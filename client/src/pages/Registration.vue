@@ -76,6 +76,7 @@
 
 <script>
   import authServices from '../services/auth';
+  import statusServices from '../services/status';
 
   export default {
     data() {
@@ -124,7 +125,10 @@
         }
       },
       async checkEmail() {
+        this.emailIsDublicate = false;
+
         let response = await authServices.emailExist(this.email);
+
         if (response.status === 200) {
           this.emailIsDublicate = true;
         } else {

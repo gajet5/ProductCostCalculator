@@ -4,23 +4,25 @@ const helmet = require('helmet');
 const {port} = require('./config');
 const cors = require('cors');
 
-const server = express();
+const app = express();
 const logger = morgan('tiny');
 
 const {connection} = require('./services/db');
 
-server.use(helmet());
-server.use(cors());
-server.use(logger);
-server.use(express.json());
+app.use(helmet());
+app.use(cors());
+app.use(logger);
+app.use(express.json());
 
 const authRouter = require('./routers/auth');
+const statusRouter = require('./routers/status');
 
-server.use('/auth',authRouter);
+app.use('/status', statusRouter);
+app.use('/auth',authRouter);
 
 connection.once('open', () => {
     console.log('Connected to MongoDB');
-    server.listen(port, () => {
+    app.listen(port, () => {
         console.log(`PCC server online on ${port} port.`);
     });
 });

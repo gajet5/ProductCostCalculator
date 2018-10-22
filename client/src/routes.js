@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
+import Login from './pages/Login';
 import Registration from './pages/Registration';
 import RegistrationConfirm from './pages/RegistrationConfirm';
 import Welcome from './pages/Welcome';
@@ -13,6 +14,10 @@ export default new VueRouter({
     {
       path: '/',
       component: Welcome
+    },
+    {
+      path: '/login',
+      component: Login
     },
     {
       path: '/registration',
