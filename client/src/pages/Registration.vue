@@ -83,6 +83,7 @@
       return {
         registred: false,
         formValid: false,
+        //todo: Накой я тут использую formValid https://vuetifyjs.com/ru/components/forms
         email: '',
         emailIsDublicate: false,
         password: '',
@@ -101,6 +102,7 @@
     },
     computed: {
       valid() {
+        //todo: Проверять жив ли сервер
         if (this.email !== '' && this.password !== '' && this.rePassword !== '') {
           if (this.formValid && !this.emailIsDublicate && this.password === this.rePassword) {
             return false;
@@ -118,7 +120,12 @@
           password: this.password
         });
         if (responce.status === 200) {
+          this.email = '';
+          this.password = '';
+          this.rePassword = '';
+
           this.registred = true;
+          //todo: Обработать ошибку.
           setTimeout(() =>{
             this.$router.push('/');
           }, 5000)
