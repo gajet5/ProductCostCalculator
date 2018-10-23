@@ -44,9 +44,6 @@
         >Назад
         </v-btn>
       </v-form>
-      <v-alert :value="registred" color="success">
-        Регистрация прошла успешно, добро пожаловать в клуб.
-      </v-alert>
     </div>
 
   </div>
@@ -54,11 +51,17 @@
 
 <script>
   import authServices from '../services/auth';
+  import statusServices from '../services/status';
 
   export default {
+    async beforeMount() {
+      this.checkServerStatus();
+    },
     data() {
       return {
+        serverStatus: true,
         formValid: false,
+        //todo: Непонятное значение formValid
         email: '',
         password: '',
         p1: true,
@@ -88,7 +91,18 @@
       },
       goToHomePage() {
         this.$router.push('/');
-      }
+      },
+      async checkServerStatus() {
+        let intervalCheck = setInterval(async () => {
+          let result = await statusServices.getServerStatus();
+          if (result.status === 200) {
+            this.serverStatus = true;
+            clearInterval(intervalCheck);
+          } else {
+            this.serverStatus = false;
+          }
+        }, 1000);
+      },
     }
   }
 </script>

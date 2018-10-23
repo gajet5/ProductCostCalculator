@@ -6,69 +6,79 @@
     </div>
     <div class="registration-wrapper">
       <h3 class="display-3 mb-2">Регистрация</h3>
-      <v-form v-model="formValid" lazy-validation>
-        <v-text-field
-          v-model="email"
-          label="Введите email"
-          type="email"
-          required
-          dark
-          color="grey lighten-5"
-          :rules="emailRules"
-          @change="checkEmail"
-        >
-        </v-text-field>
-        <transition name="slide-fade">
-          <div v-show="emailIsDublicate">
-            <v-alert
-              :value="true"
-              outline
-              color="warning">
-              Адресс уже зарегистрирован
-            </v-alert>
-          </div>
-        </transition>
-        <v-text-field
-          v-model="password"
-          :append-icon="p1 ? 'visibility' : 'visibility_off'"
-          :append-icon-cb="() => (p1 = !p1)"
-          :type="p1 ? 'password' : 'text'"
-          label="Введите пароль"
-          dark
-          color="grey lighten-5"
-          required
-          :rules="passwordRules"
-        >
-        </v-text-field>
-        <v-text-field
-          v-model="rePassword"
-          :append-icon="p2 ? 'visibility' : 'visibility_off'"
-          :append-icon-cb="() => (p2 = !p2)"
-          :type="p2 ? 'password' : 'text'"
-          label="Повторите пароль"
-          dark
-          color="grey lighten-5"
-          required
-          :rules="passwordRules"
-        >
-        </v-text-field>
+      <template v-if="serverStatus">
+        <v-form v-model="formValid" lazy-validation>
+          <v-text-field
+            v-model="email"
+            label="Введите email"
+            type="email"
+            required
+            dark
+            color="grey lighten-5"
+            :rules="emailRules"
+            @change="checkEmail"
+          >
+          </v-text-field>
+          <transition name="slide-fade">
+            <div v-show="emailIsDublicate">
+              <v-alert
+                :value="true"
+                outline
+                color="warning">
+                Адресс уже зарегистрирован
+              </v-alert>
+            </div>
+          </transition>
+          <v-text-field
+            v-model="password"
+            :append-icon="p1 ? 'visibility' : 'visibility_off'"
+            @click:append="() => (p1 = !p1)"
+            :type="p1 ? 'password' : 'text'"
+            label="Введите пароль"
+            dark
+            color="grey lighten-5"
+            required
+            :rules="passwordRules"
+          >
+          </v-text-field>
+          <v-text-field
+            v-model="rePassword"
+            :append-icon="p2 ? 'visibility' : 'visibility_off'"
+            @click:append="() => (p2 = !p2)"
+            :type="p2 ? 'password' : 'text'"
+            label="Повторите пароль"
+            dark
+            color="grey lighten-5"
+            required
+            :rules="passwordRules"
+          >
+          </v-text-field>
 
-        <v-btn
-          :disabled="valid"
-          color="success"
-          @click="registration"
-        >Зарегистрироватся
-        </v-btn>
-        <v-btn
-          flat
-          color="grey lighten-2"
-          @click="goToHomePage"
-        >Назад
-        </v-btn>
-      </v-form>
-      <v-alert :value="registred" color="success">
-        Регистрация прошла успешно, добро пожаловать в клуб.
-      </v-alert>
+          <v-btn
+            :disabled="valid"
+            color="success"
+            @click="registration"
+          >Зарегистрироватся
+          </v-btn>
+          <v-btn
+            flat
+            color="grey lighten-2"
+            @click="goToHomePage"
+          >Назад
+          </v-btn>
+        </v-form>
+        <v-alert :value="registred" color="success">
+          Регистрация прошла успешно, добро пожаловать в клуб.
+        </v-alert>
+      </template>
+      <template v-else>
+        <v-alert
+          :value="true"
+          type="error"
+        >
+          Регистрация временно недоступна.
+        </v-alert>
+      </template>
     </div>
 
   </div>
@@ -79,8 +89,12 @@
   import statusServices from '../services/status';
 
   export default {
+    async beforeMount() {
+      this.checkServerStatus();
+    },
     data() {
       return {
+        serverStatus: true,
         registred: false,
         formValid: false,
         //todo: Накой я тут использую formValid https://vuetifyjs.com/ru/components/forms
@@ -102,9 +116,9 @@
     },
     computed: {
       valid() {
-        //todo: Проверять жив ли сервер
         if (this.email !== '' && this.password !== '' && this.rePassword !== '') {
           if (this.formValid && !this.emailIsDublicate && this.password === this.rePassword) {
+            this.checkServerStatus();
             return false;
           }
         }
@@ -123,10 +137,11 @@
           this.email = '';
           this.password = '';
           this.rePassword = '';
+          //todo: После очистки формы происходит ошибка заполнения, нужно очистить без ошибки.
 
           this.registred = true;
           //todo: Обработать ошибку.
-          setTimeout(() =>{
+          setTimeout(() => {
             this.$router.push('/');
           }, 5000)
         }
@@ -141,6 +156,17 @@
         } else {
           this.emailIsDublicate = false;
         }
+      },
+      async checkServerStatus() {
+        let intervalCheck = setInterval(async () => {
+          let result = await statusServices.getServerStatus();
+          if (result.status === 200) {
+            this.serverStatus = true;
+            clearInterval(intervalCheck);
+          } else {
+            this.serverStatus = false;
+          }
+        }, 1000);
       },
       goToHomePage() {
         this.$router.push('/');
@@ -195,11 +221,14 @@
   .slide-fade-enter-active {
     transition: all .5s ease;
   }
+
   .slide-fade-leave-active {
     transition: all .10s cubic-bezier(1.0, 0.5, 0.8, 1.0);
   }
+
   .slide-fade-enter, .slide-fade-leave-to
-    /* .slide-fade-leave-active до версии 2.1.8 */ {
+    /* .slide-fade-leave-active до версии 2.1.8 */
+  {
     transform: translateX(90px);
     opacity: 0;
   }

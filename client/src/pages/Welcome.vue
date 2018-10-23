@@ -2,15 +2,16 @@
   <div>
     <section>
       <v-parallax :src="pralaxImgOne" height="600">
-          <v-layout column>
-            <v-flex class="text-sm-right">
-              <v-btn small>Войти</v-btn>
-            </v-flex>
-            <v-flex>
+          <v-layout >
+            <v-flex class="main-header__wrapper">
               <p class="display-2 text-xs-center text-logo mb-2">Калькулятор Стоимости Продукта</p>
               <p class="headline text-xs-center text-logo">экономь своё время</p>
               <div class="text-xs-center">
                 <v-btn @click="goToRegistration" color="info">Регистрация</v-btn>
+                <v-btn @click="goToLogin" color="info">Войти</v-btn>
+              </div>
+              <div class="text-xs-center">
+
               </div>
             </v-flex>
           </v-layout>
@@ -21,7 +22,6 @@
       <v-layout
         column
         wrap
-        class="my-5"
         align-center
       >
         <v-flex xs12 sm4 class="py-3">
@@ -190,6 +190,12 @@
 </script>
 
 <style scoped>
+  .main-header__wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
   .text-shadow {
     text-shadow: 0 3px 6px rgba(0, 0, 0, 0.84);
   }
