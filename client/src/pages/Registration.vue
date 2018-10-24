@@ -7,7 +7,7 @@
     <div class="registration-wrapper">
       <h3 class="display-3 mb-2">Регистрация</h3>
       <template v-if="serverStatus">
-        <v-form v-model="formValid" lazy-validation>
+        <v-form ref="registrationForm" v-model="formValid" lazy-validation>
           <v-text-field
             v-model="email"
             label="Введите email"
@@ -17,6 +17,7 @@
             color="grey lighten-5"
             :rules="emailRules"
             @change="checkEmail"
+            @input="emailIsDublicate = false"
           >
           </v-text-field>
           <transition name="slide-fade">
@@ -55,7 +56,7 @@
           </v-text-field>
 
           <v-btn
-            :disabled="valid"
+            :disabled="!formValid"
             color="success"
             @click="registration"
           >Зарегистрироватся
@@ -86,18 +87,13 @@
 
 <script>
   import authServices from '../services/auth';
-  import statusServices from '../services/status';
 
   export default {
-    async beforeMount() {
-      this.checkServerStatus();
-    },
     data() {
       return {
         serverStatus: true,
         registred: false,
         formValid: false,
-        //todo: Накой я тут использую formValid https://vuetifyjs.com/ru/components/forms
         email: '',
         emailIsDublicate: false,
         password: '',
@@ -115,35 +111,21 @@
       }
     },
     computed: {
-      valid() {
-        if (this.email !== '' && this.password !== '' && this.rePassword !== '') {
-          if (this.formValid && !this.emailIsDublicate && this.password === this.rePassword) {
-            this.checkServerStatus();
-            return false;
-          }
-        }
-        return true;
-      }
     },
     methods: {
       async registration() {
-        this.formValid = false;
-
-        let responce = await authServices.registration({
-          email: this.email,
-          password: this.password
-        });
-        if (responce.status === 200) {
-          this.email = '';
-          this.password = '';
-          this.rePassword = '';
-          //todo: После очистки формы происходит ошибка заполнения, нужно очистить без ошибки.
-
-          this.registred = true;
-          //todo: Обработать ошибку.
-          setTimeout(() => {
-            this.$router.push('/');
-          }, 5000)
+        if (this.$refs.registrationForm.validate()) {
+          let responce = await authServices.registration({
+            email: this.email,
+            password: this.password
+          });
+          if (responce.status === 200) {
+            this.clear();
+            this.registred = true;
+            setTimeout(() => {
+              this.$router.push('/');
+            }, 5000)
+          }
         }
       },
       async checkEmail() {
@@ -157,19 +139,11 @@
           this.emailIsDublicate = false;
         }
       },
-      async checkServerStatus() {
-        let intervalCheck = setInterval(async () => {
-          let result = await statusServices.getServerStatus();
-          if (result.status === 200) {
-            this.serverStatus = true;
-            clearInterval(intervalCheck);
-          } else {
-            this.serverStatus = false;
-          }
-        }, 1000);
-      },
       goToHomePage() {
         this.$router.push('/');
+      },
+      clear() {
+        this.$refs.registrationForm.reset()
       }
     }
   }
