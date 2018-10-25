@@ -1,6 +1,6 @@
 <template>
   <div class="p-relative">
-    <lock-screen v-show="lockSceenToggle"></lock-screen>
+    <lock-screen></lock-screen>
     <div class="bgImg">
       <div class="bgColor">
       </div>
@@ -8,7 +8,7 @@
     <div class="registration-wrapper">
       <h3 class="display-3 mb-2">Регистрация</h3>
       <template v-if="serverStatus">
-        <v-form ref="registrationForm" v-model="formValid" lazy-validation>
+        <v-form ref="registrationForm" v-model="formValid">
           <v-text-field
             v-model="email"
             label="Введите email"
@@ -111,7 +111,8 @@
         ],
         passwordRules: [
           v => !!v || 'Пароль должен быть указан',
-          v => /^[a-zA-Z0-9]{4,}$/.test(v) || 'Пароль должен быть валидным'
+          v => /^[a-zA-Z0-9]{4,}$/.test(v) || 'Пароль должен быть валидным',
+          v => v == this.password || 'Пароли должны совпадать'
         ]
       }
     },
