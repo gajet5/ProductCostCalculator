@@ -1,5 +1,6 @@
 <template>
   <div class="p-relative">
+    <lock-screen v-show="lockSceenToggle"></lock-screen>
     <div class="bgImg">
       <div class="bgColor">
       </div>
@@ -87,8 +88,12 @@
 
 <script>
   import authServices from '../services/auth';
+  import lockScreen from '../components/LockScreen';
 
   export default {
+    components: {
+      lockScreen
+    },
     data() {
       return {
         serverStatus: true,
@@ -111,6 +116,9 @@
       }
     },
     computed: {
+      lockSceenToggle() {
+        return this.$store.getters['serverStatus']
+      }
     },
     methods: {
       async registration() {
