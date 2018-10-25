@@ -50,7 +50,12 @@ module.exports = {
             status: 200,
             data: {
                 message: "Регистрация прошла успешно",
-                user: user.toJSON()
+                user: {
+                    id: user.id,
+                    isActiveted: user.isActiveted,
+                    premium: user.premium,
+                    premiumDateEnd: user.premiumDateEnd
+                }
             }
         });
     },
