@@ -1,5 +1,8 @@
 module.exports = async (req, res) => {
     res.status(200).send({
-        message: 'Welcome to PCC server.'
+        status: 200,
+        data: {
+            message: 'Welcome to PCC server.'
+        }
     });
 };

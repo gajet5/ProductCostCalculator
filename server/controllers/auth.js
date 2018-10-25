@@ -11,7 +11,9 @@ module.exports = {
         if (!email || !password) {
             res.status(204).json({
                 status: 204,
-                message: "Данные о пользователе не переданны."
+                data: {
+                    message: "Данные о пользователе не переданны."
+                }
             });
             return;
         }
@@ -25,12 +27,18 @@ module.exports = {
             switch (e.code) {
                 case 11000:
                     res.status(400).json({
-                        message: "Email уже зарегистрирован в системе"
+                        status: 400,
+                        data: {
+                            message: "Email уже зарегистрирован в системе"
+                        }
                     });
                     break;
                 default:
                     res.status(500).json({
-                        message: e.message
+                        status: 500,
+                        data: {
+                            message: e.message
+                        }
                     });
             }
             return;
@@ -39,7 +47,11 @@ module.exports = {
         mailer.welcome(user.email, user._id);
 
         res.status(200).json({
-            message: 'Регистрация прошла успешно'
+            status: 200,
+            data: {
+                message: "Регистрация прошла успешно",
+                user: user.toJSON()
+            }
         });
     },
 
@@ -51,7 +63,9 @@ module.exports = {
         if (!userId) {
             res.status(204).json({
                 status: 204,
-                message: "Данные о пользователе не переданны."
+                data: {
+                    message: "Данные о пользователе не переданны."
+                }
             });
             return;
         }
@@ -60,13 +74,19 @@ module.exports = {
             user = userModel.findById(userId);
         } catch (e) {
             res.status(400).json({
-                message: 'Пользователь не найден'
+                status: 400,
+                data: {
+                    message: 'Пользователь не найден'
+                }
             });
         }
 
         if (user.isActiveted) {
             res.status(208).json({
-                message: 'Пользователь уже подтвержил свой email'
+                status: 208,
+                data: {
+                    message: 'Пользователь уже подтвержил свой email'
+                }
             });
             return;
         }
@@ -77,12 +97,18 @@ module.exports = {
             });
         } catch(e) {
             res.status(500).json({
-                message: 'Ошибка на сервере'
+                status: 500,
+                data: {
+                    message: 'Ошибка на сервере'
+                }
             });
         }
 
         res.status(200).json({
-            message: 'Пользователь успешно подтвердил регистрацию'
+            status: 200,
+            data: {
+                message: 'Пользователь успешно подтвердил регистрацию'
+            }
         });
     },
 
@@ -94,7 +120,9 @@ module.exports = {
         if (!email) {
             res.status(204).json({
                 status: 204,
-                message: "Данные о пользователе не переданны."
+                data: {
+                    message: "Данные о пользователе не переданны."
+                }
             });
             return;
         }
@@ -103,20 +131,29 @@ module.exports = {
             user = await userModel.findOne({email});
         } catch (e) {
             res.status(500).json({
-                message: 'Ошибка на сервере'
+                status: 500,
+                data: {
+                    message: 'Ошибка на сервере'
+                }
             });
         }
 
 
         if (!user) {
             res.status(204).json({
-                message: 'Пользователь не найден'
+                status: 204,
+                data: {
+                    message: 'Пользователь не найден'
+                }
             });
             return;
         }
 
         res.status(200).json({
-            message: 'Пользователь найден'
+            status: 200,
+            data: {
+                message: 'Пользователь найден'
+            }
         });
 
     }
