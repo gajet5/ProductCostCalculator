@@ -99,7 +99,7 @@
 
   .bgImg {
     position: absolute;
-    background-image: url('../static/mainBG.jpg');
+    background-image: url('../static/img/mainBG.jpg');
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;

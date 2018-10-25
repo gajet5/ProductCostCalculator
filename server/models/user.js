@@ -19,7 +19,15 @@ const User = new Schema({
     isActiveted: {
         type: Boolean,
         default: false
-    }
+    },
+    premium: {
+        type: Boolean,
+        default: false
+    },
+    premiumDateEnd: {
+        type: Date,
+        default: Date.now
+    },
 });
 
 module.exports = mongoose.model('User', User);

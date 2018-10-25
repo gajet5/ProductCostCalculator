@@ -173,8 +173,8 @@
   export default {
     data() {
       return {
-        pralaxImgOne: require('../static/mainBG.jpg'),
-        pralaxImgSecound: require('../static/mainSecound.jpg')
+        pralaxImgOne: require('../static/img/mainBG.jpg'),
+        pralaxImgSecound: require('../static/img/mainSecound.jpg')
       }
     },
     methods: {
