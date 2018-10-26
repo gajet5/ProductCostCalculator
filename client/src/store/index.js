@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 export const store = new Vuex.Store({
   state: {
-    serverStatus: false,
+    serverStatus: false
   },
   getters: {
     serverStatus(state) {

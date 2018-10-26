@@ -3,10 +3,10 @@ import App from './App.vue';
 import 'babel-polyfill';
 
 import Vuetify from 'vuetify';
-import 'vuetify/dist/vuetify.min.css'
+import 'vuetify/dist/vuetify.min.css';
 
-import {store} from "./store";
-import router from "./routes";
+import { store } from './store';
+import router from './routes';
 
 Vue.use(Vuetify);
 
