@@ -21,11 +21,10 @@
     },
     computed: {
       lockSceenToggle() {
-        return this.$store.getters['serverStatus']
+        return this.$store.getters['serverStatus'];
       }
-    },
-
-  }
+    }
+  };
 </script>
 
 <style scoped>

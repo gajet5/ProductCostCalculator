@@ -107,18 +107,18 @@
         p2: true,
         emailRules: [
           v => !!v || 'Почта должна быть указана',
-          v => /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'Почта должна быть валидной'
+          v => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'Почта должна быть валидной'
         ],
         passwordRules: [
           v => !!v || 'Пароль должен быть указан',
           v => /^[a-zA-Z0-9]{4,}$/.test(v) || 'Пароль должен быть валидным',
-          v => v == this.password || 'Пароли должны совпадать'
+          v => v === this.password || 'Пароли должны совпадать'
         ]
-      }
+      };
     },
     computed: {
       lockSceenToggle() {
-        return this.$store.getters['serverStatus']
+        return this.$store.getters['serverStatus'];
       }
     },
     methods: {
@@ -133,7 +133,7 @@
             this.registred = true;
             setTimeout(() => {
               this.$router.push('/');
-            }, 5000)
+            }, 5000);
           }
         }
       },
@@ -142,20 +142,16 @@
 
         let response = await authServices.emailExist(this.email);
 
-        if (response.status === 200) {
-          this.emailIsDublicate = true;
-        } else {
-          this.emailIsDublicate = false;
-        }
+        this.emailIsDublicate = response.status === 200;
       },
       goToHomePage() {
         this.$router.push('/');
       },
       clear() {
-        this.$refs.registrationForm.reset()
+        this.$refs.registrationForm.reset();
       }
     }
-  }
+  };
 </script>
 
 <style scoped>

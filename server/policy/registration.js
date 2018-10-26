@@ -8,7 +8,7 @@ module.exports = (req, res, next) => {
         )
     };
 
-    const {error, value} = Joi.validate(req.body, schema);
+    const { error } = Joi.validate(req.body, schema);
 
     if (error) {
         switch (error.details[0].context.key) {
@@ -28,7 +28,6 @@ module.exports = (req, res, next) => {
                 res.status(500).json({
                     message: 'Что-то пошло не так'
                 });
-
         }
     } else {
         next();

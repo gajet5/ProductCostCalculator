@@ -2,7 +2,7 @@ const userModel = require('../models/user');
 const mailer = require('../services/mailer');
 
 module.exports = {
-    //POST /auth/registration
+    // POST /auth/registration
     async registration(req, res) {
         let user;
         let email = req.body.email;
@@ -12,7 +12,7 @@ module.exports = {
             res.status(204).json({
                 status: 204,
                 data: {
-                    message: "Данные о пользователе не переданны."
+                    message: 'Данные о пользователе не переданны.'
                 }
             });
             return;
@@ -29,7 +29,7 @@ module.exports = {
                     res.status(400).json({
                         status: 400,
                         data: {
-                            message: "Email уже зарегистрирован в системе"
+                            message: 'Email уже зарегистрирован в системе'
                         }
                     });
                     break;
@@ -49,7 +49,7 @@ module.exports = {
         res.status(200).json({
             status: 200,
             data: {
-                message: "Регистрация прошла успешно",
+                message: 'Регистрация прошла успешно',
                 user: {
                     id: user.id,
                     isActiveted: user.isActiveted,
@@ -60,16 +60,16 @@ module.exports = {
         });
     },
 
-    //PATCH /auth/confirm/
+    // PATCH /auth/confirm/
     async confirm(req, res) {
         let user;
-        let userId = req.body.id;
+        let userId = req.body.params.id;
 
         if (!userId) {
             res.status(204).json({
                 status: 204,
                 data: {
-                    message: "Данные о пользователе не переданны."
+                    message: 'Данные о пользователе не переданны.'
                 }
             });
             return;
@@ -100,7 +100,7 @@ module.exports = {
             user = await user.update({
                 isActiveted: true
             });
-        } catch(e) {
+        } catch (e) {
             res.status(500).json({
                 status: 500,
                 data: {
@@ -117,7 +117,7 @@ module.exports = {
         });
     },
 
-    //GET /auth/emailExist?email=some@mail.ru
+    // GET /auth/emailExist?email=some@mail.ru
     async emailExist(req, res) {
         let email = req.query.email;
         let user;
@@ -126,14 +126,14 @@ module.exports = {
             res.status(204).json({
                 status: 204,
                 data: {
-                    message: "Данные о пользователе не переданны."
+                    message: 'Данные о пользователе не переданны.'
                 }
             });
             return;
         }
 
         try {
-            user = await userModel.findOne({email});
+            user = await userModel.findOne({ email });
         } catch (e) {
             res.status(500).json({
                 status: 500,
@@ -142,7 +142,6 @@ module.exports = {
                 }
             });
         }
-
 
         if (!user) {
             res.status(204).json({
@@ -160,7 +159,5 @@ module.exports = {
                 message: 'Пользователь найден'
             }
         });
-
     }
-
 };

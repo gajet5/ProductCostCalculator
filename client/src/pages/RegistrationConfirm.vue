@@ -10,12 +10,12 @@
            style="color: #FAFAFA"
         >Подтверждение регистрации</p>
         <v-progress-linear
-          v-show="!loading"
+          v-show="loading"
           :indeterminate="true"
           color="amber"
         ></v-progress-linear>
         <v-flex
-          v-show="loading"
+          v-show="!loading"
           xs6
         >
           <div class="text-status">
@@ -37,17 +37,16 @@
   export default {
     data() {
       return {
-        loading: false,
+        loading: true,
         icon: '',
         text: '',
-        icolor: '',
-      }
+        icolor: ''
+      };
     },
     async mounted() {
-
       try {
         let result = await authServices.confirm(this.$route.params.id);
-        this.loading = true;
+        this.loading = false;
 
         if (result.status === 200) {
           this.icon = 'done';
@@ -59,17 +58,17 @@
           this.icolor = 'yellow';
         }
       } catch (e) {
-        this.loading = true;
+        this.loading = false;
         this.icon = 'error';
         this.text = 'Аккаунт не найден';
         this.icolor = 'red darken-1';
       }
 
-      setTimeout(()=> {
-        this.$router.push('/')
+      setTimeout(() => {
+        this.$router.push('/');
       }, 5000);
     }
-  }
+  };
 </script>
 
 <style scoped>
