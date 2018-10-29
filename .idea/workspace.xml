@@ -28,7 +28,7 @@
         <counts>
           <entry key="eslint" value="1" />
           <entry key="eslintignore" value="6" />
-          <entry key="gitignore" value="10" />
+          <entry key="gitignore" value="11" />
           <entry key="htaccess" value="3" />
           <entry key="html" value="5" />
           <entry key="jpg" value="1" />
@@ -42,7 +42,7 @@
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="ESLint file" value="6" />
-          <entry key="Git file" value="10" />
+          <entry key="Git file" value="11" />
           <entry key="HTML" value="5" />
           <entry key="Image" value="1" />
           <entry key="JSON" value="32" />
@@ -56,6 +56,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="eslintignore" value="26" />
+          <entry key="gitignore" value="3" />
           <entry key="html" value="25" />
           <entry key="js" value="2978" />
           <entry key="json" value="161" />
@@ -67,6 +68,7 @@
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="ESLint file" value="26" />
+          <entry key="Git file" value="3" />
           <entry key="HTML" value="25" />
           <entry key="JSON" value="161" />
           <entry key="Jade" value="7" />
@@ -128,6 +130,15 @@
               <folding>
                 <element signature="e#0#22#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="86" column="6" selection-start-line="86" selection-start-column="6" selection-end-line="86" selection-end-column="6" />
             </state>
           </provider>
         </entry>
