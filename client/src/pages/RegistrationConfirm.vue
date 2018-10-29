@@ -32,8 +32,6 @@
 </template>
 
 <script>
-  import authServices from '../services/auth';
-
   export default {
     data() {
       return {
@@ -45,22 +43,23 @@
     },
     async mounted() {
       try {
-        let result = await authServices.confirm(this.$route.params.id);
+        let result = await this.$store.dispatch('auth/confirm', {id: this.$route.params.id});
         this.loading = false;
 
-        if (result.status === 200) {
+        if (result === 200) {
           this.icon = 'done';
           this.text = 'Аккаунт подтверждён';
           this.icolor = 'green';
-        } else if (result.status === 208) {
+        } else if (result === 208) {
           this.icon = 'warning';
           this.text = 'Аккаунт уже подтверждён';
           this.icolor = 'yellow';
         }
+        // todo: Обработать ошибку когда акк не найден
       } catch (e) {
         this.loading = false;
         this.icon = 'error';
-        this.text = 'Аккаунт не найден';
+        this.text = 'Ошибка запроса';
         this.icolor = 'red darken-1';
       }
 

@@ -15,6 +15,9 @@ export default {
         email: payload.email,
         password: payload.password
       }).status;
+    },
+    async confirm(context, payload) {
+      return await authServices.confirm(payload.id).status;
     }
   }
 }

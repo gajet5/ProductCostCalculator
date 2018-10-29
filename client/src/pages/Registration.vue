@@ -124,6 +124,7 @@
       async registration() {
         if (this.$refs.registrationForm.validate()) {
 
+          // todo: Оберунуть в try\cache
           let result = await this.$store.dispatch('auth/registration', {
             email: this.email,
             password: this.password
@@ -141,8 +142,7 @@
         }
       },
       async checkEmail() {
-        this.emailIsDublicate = false;
-
+        // todo: Оберунуть в try\cache
         this.emailIsDublicate = await this.$store.dispatch('auth/checkEmail', {
           email: this.email
         }) === 200;
