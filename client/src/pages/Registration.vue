@@ -87,7 +87,6 @@
 </template>
 
 <script>
-  import authServices from '../services/auth';
   import lockScreen from '../components/LockScreen';
 
   export default {
@@ -124,25 +123,29 @@
     methods: {
       async registration() {
         if (this.$refs.registrationForm.validate()) {
-          let responce = await authServices.registration({
+
+          // todo: Оберунуть в try\cache
+          let result = await this.$store.dispatch('auth/registration', {
             email: this.email,
             password: this.password
           });
-          if (responce.status === 200) {
+
+          if (result === 200) {
             this.clear();
             this.registred = true;
+
             setTimeout(() => {
               this.$router.push('/');
             }, 5000);
           }
+          // todo: Обработать ошибку при регистрации
         }
       },
       async checkEmail() {
-        this.emailIsDublicate = false;
-
-        let response = await authServices.emailExist(this.email);
-
-        this.emailIsDublicate = response.status === 200;
+        // todo: Оберунуть в try\cache
+        this.emailIsDublicate = await this.$store.dispatch('auth/checkEmail', {
+          email: this.email
+        }) === 200;
       },
       goToHomePage() {
         this.$router.push('/');
