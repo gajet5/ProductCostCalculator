@@ -2,7 +2,7 @@
   <v-dialog v-model="lockSceenToggle" persistent max-width="300">
     <v-card dark style="text-align:center;">
       <v-card-title class="headline justify-center">Ожидание сервера..</v-card-title>
-      <v-card-text>Please stand by & don't close the tab</v-card-text>
+      <v-card-text>Пожалуйста подождите, не закрывайте вкладку или браузер.</v-card-text>
       <v-progress-linear
         indeterminate
         color="#E0E0E0"

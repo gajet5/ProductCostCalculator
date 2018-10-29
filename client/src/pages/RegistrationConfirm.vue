@@ -42,27 +42,35 @@
       };
     },
     async mounted() {
-      try {
-        let result = await this.$store.dispatch('auth/confirm', {id: this.$route.params.id});
-        this.loading = false;
+      let result = await this.$store.dispatch('auth/confirm', { id: this.$route.params.id });
+      this.loading = false;
 
-        if (result === 200) {
+      switch (result) {
+        case 200:
           this.icon = 'done';
           this.text = 'Аккаунт подтверждён';
           this.icolor = 'green';
-        } else if (result === 208) {
+          break;
+
+        case 204:
+        case 400:
+          this.icon = 'warning';
+          this.text = 'Аккаунт не найден';
+          this.icolor = 'yellow';
+          break;
+
+        case 208:
           this.icon = 'warning';
           this.text = 'Аккаунт уже подтверждён';
           this.icolor = 'yellow';
-        }
-        // todo: Обработать ошибку когда акк не найден
-      } catch (e) {
-        this.loading = false;
-        this.icon = 'error';
-        this.text = 'Ошибка запроса';
-        this.icolor = 'red darken-1';
-      }
+          break;
 
+        default:
+          this.loading = false;
+          this.icon = 'error';
+          this.text = 'Ошибка запроса';
+          this.icolor = 'red darken-1';
+      }
       setTimeout(() => {
         this.$router.push('/');
       }, 5000);
