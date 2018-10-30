@@ -6,7 +6,7 @@
     </div>
     <div class="registration-wrapper">
       <h3 class="display-3 mb-5">Вход</h3>
-      <v-form ref="loginForm" v-model="formValid" lazy-validation>
+      <v-form ref="loginForm" v-model="formValid">
         <v-text-field
           v-model="email"
           label="Введите email"
@@ -15,13 +15,12 @@
           dark
           color="grey lighten-5"
           :rules="emailRules"
-          @change="checkEmail"
         >
         </v-text-field>
         <v-text-field
           v-model="password"
           :append-icon="p1 ? 'visibility' : 'visibility_off'"
-          :append-icon-cb="() => (p1 = !p1)"
+          @click:append="() => (p1 = !p1)"
           :type="p1 ? 'password' : 'text'"
           label="Введите пароль"
           dark
@@ -32,9 +31,9 @@
         </v-text-field>
 
         <v-btn
-          :disabled="valid"
+          :disabled="!formValid"
           color="success"
-          @click="registration"
+          @click="login"
         >Войти
         </v-btn>
         <v-btn
@@ -69,14 +68,6 @@
       };
     },
     computed: {
-      valid() {
-        if (this.email !== '' && this.password !== '') {
-          if (this.formValid) {
-            return false;
-          }
-        }
-        return true;
-      }
     },
     methods: {
       async login() {
