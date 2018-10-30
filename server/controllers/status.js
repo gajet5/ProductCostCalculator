@@ -1,8 +1,9 @@
 module.exports = async (req, res) => {
-    res.status(200).send({
+    // GET: /
+    res.send({
         status: 200,
         data: {
-            message: 'Welcome to PCC server.'
+            message: 'PCC REST API'
         }
     });
 };

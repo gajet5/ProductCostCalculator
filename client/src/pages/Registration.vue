@@ -7,9 +7,9 @@
     </div>
     <div class="registration-wrapper">
       <h3 class="display-3 mb-2">Регистрация</h3>
-      <v-form ref="registrationForm" v-model="formValid">
+      <v-form ref="registrationForm" v-model="formValid" autocomplete="off">
         <v-text-field
-          v-model="email"
+          v-model.trim="email"
           label="Введите email"
           type="email"
           required
@@ -31,7 +31,7 @@
           </div>
         </transition>
         <v-text-field
-          v-model="password"
+          v-model.trim="password"
           :append-icon="p1 ? 'visibility' : 'visibility_off'"
           @click:append="() => (p1 = !p1)"
           :type="p1 ? 'password' : 'text'"
@@ -43,7 +43,7 @@
         >
         </v-text-field>
         <v-text-field
-          v-model="rePassword"
+          v-model.trim="rePassword"
           :append-icon="p2 ? 'visibility' : 'visibility_off'"
           @click:append="() => (p2 = !p2)"
           :type="p2 ? 'password' : 'text'"
@@ -121,10 +121,14 @@
             password: this.password
           });
 
-          switch (result) {
+          switch (result.status) {
             case 200:
               this.clear();
               this.registredSuccess = true;
+
+              // localStorage.setItem('user-token', result.data.token);
+              this.$store.dispatch('setToken', result.data.token);
+              this.$store.dispatch('setUser', result.data.user);
 
               setTimeout(() => {
                 this.$router.push('/');
@@ -140,7 +144,7 @@
       async checkEmail() {
         this.emailIsDublicate = await this.$store.dispatch('auth/checkEmail', {
           email: this.email
-        }) === 200;
+        }).status === 200;
       },
       goToHomePage() {
         this.$router.push('/');

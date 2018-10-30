@@ -7,43 +7,43 @@ export default {
   mutations: {},
   actions: {
     async checkEmail(context, payload) {
-      let result;
-
       try {
-        result = await authServices.emailExist(payload.email);
+        let response = await authServices.emailExist(payload.email);
+        return response.data;
       } catch (e) {
         console.log(e.message);
         return false;
       }
-
-      return result.status;
     },
     async registration(context, payload) {
-      let result;
-
       try {
-        result = await authServices.registration({
+        let response = await authServices.registration({
           email: payload.email,
           password: payload.password
         });
+        return response.data;
       } catch (e) {
         console.log(e.message);
         return false;
       }
-
-      return result.status;
     },
     async confirm(context, payload) {
-      let result;
-
       try {
-        result = await authServices.confirm(payload.id);
+        let response = await authServices.confirm(payload.id);
+        return response.data;
       } catch (e) {
         console.log(e.message);
         return false;
       }
-
-      return result.status;
+    },
+    async login(context, payload) {
+      try {
+        let response = await authServices.login(payload);
+        return response.data;
+      } catch (e) {
+        console.log(e.message);
+        return false;
+      }
     }
   }
 };

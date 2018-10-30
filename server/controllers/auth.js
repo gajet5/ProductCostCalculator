@@ -1,5 +1,15 @@
 const userModel = require('../models/user');
 const mailer = require('../services/mailer');
+const jwt = require('jsonwebtoken');
+const Promise = require('bluebird');
+const bcrypt = Promise.promisifyAll(require('bcrypt-nodejs'));
+const config = require('../config');
+
+function jwtSingUser(user) {
+    return jwt.sign(user, config.auth.jwtSecret, {
+        expiresIn: 60 * 60 * 24 * 7
+    });
+}
 
 module.exports = {
     // POST /auth/registration
@@ -9,7 +19,7 @@ module.exports = {
         let password = req.body.password;
 
         if (!email || !password) {
-            res.status(204).json({
+            res.json({
                 status: 204,
                 data: {
                     message: 'Данные о пользователе не переданны.'
@@ -18,15 +28,18 @@ module.exports = {
             return;
         }
 
+        let salt = await bcrypt.genSaltAsync(8);
+        let passwordHash = await bcrypt.hashAsync(password, salt, null);
+
         try {
             user = await userModel.create({
                 email,
-                password
+                password: passwordHash
             });
         } catch (e) {
             switch (e.code) {
                 case 11000:
-                    res.status(400).json({
+                    res.json({
                         status: 400,
                         data: {
                             message: 'Email уже зарегистрирован в системе'
@@ -34,7 +47,7 @@ module.exports = {
                     });
                     break;
                 default:
-                    res.status(500).json({
+                    res.json({
                         status: 500,
                         data: {
                             message: e.message
@@ -46,16 +59,19 @@ module.exports = {
 
         mailer.welcome(user.email, user._id);
 
-        res.status(200).json({
+        let userSendObj = {
+            id: user.id,
+            isActiveted: user.isActiveted,
+            premium: user.premium,
+            premiumDateEnd: user.premiumDateEnd
+        };
+
+        res.json({
             status: 200,
             data: {
-                message: 'Регистрация прошла успешно',
-                user: {
-                    id: user.id,
-                    isActiveted: user.isActiveted,
-                    premium: user.premium,
-                    premiumDateEnd: user.premiumDateEnd
-                }
+                message: 'Авторизация прошла успешно',
+                user: userSendObj,
+                token: jwtSingUser(userSendObj)
             }
         });
     },
@@ -66,7 +82,7 @@ module.exports = {
         let userId = req.body.params.id;
 
         if (!userId) {
-            res.status(204).json({
+            res.json({
                 status: 204,
                 data: {
                     message: 'Данные о пользователе не переданны.'
@@ -78,7 +94,7 @@ module.exports = {
         try {
             user = userModel.findById(userId);
         } catch (e) {
-            res.status(400).json({
+            res.json({
                 status: 400,
                 data: {
                     message: 'Пользователь не найден'
@@ -87,7 +103,7 @@ module.exports = {
         }
 
         if (user.isActiveted) {
-            res.status(208).json({
+            res.json({
                 status: 208,
                 data: {
                     message: 'Пользователь уже подтвержил свой email'
@@ -101,7 +117,7 @@ module.exports = {
                 isActiveted: true
             });
         } catch (e) {
-            res.status(500).json({
+            res.json({
                 status: 500,
                 data: {
                     message: 'Ошибка на сервере'
@@ -109,7 +125,7 @@ module.exports = {
             });
         }
 
-        res.status(200).json({
+        res.json({
             status: 200,
             data: {
                 message: 'Пользователь успешно подтвердил регистрацию'
@@ -123,7 +139,7 @@ module.exports = {
         let user;
 
         if (!email) {
-            res.status(204).json({
+            res.json({
                 status: 204,
                 data: {
                     message: 'Данные о пользователе не переданны.'
@@ -135,7 +151,7 @@ module.exports = {
         try {
             user = await userModel.findOne({ email });
         } catch (e) {
-            res.status(500).json({
+            res.json({
                 status: 500,
                 data: {
                     message: 'Ошибка на сервере'
@@ -144,7 +160,7 @@ module.exports = {
         }
 
         if (!user) {
-            res.status(204).json({
+            res.json({
                 status: 204,
                 data: {
                     message: 'Пользователь не найден'
@@ -153,10 +169,76 @@ module.exports = {
             return;
         }
 
-        res.status(200).json({
+        res.json({
             status: 200,
             data: {
                 message: 'Пользователь найден'
+            }
+        });
+    },
+
+    // POST /auth/login
+    async login(req, res) {
+        let user;
+        let email = req.body.email;
+        let password = req.body.password;
+
+        if (!email || !password) {
+            res.json({
+                status: 204,
+                data: {
+                    message: 'Данные о пользователе не переданны.'
+                }
+            });
+            return;
+        }
+
+        try {
+            user = await userModel.findOne({
+                email
+            });
+        } catch (e) {
+            res.json({
+                status: 500,
+                data: {
+                    message: e.message
+                }
+            });
+        }
+
+        if (!user) {
+            res.json({
+                status: 403,
+                data: {
+                    message: 'Пользователь не найден.'
+                }
+            });
+            return;
+        }
+
+        if (!await bcrypt.compareAsync(password, user.password)) {
+            res.json({
+                status: 403,
+                data: {
+                    message: 'Пароль не корректен.'
+                }
+            });
+            return;
+        }
+
+        let userSendObj = {
+            id: user.id,
+            isActiveted: user.isActiveted,
+            premium: user.premium,
+            premiumDateEnd: user.premiumDateEnd
+        };
+
+        res.json({
+            status: 200,
+            data: {
+                message: 'Авторизация прошла успешно',
+                user: userSendObj,
+                token: jwtSingUser(userSendObj)
             }
         });
     }

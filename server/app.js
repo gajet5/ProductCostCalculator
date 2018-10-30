@@ -13,11 +13,12 @@ app.use(helmet());
 app.use(cors());
 app.use(logger);
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 const authRouter = require('./routers/auth');
 const statusRouter = require('./routers/status');
 
-app.use('/status', statusRouter);
+app.use('/', statusRouter);
 app.use('/auth', authRouter);
 
 connection.once('open', () => {
