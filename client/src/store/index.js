@@ -11,7 +11,7 @@ export const store = new Vuex.Store({
     auth
   },
   state: {
-    serverStatus: true
+    serverStatus: false
   },
   getters: {
     serverStatus(state) {
@@ -25,14 +25,18 @@ export const store = new Vuex.Store({
   },
   actions: {
     async serverStatus(ctx) {
-      let result;
-      try {
-        result = await statusService.getServerStatus();
-      } catch (e) {
-        console.log(e.message);
-        result = { 'status': -1 };
+      async function foo() {
+        try {
+          await statusService.getServerStatus();
+          ctx.commit('changeServerStatus', true);
+        } catch (e) {
+          console.log(e.message);
+          ctx.commit('changeServerStatus', false);
+        }
       }
-      ctx.commit('changeServerStatus', result.status === 200);
+      foo();
+
+      setInterval(foo, 1000 * 5);
     }
   }
 });
