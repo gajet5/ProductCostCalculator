@@ -1,6 +1,6 @@
 <template>
   <div class="p-relative">
-    <lock-screen></lock-screen>
+    <lock-screen-component></lock-screen-component>
     <div class="bgImg">
       <div class="bgColor">
       </div>
@@ -80,11 +80,11 @@
 </template>
 
 <script>
-  import lockScreen from '../components/LockScreen';
+  import lockScreenComponent from '../components/LockScreen';
 
   export default {
     components: {
-      lockScreen
+      lockScreenComponent
     },
     data() {
       return {
