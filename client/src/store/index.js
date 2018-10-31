@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import auth from './modules/auth';
+import statusService from '../services/status';
 
 Vue.use(Vuex);
 
@@ -34,14 +35,19 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
-    serverStatus(ctx) {
-      function foo() {
-        // console.log(1);
-        // ctx.commit('changeServerStatus', Math.random() > 0.5);
+    async serverStatus(ctx) {
+      async function foo() {
+        try {
+          await statusService.getServerStatus();
+          ctx.commit('changeServerStatus', true);
+        } catch (e) {
+          console.log(e.message);
+          ctx.commit('changeServerStatus', false);
+        }
       }
-
-      setInterval(foo, 1000 * 5);
       foo();
+      
+      setInterval(foo, 1000 * 5);
     },
     setToken(context, token) {
       context.commit('setToken', token);

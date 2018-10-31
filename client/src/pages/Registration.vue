@@ -108,11 +108,6 @@
         ]
       };
     },
-    computed: {
-      lockSceenToggle() {
-        return this.$store.getters['serverStatus'];
-      }
-    },
     methods: {
       async registration() {
         if (this.$refs.registrationForm.validate()) {
