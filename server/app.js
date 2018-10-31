@@ -20,6 +20,8 @@ const statusRouter = require('./routers/status');
 
 app.use('/', statusRouter);
 app.use('/auth', authRouter);
+// Auth middleware
+// app.use('/catalogs', catalogsRouter);
 
 connection.once('open', () => {
     console.log('Connected to MongoDB');

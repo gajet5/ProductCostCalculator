@@ -10,6 +10,6 @@ module.exports = {
         }
     },
     auth: {
-        jwtSecret: 'secret'
+        jwtSecret: 'RZpEhnLhIoNjqLsfG58peE0xKVNsqxvP'
     }
 };

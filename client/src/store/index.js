@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import axios from 'axios';
 
 import auth from './modules/auth';
 import statusService from '../services/status';
@@ -13,13 +14,18 @@ export const store = new Vuex.Store({
   },
   state: {
     serverStatus: false,
-    token: null,
-    user: null,
-    isUserLoggedIn: false
+    token: '',
+    authStatus: ''
   },
   getters: {
     serverStatus(state) {
       return state.serverStatus;
+    },
+    isAuthenticated(state) {
+      return !!state.token;
+    },
+    authStatus(state) {
+      return state.authStatus;
     }
   },
   mutations: {
@@ -27,11 +33,17 @@ export const store = new Vuex.Store({
       state.serverStatus = status;
     },
     setToken(state, token) {
+      if (token) {
+        localStorage.setItem('token', token);
+        axios.defaults.headers.common['Authorization'] = token;
+      } else {
+        localStorage.removeItem('token');
+        delete axios.defaults.headers.common['Authorization'];
+      }
       state.token = token;
-      state.isUserLoggedIn = !!token;
     },
-    setUser(state, user) {
-      state.user = user;
+    authStatus(state, status) {
+      state.authStatus = status;
     }
   },
   actions: {
@@ -47,12 +59,6 @@ export const store = new Vuex.Store({
       }
       foo();
       setInterval(foo, 1000 * 5);
-    },
-    setToken(context, token) {
-      context.commit('setToken', token);
-    },
-    setUser(context, user) {
-      context.commit('setUser', user);
     }
   }
 });

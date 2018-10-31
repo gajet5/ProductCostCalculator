@@ -6,18 +6,9 @@
     scroll-off-screen
     scroll-target="#scrolling-techniques"
   >
-
-    <v-toolbar-title>PCC - Каталоги</v-toolbar-title>
-
+    <v-toolbar-title>{{ title }}</v-toolbar-title>
     <v-spacer></v-spacer>
-
-    <v-btn icon>
-      <v-icon>search</v-icon>
-    </v-btn>
-
-    <v-btn icon>
-      <v-icon>add</v-icon>
-    </v-btn>
+    <slot></slot>
     <v-menu transition="slide-y-transition" :nudge-bottom="50">
       <v-btn slot="activator" icon>
         <v-icon>account_circle</v-icon>
@@ -37,13 +28,13 @@
 
 <script>
   export default {
+    props: ['title'],
     methods: {
       goToSettings() {
         console.log('Настройки');
       },
       logOut() {
-        this.$store.dispatch('setToken', null);
-        this.$store.dispatch('setUser', null);
+        this.$store.commit('setToken', '');
         this.$router.push('/');
       }
     }

@@ -82,6 +82,8 @@
     },
     methods: {
       async login() {
+        this.$store.commit('authStatus', 'loading');
+
         let result = await this.$store.dispatch('auth/login', {
           email: this.email,
           password: this.password
@@ -89,9 +91,8 @@
 
         switch (result.status) {
           case 200:
-            // localStorage.setItem('user-token', result.data.token);
-            this.$store.dispatch('setToken', result.data.token);
-            this.$store.dispatch('setUser', result.data.user);
+            this.$store.commit('authStatus', 'success');
+            this.$store.commit('setToken', result.data.token);
             setTimeout(() => {
               this.$router.push('/catalogs');
             }, 1000);
@@ -99,15 +100,17 @@
             break;
 
           case 403:
+            this.$store.commit('authStatus', 'error');
+            this.$store.commit('setToken', '');
             this.loginErrorText = 'Введены неверные данные для авторизации.';
             this.loginError = true;
-            // localStorage.removeItem('user-token');
             break;
 
           default:
+            this.$store.commit('authStatus', 'error');
+            this.$store.commit('setToken', '');
             this.loginErrorText = 'Во время входа произошла ошибка, попробуйте ещё раз.';
             this.loginError = true;
-            // localStorage.removeItem('user-token');
             break;
         }
 

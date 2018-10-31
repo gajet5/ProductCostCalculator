@@ -120,10 +120,7 @@
             case 200:
               this.clear();
               this.registredSuccess = true;
-
-              // localStorage.setItem('user-token', result.data.token);
-              this.$store.dispatch('setToken', result.data.token);
-              this.$store.dispatch('setUser', result.data.user);
+              this.$store.commit('setToken', result.data.token);
 
               setTimeout(() => {
                 this.$router.push('/');
@@ -132,6 +129,7 @@
 
             default:
               this.registredError = true;
+              this.$store.commit('setToken', '');
               break;
           }
         }

@@ -70,7 +70,6 @@ module.exports = {
             status: 200,
             data: {
                 message: 'Авторизация прошла успешно',
-                user: userSendObj,
                 token: jwtSingUser(userSendObj)
             }
         });
@@ -237,7 +236,6 @@ module.exports = {
             status: 200,
             data: {
                 message: 'Авторизация прошла успешно',
-                user: userSendObj,
                 token: jwtSingUser(userSendObj)
             }
         });
