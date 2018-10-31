@@ -5,11 +5,11 @@ module.exports = {
     mailOptions: {
         service: 'Yandex',
         auth: {
-            user: 'no-replay@s-evil.ru',
+            user: '',
             pass: ''
         }
     },
     auth: {
-        jwtSecret: 'secret'
+        jwtSecret: ''
     }
 };

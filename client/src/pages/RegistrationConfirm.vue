@@ -45,7 +45,7 @@
       let result = await this.$store.dispatch('auth/confirm', { id: this.$route.params.id });
       this.loading = false;
 
-      switch (result) {
+      switch (result.status) {
         case 200:
           this.icon = 'done';
           this.text = 'Аккаунт подтверждён';

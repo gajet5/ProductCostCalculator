@@ -6,22 +6,21 @@
     </div>
     <div class="registration-wrapper">
       <h3 class="display-3 mb-5">Вход</h3>
-      <v-form ref="loginForm" v-model="formValid" lazy-validation>
+      <v-form ref="loginForm" v-model="formValid">
         <v-text-field
-          v-model="email"
+          v-model.trim="email"
           label="Введите email"
           type="email"
           required
           dark
           color="grey lighten-5"
           :rules="emailRules"
-          @change="checkEmail"
         >
         </v-text-field>
         <v-text-field
-          v-model="password"
+          v-model.trim="password"
           :append-icon="p1 ? 'visibility' : 'visibility_off'"
-          :append-icon-cb="() => (p1 = !p1)"
+          @click:append="() => (p1 = !p1)"
           :type="p1 ? 'password' : 'text'"
           label="Введите пароль"
           dark
@@ -32,9 +31,9 @@
         </v-text-field>
 
         <v-btn
-          :disabled="valid"
+          :disabled="!formValid"
           color="success"
-          @click="registration"
+          @click="login"
         >Войти
         </v-btn>
         <v-btn
@@ -44,6 +43,9 @@
         >Назад
         </v-btn>
       </v-form>
+      <v-alert :value="loginError" color="error">
+        {{ loginErrorText }}
+      </v-alert>
     </div>
 
   </div>
@@ -55,35 +57,64 @@
       return {
         serverStatus: true,
         formValid: false,
+        loginError: false,
+        loginErrorText: '',
         email: '',
         password: '',
         p1: true,
         emailRules: [
-          v => !!v || 'Почта должна быть указана',
-          v => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'Почта должна быть валидной'
+          v => !!v || 'Почта должна быть указана.',
+          v => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'Почта должна быть валидной.'
         ],
         passwordRules: [
-          v => !!v || 'Пароль должен быть указан',
-          v => /^[a-zA-Z0-9]{4,}$/.test(v) || 'Пароль должен быть валидным'
+          v => !!v || 'Пароль должен быть указан.',
+          v => /^[a-zA-Z0-9]{4,}$/.test(v) || 'Пароль должен быть валидным.'
         ]
       };
     },
     computed: {
-      valid() {
-        if (this.email !== '' && this.password !== '') {
-          if (this.formValid) {
-            return false;
-          }
-        }
-        return true;
-      }
     },
     methods: {
       async login() {
+        let result = await this.$store.dispatch('auth/login', {
+          email: this.email,
+          password: this.password
+        });
 
+        switch (result.status) {
+          case 200:
+            // localStorage.setItem('user-token', result.data.token);
+            this.$store.dispatch('setToken', result.data.token);
+            this.$store.dispatch('setUser', result.data.user);
+            setTimeout(() => {
+              this.$router.push('/');
+            }, 1000);
+
+            break;
+
+          case 403:
+            this.loginErrorText = 'Введены неверные данные для авторизации.';
+            this.loginError = true;
+            // localStorage.removeItem('user-token');
+            break;
+
+          default:
+            this.loginErrorText = 'Во время входа произошла ошибка, попробуйте ещё раз.';
+            this.loginError = true;
+            // localStorage.removeItem('user-token');
+            break;
+        }
+
+        setTimeout(() => {
+          this.loginError = false;
+          this.loginErrorText = '';
+        }, 1000 * 5);
       },
       goToHomePage() {
         this.$router.push('/');
+      },
+      clear() {
+        this.$refs.loginForm.reset();
       }
     }
   };
