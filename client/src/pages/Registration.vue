@@ -7,87 +7,79 @@
     </div>
     <div class="registration-wrapper">
       <h3 class="display-3 mb-2">Регистрация</h3>
-      <template v-if="serverStatus">
-        <v-form ref="registrationForm" v-model="formValid">
-          <v-text-field
-            v-model="email"
-            label="Введите email"
-            type="email"
-            required
-            dark
-            color="grey lighten-5"
-            :rules="emailRules"
-            @change="checkEmail"
-            @input="emailIsDublicate = false"
-          >
-          </v-text-field>
-          <transition name="slide-fade">
-            <div v-show="emailIsDublicate">
-              <v-alert
-                :value="true"
-                outline
-                color="warning">
-                Адресс уже зарегистрирован
-              </v-alert>
-            </div>
-          </transition>
-          <v-text-field
-            v-model="password"
-            :append-icon="p1 ? 'visibility' : 'visibility_off'"
-            @click:append="() => (p1 = !p1)"
-            :type="p1 ? 'password' : 'text'"
-            label="Введите пароль"
-            dark
-            color="grey lighten-5"
-            required
-            :rules="passwordRules"
-          >
-          </v-text-field>
-          <v-text-field
-            v-model="rePassword"
-            :append-icon="p2 ? 'visibility' : 'visibility_off'"
-            @click:append="() => (p2 = !p2)"
-            :type="p2 ? 'password' : 'text'"
-            label="Повторите пароль"
-            dark
-            color="grey lighten-5"
-            required
-            :rules="passwordRules"
-          >
-          </v-text-field>
-
-          <v-btn
-            :disabled="!formValid"
-            color="success"
-            @click="registration"
-          >Зарегистрироватся
-          </v-btn>
-          <v-btn
-            flat
-            color="grey lighten-2"
-            @click="goToHomePage"
-          >Назад
-          </v-btn>
-        </v-form>
-        <v-alert :value="registred" color="success">
-          Регистрация прошла успешно, добро пожаловать в клуб.
-        </v-alert>
-      </template>
-      <template v-else>
-        <v-alert
-          :value="true"
-          type="error"
+      <v-form ref="registrationForm" v-model="formValid">
+        <v-text-field
+          v-model="email"
+          label="Введите email"
+          type="email"
+          required
+          dark
+          color="grey lighten-5"
+          :rules="emailRules"
+          @change="checkEmail"
+          @input="emailIsDublicate = false"
         >
-          Регистрация временно недоступна.
-        </v-alert>
-      </template>
+        </v-text-field>
+        <transition name="slide-fade">
+          <div v-show="emailIsDublicate">
+            <v-alert
+              :value="true"
+              outline
+              color="warning">
+              Адресс уже зарегистрирован
+            </v-alert>
+          </div>
+        </transition>
+        <v-text-field
+          v-model="password"
+          :append-icon="p1 ? 'visibility' : 'visibility_off'"
+          @click:append="() => (p1 = !p1)"
+          :type="p1 ? 'password' : 'text'"
+          label="Введите пароль"
+          dark
+          color="grey lighten-5"
+          required
+          :rules="passwordRules"
+        >
+        </v-text-field>
+        <v-text-field
+          v-model="rePassword"
+          :append-icon="p2 ? 'visibility' : 'visibility_off'"
+          @click:append="() => (p2 = !p2)"
+          :type="p2 ? 'password' : 'text'"
+          label="Повторите пароль"
+          dark
+          color="grey lighten-5"
+          required
+          :rules="passwordRules"
+        >
+        </v-text-field>
+
+        <v-btn
+          :disabled="!formValid"
+          color="success"
+          @click="registration"
+        >Зарегистрироватся
+        </v-btn>
+        <v-btn
+          flat
+          color="grey lighten-2"
+          @click="goToHomePage"
+        >Назад
+        </v-btn>
+      </v-form>
+      <v-alert :value="registredSuccess" color="success">
+        Регистрация прошла успешно, добро пожаловать в клуб.
+      </v-alert>
+      <v-alert :value="registredError" color="error">
+        Во время регистрации произошла ошибка, попробуйте ещё раз.
+      </v-alert>
     </div>
 
   </div>
 </template>
 
 <script>
-  import authServices from '../services/auth';
   import lockScreen from '../components/LockScreen';
 
   export default {
@@ -96,8 +88,8 @@
     },
     data() {
       return {
-        serverStatus: true,
-        registred: false,
+        registredSuccess: false,
+        registredError: false,
         formValid: false,
         email: '',
         emailIsDublicate: false,
@@ -107,55 +99,52 @@
         p2: true,
         emailRules: [
           v => !!v || 'Почта должна быть указана',
-          v => /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'Почта должна быть валидной'
+          v => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'Почта должна быть валидной'
         ],
         passwordRules: [
           v => !!v || 'Пароль должен быть указан',
           v => /^[a-zA-Z0-9]{4,}$/.test(v) || 'Пароль должен быть валидным',
-          v => v == this.password || 'Пароли должны совпадать'
+          v => v === this.password || 'Пароли должны совпадать'
         ]
-      }
-    },
-    computed: {
-      lockSceenToggle() {
-        return this.$store.getters['serverStatus']
-      }
+      };
     },
     methods: {
       async registration() {
         if (this.$refs.registrationForm.validate()) {
-          let responce = await authServices.registration({
+          let result = await this.$store.dispatch('auth/registration', {
             email: this.email,
             password: this.password
           });
-          if (responce.status === 200) {
-            this.clear();
-            this.registred = true;
-            setTimeout(() => {
-              this.$router.push('/');
-            }, 5000)
+
+          switch (result) {
+            case 200:
+              this.clear();
+              this.registredSuccess = true;
+
+              setTimeout(() => {
+                this.$router.push('/');
+              }, 5000);
+              break;
+
+            default:
+              this.registredError = true;
+              break;
           }
         }
       },
       async checkEmail() {
-        this.emailIsDublicate = false;
-
-        let response = await authServices.emailExist(this.email);
-
-        if (response.status === 200) {
-          this.emailIsDublicate = true;
-        } else {
-          this.emailIsDublicate = false;
-        }
+        this.emailIsDublicate = await this.$store.dispatch('auth/checkEmail', {
+          email: this.email
+        }) === 200;
       },
       goToHomePage() {
         this.$router.push('/');
       },
       clear() {
-        this.$refs.registrationForm.reset()
+        this.$refs.registrationForm.reset();
       }
     }
-  }
+  };
 </script>
 
 <style scoped>

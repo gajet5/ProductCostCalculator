@@ -175,18 +175,17 @@
       return {
         pralaxImgOne: require('../static/img/mainBG.jpg'),
         pralaxImgSecound: require('../static/img/mainSecound.jpg')
-      }
+      };
     },
     methods: {
       goToRegistration() {
-        this.$router.push('/registration')
+        this.$router.push('/registration');
       },
       goToLogin() {
-        this.$router.push('/login')
+        this.$router.push('/login');
       }
     }
-
-  }
+  };
 </script>
 
 <style scoped>

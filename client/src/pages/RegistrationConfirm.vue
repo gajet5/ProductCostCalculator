@@ -10,12 +10,12 @@
            style="color: #FAFAFA"
         >Подтверждение регистрации</p>
         <v-progress-linear
-          v-show="!loading"
+          v-show="loading"
           :indeterminate="true"
           color="amber"
         ></v-progress-linear>
         <v-flex
-          v-show="loading"
+          v-show="!loading"
           xs6
         >
           <div class="text-status">
@@ -32,44 +32,50 @@
 </template>
 
 <script>
-  import authServices from '../services/auth';
-
   export default {
     data() {
       return {
-        loading: false,
+        loading: true,
         icon: '',
         text: '',
-        icolor: '',
-      }
+        icolor: ''
+      };
     },
     async mounted() {
+      let result = await this.$store.dispatch('auth/confirm', { id: this.$route.params.id });
+      this.loading = false;
 
-      try {
-        let result = await authServices.confirm(this.$route.params.id);
-        this.loading = true;
-
-        if (result.status === 200) {
+      switch (result) {
+        case 200:
           this.icon = 'done';
           this.text = 'Аккаунт подтверждён';
           this.icolor = 'green';
-        } else if (result.status === 208) {
+          break;
+
+        case 204:
+        case 400:
+          this.icon = 'warning';
+          this.text = 'Аккаунт не найден';
+          this.icolor = 'yellow';
+          break;
+
+        case 208:
           this.icon = 'warning';
           this.text = 'Аккаунт уже подтверждён';
           this.icolor = 'yellow';
-        }
-      } catch (e) {
-        this.loading = true;
-        this.icon = 'error';
-        this.text = 'Аккаунт не найден';
-        this.icolor = 'red darken-1';
-      }
+          break;
 
-      setTimeout(()=> {
-        this.$router.push('/')
+        default:
+          this.loading = false;
+          this.icon = 'error';
+          this.text = 'Ошибка запроса';
+          this.icolor = 'red darken-1';
+      }
+      setTimeout(() => {
+        this.$router.push('/');
       }, 5000);
     }
-  }
+  };
 </script>
 
 <style scoped>

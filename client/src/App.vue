@@ -7,13 +7,15 @@
 <script>
   export default {
     async beforeCreate() {
-      let result = this.$store.dispatch('serverStatus');
-      console.log(`Результат в beforeCreate${result}`)
+      this.$store.dispatch('serverStatus');
+    },
+    created() {
+      setInterval(() => this.$store.dispatch('serverStatus'), 1000 * 5);
     },
     data() {
-      return {}
+      return {};
     }
-  }
+  };
 </script>
 
 <style>
