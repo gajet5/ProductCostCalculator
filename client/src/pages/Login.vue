@@ -1,5 +1,6 @@
 <template>
   <div class="p-relative">
+    <lock-screen-component></lock-screen-component>
     <div class="bgImg">
       <div class="bgColor">
       </div>
@@ -52,7 +53,12 @@
 </template>
 
 <script>
+  import lockScreenComponent from '../components/LockScreen';
+
   export default {
+    components: {
+      lockScreenComponent
+    },
     data() {
       return {
         serverStatus: true,
