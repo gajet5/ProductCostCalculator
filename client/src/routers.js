@@ -6,6 +6,7 @@ import Registration from './pages/Registration';
 import RegistrationConfirm from './pages/RegistrationConfirm';
 import Welcome from './pages/Welcome';
 import PageNotFound from './pages/PageNotFound';
+import Catalogs from './pages/Catalogs';
 
 Vue.use(VueRouter);
 
@@ -26,6 +27,10 @@ export default new VueRouter({
     {
       path: '/registration/confirm/:id',
       component: RegistrationConfirm
+    },
+    {
+      path: '/catalogs',
+      component: Catalogs
     },
     {
       path: '*',

@@ -87,7 +87,7 @@
             this.$store.dispatch('setToken', result.data.token);
             this.$store.dispatch('setUser', result.data.user);
             setTimeout(() => {
-              this.$router.push('/');
+              this.$router.push('/catalogs');
             }, 1000);
 
             break;

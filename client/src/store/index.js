@@ -46,7 +46,6 @@ export const store = new Vuex.Store({
         }
       }
       foo();
-      
       setInterval(foo, 1000 * 5);
     },
     setToken(context, token) {
