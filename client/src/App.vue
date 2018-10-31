@@ -9,6 +9,9 @@
     async beforeCreate() {
       this.$store.dispatch('serverStatus');
     },
+    created() {
+      setInterval(() => this.$store.dispatch('serverStatus'), 1000 * 5);
+    },
     data() {
       return {};
     }
