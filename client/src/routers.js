@@ -12,14 +12,14 @@ import { store } from './store';
 Vue.use(VueRouter);
 
 function ifNotAuthenticated(to, from, next) {
-  if (store.getters.isAuthenticated) {
+  if (store.getters.isAuthenticated || localStorage.getItem('token')) {
     return next();
   }
   next('/login');
 }
 
 function ifAuthenticated(to, from, next) {
-  if (!store.getters.isAuthenticated) {
+  if (!store.getters.isAuthenticated || !localStorage.getItem('token')) {
     return next();
   }
   next('/catalogs');

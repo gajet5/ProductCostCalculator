@@ -49,7 +49,9 @@ module.exports = {
             }
         }
 
-        mailer.welcome(user.email, user._id);
+        if (config.sendMail) {
+            mailer.welcome(user.email, user._id);
+        }
 
         let userSendObj = {
             id: user.id,
@@ -200,8 +202,6 @@ module.exports = {
                 }
             });
         }
-
-        console.log(await user.comparePassword(password));
 
         if (!await user.comparePassword(password)) {
             return res.json({
