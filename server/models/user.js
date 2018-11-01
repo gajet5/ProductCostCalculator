@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt-nodejs');
 const util = require('util');
 
 const Schema = mongoose.Schema;
@@ -44,8 +44,9 @@ User.pre('save', async function(next) {
 });
 
 User.methods.comparePassword = async function(password) {
+    const bcryptCompare = util.promisify(bcrypt.compare);
     try {
-        return await bcrypt.compare(password, this.password);
+        return await bcryptCompare(password, this.password);
     } catch (e) {
         console.log(e);
     }
