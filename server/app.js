@@ -15,11 +15,15 @@ app.use(logger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+const protectingTikenMiddleware = require('./middleware/protectingToken');
+
 const authRouter = require('./routers/auth');
 const statusRouter = require('./routers/status');
 
 app.use('/', statusRouter);
 app.use('/auth', authRouter);
+app.use(protectingTikenMiddleware);
+// app.use('/catalogs', catalogsRouter);
 
 connection.once('open', () => {
     console.log('Connected to MongoDB');

@@ -12,7 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
-    "bluebird": "^3.5.2",
     "cors": "^2.8.4",
     "express": "^4.16.3",
     "helmet": "^3.12.1",

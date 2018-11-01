@@ -8,6 +8,7 @@
   export default {
     async beforeCreate() {
       this.$store.dispatch('serverStatus');
+      this.$store.commit('setToken', localStorage.getItem('token'));
     },
     data() {
       return {};
