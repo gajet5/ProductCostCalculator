@@ -116,6 +116,8 @@
             password: this.password
           });
 
+          console.log(result);
+
           switch (result.status) {
             case 200:
               this.clear();
@@ -123,7 +125,7 @@
               this.$store.commit('setToken', result.data.token);
 
               setTimeout(() => {
-                this.$router.push('/');
+                this.$router.push('/catalogs');
               }, 5000);
               break;
 

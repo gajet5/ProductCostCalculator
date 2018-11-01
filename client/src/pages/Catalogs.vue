@@ -4,7 +4,7 @@
       <v-icon>search</v-icon>
     </v-btn>
 
-    <v-btn icon @click="status">
+    <v-btn icon>
       <v-icon>add</v-icon>
     </v-btn>
   </header-component>

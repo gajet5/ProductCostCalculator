@@ -35,10 +35,10 @@ export const store = new Vuex.Store({
     setToken(state, token) {
       if (token) {
         localStorage.setItem('token', token);
-        axios.defaults.headers.common['Authorization'] = token;
+        axios.defaults.headers.common['x-access-token'] = token;
       } else {
         localStorage.removeItem('token');
-        delete axios.defaults.headers.common['Authorization'];
+        delete axios.defaults.headers.common['x-access-token'];
       }
       state.token = token;
     },
