@@ -59,6 +59,10 @@
   import headerComponent from '../components/Header';
 
   export default {
+    async beforeMount() {
+      await this.$store.dispatch('getTokenStatus');
+      await this.$store.dispatch('getServerStatus');
+    },
     components: {
       headerComponent
     },

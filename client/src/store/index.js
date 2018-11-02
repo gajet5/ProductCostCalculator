@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import auth from './modules/auth';
 import statusService from '../services/status';
+import router from '../routers';
 
 Vue.use(Vuex);
 
@@ -41,7 +42,7 @@ export const store = new Vuex.Store({
     }
   },
   mutations: {
-    changeServerStatus(state, status) {
+    setServerStatus(state, status) {
       state.serverStatus = status;
     },
     setToken(state, token) {
@@ -51,6 +52,7 @@ export const store = new Vuex.Store({
       } else {
         localStorage.removeItem('token');
         delete axios.defaults.headers.common['x-access-token'];
+        router.push('/login');
       }
       state.token = token;
     },
@@ -68,14 +70,17 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
-    async serverStatus(ctx) {
-      async function foo() {
+    async getServerStatus(ctx) {
+      async function wrapper() {
         try {
           await statusService.getServerStatus();
-          ctx.commit('changeServerStatus', true);
+          ctx.commit('setServerStatus', true);
         } catch (e) {
           console.log(e.message);
-          ctx.commit('changeServerStatus', false);
+          ctx.commit('setServerStatus', false);
+          setTimeout(async () => {
+            await wrapper();
+          }, 1000 * 5);
         }
       }
       foo();

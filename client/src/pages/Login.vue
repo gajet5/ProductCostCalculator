@@ -7,7 +7,7 @@
     </div>
     <div class="registration-wrapper">
       <h3 class="display-3 mb-5">Вход</h3>
-      <v-form ref="loginForm" v-model="formValid">
+      <v-form ref="loginForm" v-model="formValid" @submit.prevent="">
         <v-text-field
           v-model.trim="email"
           label="Введите email"
@@ -32,6 +32,7 @@
         </v-text-field>
 
         <v-btn
+          type="submit"
           :disabled="!formValid"
           color="success"
           @click="login"
@@ -56,6 +57,9 @@
   import lockScreenComponent from '../components/LockScreen';
 
   export default {
+    async beforeMount() {
+      await this.$store.dispatch('getServerStatus');
+    },
     components: {
       lockScreenComponent
     },
@@ -78,11 +82,14 @@
         ]
       };
     },
-    computed: {
-    },
+    computed: {},
     methods: {
       async login() {
-        this.$store.commit('authStatus', 'loading');
+        await this.$store.dispatch('getServerStatus');
+
+        if (!this.$store.getters.serverStatus) {
+          return;
+        }
 
         let result = await this.$store.dispatch('auth/login', {
           email: this.email,
@@ -91,7 +98,6 @@
 
         switch (result.status) {
           case 200:
-            this.$store.commit('authStatus', 'success');
             this.$store.commit('setToken', result.data.token);
             setTimeout(() => {
               this.$router.push('/catalogs');
@@ -100,14 +106,12 @@
             break;
 
           case 403:
-            this.$store.commit('authStatus', 'error');
             this.$store.commit('setToken', '');
             this.loginErrorText = 'Введены неверные данные для авторизации.';
             this.loginError = true;
             break;
 
           default:
-            this.$store.commit('authStatus', 'error');
             this.$store.commit('setToken', '');
             this.loginErrorText = 'Во время входа произошла ошибка, попробуйте ещё раз.';
             this.loginError = true;
