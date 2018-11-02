@@ -7,22 +7,32 @@ import RegistrationConfirm from './pages/RegistrationConfirm';
 import Welcome from './pages/Welcome';
 import PageNotFound from './pages/PageNotFound';
 import Catalogs from './pages/Catalogs';
+import User from './pages/User';
 import { store } from './store';
 
 Vue.use(VueRouter);
 
-function ifNotAuthenticated(to, from, next) {
-  if (store.getters.isAuthenticated || localStorage.getItem('token')) {
-    return next();
-  }
-  next('/login');
-}
-
 function ifAuthenticated(to, from, next) {
-  if (!store.getters.isAuthenticated || !localStorage.getItem('token')) {
-    return next();
+  let authStatus = !!store.getters.isAuthenticated || !!localStorage.getItem('token');
+
+  switch (to.path) {
+    case '/login':
+      if (authStatus) {
+        next('/catalogs');
+      }
+      break;
+    case '/catalogs':
+      if (!authStatus) {
+        next('/login');
+      }
+      break;
+    case '/user':
+      if (!authStatus) {
+        next('/login');
+      }
+      break;
   }
-  next('/catalogs');
+  next();
 }
 
 export default new VueRouter({
@@ -47,7 +57,12 @@ export default new VueRouter({
     {
       path: '/catalogs',
       component: Catalogs,
-      beforeEnter: ifNotAuthenticated
+      beforeEnter: ifAuthenticated
+    },
+    {
+      path: '/user',
+      component: User,
+      beforeEnter: ifAuthenticated
     },
     {
       path: '*',
