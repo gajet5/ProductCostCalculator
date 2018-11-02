@@ -3,19 +3,12 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 const config = require('../config');
 
-let smtpTransport = nodemailer.createTransport({
-    service: 'Yandex',
-    auth: {
-        // todo: добавить данные на продакшен
-        user: 'no-replay@s-evil.ru',
-        pass: ''
-    }
-});
+let smtpTransport = nodemailer.createTransport(config.mailOptions);
 
 module.exports = {
     welcome(email, id) {
         let mailOptions = {
-            from: 'no-replay@s-evil.ru',
+            from: config.mailOptions.auth.user,
             to: email,
             subject: '[PCC] Успешная регистрация',
             html: pug.renderFile(path.join(path.resolve(__dirname), '..', 'template', 'welcomeMail.pug'), { confirmLink: `${config.site}/registration/confirm/${id}` })

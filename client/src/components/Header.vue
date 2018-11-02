@@ -1,0 +1,46 @@
+<template>
+  <v-toolbar
+    absolute
+    color="indigo darken-1"
+    dark
+    scroll-off-screen
+    scroll-target="#scrolling-techniques"
+  >
+    <v-toolbar-title>{{ title }}</v-toolbar-title>
+    <v-spacer></v-spacer>
+    <slot></slot>
+    <v-menu transition="slide-y-transition" :nudge-bottom="50">
+      <v-btn slot="activator" icon>
+        <v-icon>account_circle</v-icon>
+      </v-btn>
+      <v-list>
+        <v-list-tile @click="goToSettings">
+          <v-list-tile-title>Настройки</v-list-tile-title>
+        </v-list-tile>
+        <v-list-tile @click="logOut">
+          <v-list-tile-title>Выйти</v-list-tile-title>
+        </v-list-tile>
+      </v-list>
+    </v-menu>
+
+  </v-toolbar>
+</template>
+
+<script>
+  export default {
+    props: ['title'],
+    methods: {
+      goToSettings() {
+        console.log('Настройки');
+      },
+      logOut() {
+        this.$store.commit('setToken', '');
+        this.$router.push('/');
+      }
+    }
+  };
+</script>
+
+<style scoped>
+
+</style>

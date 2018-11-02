@@ -1,15 +1,15 @@
 <template>
   <div class="p-relative">
-    <lock-screen></lock-screen>
+    <lock-screen-component></lock-screen-component>
     <div class="bgImg">
       <div class="bgColor">
       </div>
     </div>
     <div class="registration-wrapper">
       <h3 class="display-3 mb-2">Регистрация</h3>
-      <v-form ref="registrationForm" v-model="formValid">
+      <v-form ref="registrationForm" v-model="formValid" autocomplete="off" @submit.prevent="">
         <v-text-field
-          v-model="email"
+          v-model.trim="email"
           label="Введите email"
           type="email"
           required
@@ -31,7 +31,7 @@
           </div>
         </transition>
         <v-text-field
-          v-model="password"
+          v-model.trim="password"
           :append-icon="p1 ? 'visibility' : 'visibility_off'"
           @click:append="() => (p1 = !p1)"
           :type="p1 ? 'password' : 'text'"
@@ -43,7 +43,7 @@
         >
         </v-text-field>
         <v-text-field
-          v-model="rePassword"
+          v-model.trim="rePassword"
           :append-icon="p2 ? 'visibility' : 'visibility_off'"
           @click:append="() => (p2 = !p2)"
           :type="p2 ? 'password' : 'text'"
@@ -56,6 +56,7 @@
         </v-text-field>
 
         <v-btn
+          type="submit"
           :disabled="!formValid"
           color="success"
           @click="registration"
@@ -80,11 +81,14 @@
 </template>
 
 <script>
-  import lockScreen from '../components/LockScreen';
+  import lockScreenComponent from '../components/LockScreen';
 
   export default {
+    async beforeMount() {
+      await this.$store.dispatch('getServerStatus');
+    },
     components: {
-      lockScreen
+      lockScreenComponent
     },
     data() {
       return {
@@ -116,18 +120,22 @@
             password: this.password
           });
 
-          switch (result) {
+          console.log(result);
+
+          switch (result.status) {
             case 200:
               this.clear();
               this.registredSuccess = true;
+              this.$store.commit('setToken', result.data.token);
 
               setTimeout(() => {
-                this.$router.push('/');
+                this.$router.push('/catalogs');
               }, 5000);
               break;
 
             default:
               this.registredError = true;
+              this.$store.commit('setToken', '');
               break;
           }
         }
@@ -135,7 +143,7 @@
       async checkEmail() {
         this.emailIsDublicate = await this.$store.dispatch('auth/checkEmail', {
           email: this.email
-        }) === 200;
+        }).status === 200;
       },
       goToHomePage() {
         this.$router.push('/');

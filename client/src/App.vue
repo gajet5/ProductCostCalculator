@@ -7,10 +7,7 @@
 <script>
   export default {
     async beforeCreate() {
-      this.$store.dispatch('serverStatus');
-    },
-    created() {
-      setInterval(() => this.$store.dispatch('serverStatus'), 1000 * 5);
+      this.$store.commit('setToken', localStorage.getItem('token'));
     },
     data() {
       return {};

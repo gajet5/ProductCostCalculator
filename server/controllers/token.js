@@ -1,9 +1,9 @@
 module.exports = async (req, res) => {
-    // GET: /
+    // GET: /token/status
     res.send({
         status: 200,
         data: {
-            message: 'PCC REST API'
+            message: 'Ключ корректен.'
         }
     });
 };

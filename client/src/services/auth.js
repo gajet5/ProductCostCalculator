@@ -1,21 +1,42 @@
 import Api from './Api';
 
 export default {
-  registration(credentials) {
-    return Api().post('auth/registration', credentials);
+  async registration(credentials) {
+    try {
+      return await Api().post('auth/registration', credentials);
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   },
-  emailExist(email) {
-    return Api().get('auth/emailExist', {
-      params: {
-        email
-      }
-    });
+  async emailExist(email) {
+    try {
+      return await Api().get('auth/emailExist', {
+        params: {
+          email
+        }
+      });
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   },
-  confirm(id) {
-    return Api().patch('auth/confirm', {
-      params: {
+  async confirm(id) {
+    try {
+      return await Api().patch('auth/confirm', {
         id
-      }
-    });
+      });
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  },
+  async login(credentials) {
+    try {
+      return await Api().post('auth/login', credentials);
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   }
 };

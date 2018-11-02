@@ -6,7 +6,7 @@ import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.min.css';
 
 import { store } from './store';
-import router from './routes';
+import router from './routers';
 
 Vue.use(Vuetify);
 
