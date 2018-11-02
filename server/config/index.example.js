@@ -11,6 +11,7 @@ module.exports = {
         }
     },
     auth: {
-        jwtSecret: ''
+        jwtSecret: '',
+        expTime: '7d'
     }
 };

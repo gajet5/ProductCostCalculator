@@ -24,9 +24,7 @@ export default {
   async confirm(id) {
     try {
       return await Api().patch('auth/confirm', {
-        params: {
-          id
-        }
+        id
       });
     } catch (e) {
       console.log(e);

@@ -7,7 +7,7 @@
     </div>
     <div class="registration-wrapper">
       <h3 class="display-3 mb-2">Регистрация</h3>
-      <v-form ref="registrationForm" v-model="formValid" autocomplete="off">
+      <v-form ref="registrationForm" v-model="formValid" autocomplete="off" @submit.prevent="">
         <v-text-field
           v-model.trim="email"
           label="Введите email"
@@ -56,6 +56,7 @@
         </v-text-field>
 
         <v-btn
+          type="submit"
           :disabled="!formValid"
           color="success"
           @click="registration"
@@ -83,6 +84,9 @@
   import lockScreenComponent from '../components/LockScreen';
 
   export default {
+    async beforeMount() {
+      await this.$store.dispatch('getServerStatus');
+    },
     components: {
       lockScreenComponent
     },
