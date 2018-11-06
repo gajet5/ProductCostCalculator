@@ -15,7 +15,12 @@ export const store = new Vuex.Store({
   },
   state: {
     serverStatus: true,
-    token: ''
+    token: '',
+    breadcrumbs: [{
+      text: 'Главная',
+      disabled: false,
+      href: '/'
+    }]
   },
   getters: {
     serverStatus(state) {
@@ -23,6 +28,9 @@ export const store = new Vuex.Store({
     },
     isAuthenticated(state) {
       return !!state.token;
+    },
+    breadcrumbs(state) {
+      return state.breadcrumbs;
     }
   },
   mutations: {
@@ -39,6 +47,12 @@ export const store = new Vuex.Store({
         router.push('/login');
       }
       state.token = token;
+    },
+    addBreadcrumbs(state, breadcrumbs) {
+      state.breadcrumbs.push(breadcrumbs);
+    },
+    deleteLastBreadcrumbs(state) {
+      state.breadcrumbs.splice(-1, 1);
     }
   },
   actions: {
