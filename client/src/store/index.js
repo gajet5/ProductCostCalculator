@@ -15,7 +15,16 @@ export const store = new Vuex.Store({
   state: {
     serverStatus: false,
     token: '',
-    authStatus: ''
+    authStatus: '',
+    catalogs: [
+      { name: 'Каталог #1' },
+      { name: 'Каталог #2' },
+      { name: 'Каталог #3' },
+      { name: 'Каталог #4' },
+      { name: 'Каталог #5' },
+      { name: 'Каталог #6' },
+      { name: 'Каталог #7' }
+    ]
   },
   getters: {
     serverStatus(state) {
@@ -26,6 +35,9 @@ export const store = new Vuex.Store({
     },
     authStatus(state) {
       return state.authStatus;
+    },
+    catalogsList(state) {
+      return state.catalogs;
     }
   },
   mutations: {
@@ -44,6 +56,15 @@ export const store = new Vuex.Store({
     },
     authStatus(state, status) {
       state.authStatus = status;
+    },
+    spliceList(state, index) {
+      state.catalogs.splice(index, 1);
+    },
+    pushList(state, item) {
+      state.catalogs.push(item);
+    },
+    assignList(state, payload) {
+      Object.assign(state.catalogs[payload.index], payload.item);
     }
   },
   actions: {
@@ -59,6 +80,15 @@ export const store = new Vuex.Store({
       }
       foo();
       setInterval(foo, 1000 * 5);
+    },
+    spliceList: (ctx, payload) => {
+      ctx.commit('spliceList', payload.index);
+    },
+    pushList: (ctx, payload) => {
+      ctx.commit('pushList', payload.item);
+    },
+    assignList: (ctx, payload) => {
+      ctx.commit('assignList', payload);
     }
   }
 });
