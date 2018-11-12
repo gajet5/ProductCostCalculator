@@ -17,6 +17,11 @@ export const store = new Vuex.Store({
     serverStatus: false,
     token: '',
     authStatus: '',
+    breadcrumbs: [{
+      text: 'Главная',
+      disabled: false,
+      href: '/'
+    }],
     catalogs: [
       { name: 'Каталог #1' },
       { name: 'Каталог #2' },
@@ -33,6 +38,9 @@ export const store = new Vuex.Store({
     },
     isAuthenticated(state) {
       return !!state.token;
+    },
+    breadcrumbs(state) {
+      return state.breadcrumbs;
     },
     authStatus(state) {
       return state.authStatus;
@@ -67,6 +75,12 @@ export const store = new Vuex.Store({
     },
     assignList(state, payload) {
       Object.assign(state.catalogs[payload.index], payload.item);
+    },
+    addBreadcrumbs(state, breadcrumbs) {
+      state.breadcrumbs.push(breadcrumbs);
+    },
+    deleteLastBreadcrumbs(state) {
+      state.breadcrumbs.splice(-1, 1);
     }
   },
   actions: {

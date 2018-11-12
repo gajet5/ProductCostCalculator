@@ -13,7 +13,13 @@
         <v-icon>add</v-icon>
       </v-btn>
     </header-component>
-
+    <v-container>
+      <v-layout>
+        <v-flex xs12>
+          <v-breadcrumbs :items="breadcrumbs" divider=">" mb-0></v-breadcrumbs>
+        </v-flex>
+      </v-layout>
+    </v-container>
     <v-container class="catalogs-table">
       <v-dialog v-model="dialog" max-width="500px">
         <v-card>
@@ -51,7 +57,6 @@
           Your search for "{{ search }}" found no results.
         </v-alert>
       </v-data-table>
-    </v-container>
   </div>
 </template>
 
@@ -62,6 +67,11 @@
     async beforeMount() {
       await this.$store.dispatch('getTokenStatus');
       await this.$store.dispatch('getServerStatus');
+      this.$store.commit('addBreadcrumbs', {
+        text: 'Каталоги',
+        disabled: false,
+        href: '/catalogs'
+      });
     },
     components: {
       headerComponent
@@ -77,6 +87,9 @@
     watch: {
       dialog(val) {
         val || this.close();
+      },
+      breadcrumbs() {
+        return this.$store.getters.breadcrumbs;
       }
     },
     methods: {

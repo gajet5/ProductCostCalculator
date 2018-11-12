@@ -120,8 +120,6 @@
             password: this.password
           });
 
-          console.log(result);
-
           switch (result.status) {
             case 200:
               this.clear();
