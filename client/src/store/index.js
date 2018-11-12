@@ -14,13 +14,23 @@ export const store = new Vuex.Store({
     auth
   },
   state: {
-    serverStatus: true,
+    serverStatus: false,
     token: '',
+    authStatus: '',
     breadcrumbs: [{
       text: 'Главная',
       disabled: false,
       href: '/'
-    }]
+    }],
+    catalogs: [
+      { name: 'Каталог #1' },
+      { name: 'Каталог #2' },
+      { name: 'Каталог #3' },
+      { name: 'Каталог #4' },
+      { name: 'Каталог #5' },
+      { name: 'Каталог #6' },
+      { name: 'Каталог #7' }
+    ]
   },
   getters: {
     serverStatus(state) {
@@ -31,6 +41,12 @@ export const store = new Vuex.Store({
     },
     breadcrumbs(state) {
       return state.breadcrumbs;
+    },
+    authStatus(state) {
+      return state.authStatus;
+    },
+    catalogsList(state) {
+      return state.catalogs;
     }
   },
   mutations: {
@@ -47,6 +63,18 @@ export const store = new Vuex.Store({
         router.push('/login');
       }
       state.token = token;
+    },
+    authStatus(state, status) {
+      state.authStatus = status;
+    },
+    spliceList(state, index) {
+      state.catalogs.splice(index, 1);
+    },
+    pushList(state, item) {
+      state.catalogs.push(item);
+    },
+    assignList(state, payload) {
+      Object.assign(state.catalogs[payload.index], payload.item);
     },
     addBreadcrumbs(state, breadcrumbs) {
       state.breadcrumbs.push(breadcrumbs);
@@ -69,17 +97,17 @@ export const store = new Vuex.Store({
           }, 1000 * 5);
         }
       }
-      await wrapper();
+      foo();
+      setInterval(foo, 1000 * 5);
     },
-    async getTokenStatus(ctx) {
-      try {
-        let responce = await statusService.getTokenStatus();
-        if (responce.data.status !== 200) {
-          ctx.commit('setToken', false);
-        }
-      } catch (e) {
-        console.log(e.message);
-      }
+    spliceList: (ctx, payload) => {
+      ctx.commit('spliceList', payload.index);
+    },
+    pushList: (ctx, payload) => {
+      ctx.commit('pushList', payload.item);
+    },
+    assignList: (ctx, payload) => {
+      ctx.commit('assignList', payload);
     }
   }
 });
