@@ -1,12 +1,11 @@
 <template>
   <v-toolbar
-    absolute
     color="indigo darken-1"
     dark
     scroll-off-screen
     scroll-target="#scrolling-techniques"
   >
-    <v-toolbar-title>{{ title }}</v-toolbar-title>
+    <v-toolbar-title @click="goToHome">PCC - Калькуляция себестоимости продукции</v-toolbar-title>
     <v-spacer></v-spacer>
     <slot></slot>
     <v-menu transition="slide-y-transition" :nudge-bottom="50">
@@ -31,7 +30,10 @@
     props: ['title'],
     methods: {
       goToSettings() {
-        console.log('Настройки');
+        this.$router.push('/user');
+      },
+      goToHome() {
+        this.$router.push('/');
       },
       logOut() {
         this.$store.commit('setToken', '');
