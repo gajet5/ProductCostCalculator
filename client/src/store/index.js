@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import axios from 'axios';
 
 import auth from './modules/auth';
+import user from './modules/user';
 import statusService from '../services/status';
 import router from '../routers';
 
@@ -11,11 +12,13 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
   strict: true,
   modules: {
-    auth
+    auth,
+    user
   },
   state: {
     serverStatus: true,
-    token: ''
+    token: '',
+    breadcrumbs: []
   },
   getters: {
     serverStatus(state) {
@@ -23,6 +26,9 @@ export const store = new Vuex.Store({
     },
     isAuthenticated(state) {
       return !!state.token;
+    },
+    breadcrumbs(state) {
+      return state.breadcrumbs;
     }
   },
   mutations: {
@@ -39,6 +45,22 @@ export const store = new Vuex.Store({
         router.push('/login');
       }
       state.token = token;
+    },
+    setBreadcrumbs(state, options) {
+      if (state.breadcrumbs.length === 0) {
+        state.breadcrumbs = JSON.parse(localStorage.getItem('breadcrumbs'));
+        state.breadcrumbs.pop();
+      }
+      if (options.clear) {
+        state.breadcrumbs = [];
+      }
+      if (options.add) {
+        state.breadcrumbs.push(options.item);
+      }
+      if (options.remove) {
+        state.breadcrumbs.pop();
+      }
+      localStorage.setItem('breadcrumbs', JSON.stringify(state.breadcrumbs));
     }
   },
   actions: {

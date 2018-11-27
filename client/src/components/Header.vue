@@ -5,7 +5,7 @@
     scroll-off-screen
     scroll-target="#scrolling-techniques"
   >
-    <v-toolbar-title @click="goToHome">PCC - Калькуляция себестоимости продукции</v-toolbar-title>
+    <v-toolbar-title @click="goToHome" class="header-title">PCC - Калькуляция себестоимости продукции</v-toolbar-title>
     <v-spacer></v-spacer>
     <slot></slot>
     <v-menu transition="slide-y-transition" :nudge-bottom="50">
@@ -44,5 +44,7 @@
 </script>
 
 <style scoped>
-
+.header-title {
+  cursor: pointer;
+}
 </style>

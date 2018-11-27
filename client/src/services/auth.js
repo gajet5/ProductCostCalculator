@@ -12,9 +12,7 @@ export default {
   async emailExist(email) {
     try {
       return await Api().get('auth/emailExist', {
-        params: {
-          email
-        }
+        email
       });
     } catch (e) {
       console.log(e);

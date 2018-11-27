@@ -1,13 +1,21 @@
 <template>
-  <header-component title="PCC - Каталоги">
-    <v-btn icon>
-      <v-icon>search</v-icon>
-    </v-btn>
-
-    <v-btn icon>
-      <v-icon>add</v-icon>
-    </v-btn>
-  </header-component>
+  <div>
+    <header-component>
+      <v-btn icon>
+        <v-icon>search</v-icon>
+      </v-btn>
+      <v-btn icon>
+        <v-icon>add</v-icon>
+      </v-btn>
+    </header-component>
+    <v-container>
+      <v-layout>
+        <v-flex>
+          <v-breadcrumbs :items="breadcrumbs" divider=">"></v-breadcrumbs>
+        </v-flex>
+      </v-layout>
+    </v-container>
+  </div>
 </template>
 
 <script>
@@ -17,9 +25,24 @@
     async beforeMount() {
       await this.$store.dispatch('getTokenStatus');
       await this.$store.dispatch('getServerStatus');
+
+      this.$store.commit('setBreadcrumbs', {
+        add: true,
+        clear: true,
+        item: {
+          text: 'Каталог',
+          disabled: false,
+          href: '/catalogs'
+        }
+      });
     },
     components: {
       headerComponent
+    },
+    computed: {
+      breadcrumbs() {
+        return this.$store.getters.breadcrumbs;
+      }
     }
   };
 </script>

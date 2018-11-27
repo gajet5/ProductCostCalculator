@@ -1,10 +1,20 @@
 import Api from './Api';
 
 export default {
-  getServerStatus() {
-    return Api().get('');
+  async getServerStatus() {
+    try {
+      return await Api().get('');
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   },
-  getTokenStatus() {
-    return Api().get('token/status');
+  async getTokenStatus() {
+    try {
+      return await Api().get('token/status');
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   }
 };

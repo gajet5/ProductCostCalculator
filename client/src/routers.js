@@ -17,6 +17,7 @@ function ifAuthenticated(to, from, next) {
 
   switch (to.path) {
     case '/login':
+    case '/registration':
       if (authStatus) {
         next('/catalogs');
       }
@@ -48,7 +49,8 @@ export default new VueRouter({
     },
     {
       path: '/registration',
-      component: Registration
+      component: Registration,
+      beforeEnter: ifAuthenticated
     },
     {
       path: '/registration/confirm/:id',

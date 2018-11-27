@@ -23,7 +23,6 @@ module.exports = {
                 data: {
                     message: 'Пользователь найден',
                     user: {
-                        id: user.id,
                         isActiveted: user.isActiveted,
                         premium: user.premium,
                         premiumDateEnd: user.premiumDateEnd
