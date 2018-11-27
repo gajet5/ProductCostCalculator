@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 const config = require('../config');
 
-mongoose.connect(config.mongodbUrl);
+mongoose.connect(config.mongodbUrl, {
+    useNewUrlParser: true,
+    useCreateIndex: true
+});
 
 mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 mongoose.connection.on('disconnected', () => console.log('Disconnected from MongoDB'));
