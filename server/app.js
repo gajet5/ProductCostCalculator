@@ -21,13 +21,14 @@ const authRouter = require('./routers/auth');
 const statusRouter = require('./routers/status');
 const userRouter = require('./routers/user');
 const tokenRouter = require('./routers/token');
+const catalogsRouter = require('./routers/catalogs');
 
 app.use('/', statusRouter);
 app.use('/auth', authRouter);
 app.use(protectingTikenMiddleware);
 app.use('/token', tokenRouter);
 app.use('/user', userRouter);
-// app.use('/catalogs', catalogsRouter);
+app.use('/catalogs', catalogsRouter);
 
 connection.once('open', () => {
     console.log('Connected to MongoDB');
