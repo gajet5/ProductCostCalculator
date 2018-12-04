@@ -1,12 +1,12 @@
 const catalogsModel = require('../models/catalogs');
 
 module.exports = {
-    // GET /catalogs/list
+    // GET /catalogs/list?limit={number}&skip={number}
     async list(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
-        let limit = req.body.limit;
-        let skip = req.body.skip;
+        let limit = req.query.limit;
+        let skip = req.query.skip;
 
         try {
             let catalogs = await catalogsModel.find({
@@ -81,7 +81,7 @@ module.exports = {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
         let catalogId = req.body.catalogId;
-        let newName = req.body.name;
+        let newName = req.body.newName;
 
         if (!catalogId || !newName) {
             return res.json({
@@ -93,11 +93,21 @@ module.exports = {
         }
 
         try {
-            await catalogsModel.findOneAndUpdate({
+            let catalog = await catalogsModel.findOneAndUpdate({
                 id: catalogId,
                 owner: userId
             }, {
                 name: newName
+            });
+            return res.json({
+                status: 200,
+                data: {
+                    message: 'Каталог успешно переименован',
+                    catalog: {
+                        id: catalog.id,
+                        name: catalog.name
+                    }
+                }
             });
         } catch (e) {
             return res.json({
@@ -129,6 +139,12 @@ module.exports = {
             await catalogsModel.findOneAndDelete({
                 id: catalogId,
                 owner: userId
+            });
+            return res.json({
+                status: 200,
+                data: {
+                    message: 'Каталог успешно удалён'
+                }
             });
         } catch (e) {
             return res.json({
