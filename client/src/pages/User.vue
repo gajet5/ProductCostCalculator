@@ -17,16 +17,19 @@
                   <h3 class="headline mb-0">
                     {{email}}
                   </h3>
-                  <span class="grey--text">{{userStatus}}</span>
+                  <span class="grey--text">{{userStatus  ? 'Премиум' : 'Стандарт'}}</span>
                 </div>
                 <v-spacer></v-spacer>
-                <div>
+                <div v-if="userStatus">
                   <span>Премиум: {{premiumDateEnd}}</span>
+                </div>
+                <div v-else>
+                  <span>Купить премиум</span>
                 </div>
               </v-card-title>
               <div>
                 <v-alert
-                  :value="true"
+                  :value="shopWarningEmailConfirm"
                   type="warning"
                 >
                   Email не поддтверждён, часть функционала недоступно.
@@ -84,7 +87,10 @@
                   Формулы
                 </h3>
               </div>
+              <v-spacer></v-spacer>
+              <formula-component></formula-component>
             </v-card-title>
+            <span>Таблица формул</span>
           </v-card>
         </v-flex>
       </v-layout>
@@ -94,6 +100,10 @@
 
 <script>
   import headerComponent from '../components/Header';
+  import formulaComponent from '../components/Formula';
+  import moment from 'moment';
+
+  moment.locale('ru');
 
   export default {
     async beforeMount() {
@@ -116,13 +126,11 @@
       });
     },
     components: {
-      headerComponent
+      headerComponent,
+      formulaComponent
     },
     data() {
       return {
-        email: 'User email',
-        userStatus: 'Стандарт',
-        premiumDateEnd: '0:00:00',
         showPasswordChangeForm: false,
         formValid: false,
         password: '',
@@ -137,8 +145,20 @@
       };
     },
     computed: {
+      email() {
+        return this.$store.getters['user/email'];
+      },
       breadcrumbs() {
         return this.$store.getters.breadcrumbs;
+      },
+      shopWarningEmailConfirm() {
+        return !this.$store.getters['user/isActiveted'];
+      },
+      premiumDateEnd() {
+        return moment(this.$store.getters['user/premiumDateEnd']).toNow(true);
+      },
+      userStatus() {
+        return this.$store.getters['user/premium'];
       }
     },
     methods: {

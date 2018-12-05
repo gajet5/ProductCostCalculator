@@ -3,11 +3,15 @@ import userServices from '../../services/user';
 export default {
   namespaced: true,
   state: {
+    email: undefined,
     isActiveted: undefined,
     premium: undefined,
     premiumDateEnd: undefined
   },
   getters: {
+    email(state) {
+      return state.email;
+    },
     isActiveted(state) {
       return state.isActiveted;
     },
@@ -19,20 +23,24 @@ export default {
     }
   },
   mutations: {
-    setIsActiveted(state, playload) {
-      state.isActiveted = playload;
+    setEmail(state, payload) {
+      state.email = payload;
     },
-    setPremium(state, playload) {
-      state.premium = playload;
+    setIsActiveted(state, payload) {
+      state.isActiveted = payload;
     },
-    setPremiumDateEnd(state, playload) {
-      state.premiumDateEnd = playload;
+    setPremium(state, payload) {
+      state.premium = payload;
+    },
+    setPremiumDateEnd(state, payload) {
+      state.premiumDateEnd = payload;
     }
   },
   actions: {
     async getUserInfo(context) {
       try {
         let { data } = await userServices.getUserInfo();
+        context.commit('setEmail', data.user.email);
         context.commit('setIsActiveted', data.user.isActiveted);
         context.commit('setPremium', data.user.premium);
         context.commit('setPremiumDateEnd', data.user.premiumDateEnd);

@@ -12,7 +12,7 @@ module.exports = {
             let catalogs = await catalogsModel.find({
                 owner: userId
             }, null, {
-                skip: skip || 0,
+                skip: skip || 0
             }).limit(limit || 20);
 
             return res.json({
@@ -73,10 +73,9 @@ module.exports = {
                 }
             });
         }
-
     },
 
-    // PATCH: /catalogs/rename
+    // PATCH /catalogs/rename
     async rename(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
@@ -117,10 +116,9 @@ module.exports = {
                 }
             });
         }
-
     },
 
-    // DELETE: /catalogs/delete
+    // DELETE /catalogs/delete
     async delete(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));

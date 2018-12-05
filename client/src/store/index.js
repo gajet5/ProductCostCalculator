@@ -47,19 +47,29 @@ export const store = new Vuex.Store({
       state.token = token;
     },
     setBreadcrumbs(state, options) {
-      if (state.breadcrumbs.length === 0) {
-        state.breadcrumbs = JSON.parse(localStorage.getItem('breadcrumbs'));
-        state.breadcrumbs.pop();
+      state.breadcrumbs = JSON.parse(localStorage.getItem('breadcrumbs'));
+
+      if (!state.breadcrumbs) {
+        state.breadcrumbs = [];
       }
+
       if (options.clear) {
         state.breadcrumbs = [];
       }
+
       if (options.add) {
+        for (let item of state.breadcrumbs) {
+          if (item.text === options.item.text) {
+            return false;
+          }
+        }
         state.breadcrumbs.push(options.item);
       }
+
       if (options.remove) {
         state.breadcrumbs.pop();
       }
+
       localStorage.setItem('breadcrumbs', JSON.stringify(state.breadcrumbs));
     }
   },
