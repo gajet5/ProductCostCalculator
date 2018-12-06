@@ -75,12 +75,15 @@ export const store = new Vuex.Store({
     async getServerStatus(ctx) {
       async function wrapper() {
         try {
-          ctx.commit('setServerStatus', await statusService.getServerStatus());
+          let serverStatus = await statusService.getServerStatus();
+          ctx.commit('setServerStatus', serverStatus);
+          if (!serverStatus) {
+            setTimeout(async () => {
+              await wrapper();
+            }, 1000 * 5);
+          }
         } catch (e) {
           console.log(e.message);
-          setTimeout(async () => {
-            await wrapper();
-          }, 1000 * 5);
         }
       }
       await wrapper();

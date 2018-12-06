@@ -21,10 +21,52 @@
               solo
             ></v-text-field>
             <h2 class="mb-2">Формула</h2>
-            <v-card class="grey lighten-3 pa-3" @click="focusInputFormula">
+            <v-card class="grey lighten-3 pa-3">
               <span>= </span>{{ formula }}
             </v-card>
-            <input type="text" ref="formula" v-model="formula" class="hidden">
+          </v-flex>
+        </v-layout>
+        <v-layout class="ma-2">
+          <v-spacer></v-spacer>
+          <v-btn fab dark small color="primary">
+            <v-icon dark>add</v-icon>
+          </v-btn>
+          <v-btn fab dark small color="primary">
+            <v-icon dark>remove</v-icon>
+          </v-btn>
+          <v-btn fab dark small color="primary">
+            <v-icon dark>*</v-icon>
+          </v-btn>
+          <v-btn fab dark small color="primary">
+            <v-icon dark class="btn-possition-fix">/</v-icon>
+          </v-btn>
+          <v-btn fab dark small color="primary">
+            <v-icon dark class="btn-possition-fix">(</v-icon>
+          </v-btn>
+          <v-btn fab dark small color="primary">
+            <v-icon dark class="btn-possition-fix">)</v-icon>
+          </v-btn>
+        </v-layout>
+        <v-layout>
+          <v-flex>
+            <v-card>
+              <v-card-title>Операнды</v-card-title>
+              <v-layout wrap v-for="(item, index) in operands" :key="index">
+                <v-flex sm2>
+                  <span>{{ item.letter }}</span>
+                </v-flex>
+                <v-flex sm10>
+                  <v-text-field
+                    label="Имя"
+                    box
+                    v-model="item.name"
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
+              <v-card-actions>
+                <v-btn flat color="primary" @click="addOperand" :disabled="limitVariations">Добавить</v-btn>
+              </v-card-actions>
+            </v-card>
           </v-flex>
         </v-layout>
       </v-container>
@@ -33,24 +75,41 @@
 </template>
 
 <script>
+  import getLetter from '../helper/getLetter';
+
   export default {
     data() {
       return {
+        letters: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
+        usedLetters: [],
+        operands: [],
         formula: '',
-        addFormula: false
+        addFormula: false,
+        limitVariations: false
       };
     },
     methods: {
-      focusInputFormula() {
-        this.$refs.formula.focus();
+      addOperand() {
+        if (this.letters.length * this.letters.length === this.usedLetters.length) {
+          return false;
+        }
+
+        let letter = getLetter(this.usedLetters, this.letters);
+        this.usedLetters.push(letter);
+
+        this.operands.push({
+          letter,
+          name: ''
+        });
       }
     }
   };
 </script>
 
 <style scoped>
-  .hidden {
-    position: absolute;
-    left: -1000px;
+  .btn-possition-fix {
+    position: relative;
+    top: -4px;
+    left: -1px;
   }
 </style>
