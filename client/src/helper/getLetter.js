@@ -1,5 +1,5 @@
 export default function(usedLetters, letters) {
-  if (usedLetters < letters) {
+  if (usedLetters.length < letters.length) {
     for (let item of letters) {
       if (!usedLetters.find(element => element === item)) {
         return item;

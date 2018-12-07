@@ -27,42 +27,58 @@
           </v-flex>
         </v-layout>
         <v-layout class="ma-2">
-          <v-spacer></v-spacer>
-          <v-btn fab dark small color="primary">
+          <v-btn dark color="primary">
             <v-icon dark>add</v-icon>
           </v-btn>
-          <v-btn fab dark small color="primary">
+          <v-btn dark color="primary">
             <v-icon dark>remove</v-icon>
           </v-btn>
-          <v-btn fab dark small color="primary">
+          <v-btn dark color="primary">
             <v-icon dark>*</v-icon>
           </v-btn>
-          <v-btn fab dark small color="primary">
-            <v-icon dark class="btn-possition-fix">/</v-icon>
+          <v-btn dark color="primary">
+            <v-icon dark class="btn-slash-possition-fix">/</v-icon>
           </v-btn>
-          <v-btn fab dark small color="primary">
-            <v-icon dark class="btn-possition-fix">(</v-icon>
+          <v-btn dark color="primary">
+            <v-icon dark class="btn-scob-possition-fix">(</v-icon>
           </v-btn>
-          <v-btn fab dark small color="primary">
-            <v-icon dark class="btn-possition-fix">)</v-icon>
+          <v-btn dark color="primary">
+            <v-icon dark class="btn-scob-possition-fix">)</v-icon>
           </v-btn>
         </v-layout>
         <v-layout>
           <v-flex>
             <v-card>
-              <v-card-title>Операнды</v-card-title>
-              <v-layout wrap v-for="(item, index) in operands" :key="index">
-                <v-flex sm2>
-                  <span>{{ item.letter }}</span>
-                </v-flex>
-                <v-flex sm10>
-                  <v-text-field
-                    label="Имя"
-                    box
-                    v-model="item.name"
-                  ></v-text-field>
-                </v-flex>
-              </v-layout>
+              <v-card-title>
+                <h3>
+                  Операнды
+                </h3>
+              </v-card-title>
+              <v-list>
+                <v-list-tile v-for="(item, index) in operands" :key="index" class="mt-1 mb-1">
+                  <v-list-tile-action>
+                    <span class="pa-2 orange darken-1 white--text">{{ item.letter }}</span>
+                  </v-list-tile-action>
+                  <v-list-tile-content>
+                    <div class="w-100">
+                      <v-text-field
+                        label="Название"
+                        v-model="item.name"
+                      ></v-text-field>
+                    </div>
+                  </v-list-tile-content>
+                  <v-list-tile-action>
+                    <div>
+                      <v-btn fab dark small color="green darken-1">
+                        <v-icon dark>add</v-icon>
+                      </v-btn>
+                      <v-btn fab dark small color="red darken-1" @click="deleteOperand(item)">
+                        <v-icon dark>delete</v-icon>
+                      </v-btn>
+                    </div>
+                  </v-list-tile-action>
+                </v-list-tile>
+              </v-list>
               <v-card-actions>
                 <v-btn flat color="primary" @click="addOperand" :disabled="limitVariations">Добавить</v-btn>
               </v-card-actions>
@@ -101,15 +117,29 @@
           letter,
           name: ''
         });
+      },
+      deleteOperand(item) {
+        let indexOperand = this.operands.indexOf(item);
+        let idexUsedLetter = this.usedLetters.indexOf(item.letter);
+        this.operands.splice(indexOperand, 1);
+        this.usedLetters.splice(idexUsedLetter, 1);
       }
     }
   };
 </script>
 
 <style scoped>
-  .btn-possition-fix {
+  .btn-slash-possition-fix {
     position: relative;
-    top: -4px;
-    left: -1px;
+    top: -3px;
+  }
+
+  .btn-scob-possition-fix {
+    position: relative;
+    top: -5px;
+  }
+
+  .w-100 {
+    width: 100%;
   }
 </style>
