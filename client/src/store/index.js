@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import auth from './modules/auth';
 import user from './modules/user';
+import formulas from './modules/formulas';
 import statusService from '../services/status';
 
 Vue.use(Vuex);
@@ -12,7 +13,8 @@ export const store = new Vuex.Store({
   strict: true,
   modules: {
     auth,
-    user
+    user,
+    formulas
   },
   state: {
     serverStatus: true,

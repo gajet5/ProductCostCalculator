@@ -9,7 +9,7 @@
         <v-toolbar-title>Настройки</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn dark flat @click="addFormula = false">Сохранить</v-btn>
+          <v-btn dark flat @click="save" :disabled="!formulaName">Сохранить</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-container>
@@ -20,6 +20,8 @@
               label="Название формулы"
               solo
               v-model="formulaName"
+              required
+              :rules="nameRules"
             ></v-text-field>
             <h2 class="mb-2">Формула</h2>
             <v-card class="grey lighten-3 pa-3">
@@ -40,9 +42,6 @@
           </v-btn>
           <v-btn color="primary" :disabled="signCanAdded" @click="addOperator('/')">
             /
-          </v-btn>
-          <v-btn color="primary" :disabled="signCanAdded" @click="addOperator('%')">
-            %
           </v-btn>
           <v-btn color="primary" @click="addOperator('(')">
             (
@@ -78,7 +77,7 @@
                   <v-list-tile-action>
                     <div>
                       <template v-if="!item.inFormula">
-                        <v-btn fab small color="green darken-1" @click="letterInFormula(item)" :disabled="!letterCanAdded && item.name">
+                        <v-btn fab small color="green darken-1" @click="letterInFormula(item)" :disabled="!letterCanAdded || item.name === ''">
                           <v-icon class="white--text">add</v-icon>
                         </v-btn>
                       </template>
@@ -107,11 +106,16 @@
 
 <script>
   import getLetter from '../helper/getLetter';
+  import formulasServices from '../services/formulas';
 
   export default {
     data() {
       return {
         formulaName: '',
+        nameRules: [
+          v => !!v || 'Имя должено быть указано',
+          v => /^[a-zA-Zа-яА-Я ]{3,}$/.test(v) || 'Имя должено быть валидным'
+        ],
         indexInFormula: 1,
         letters: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
         usedLetters: [],
@@ -155,7 +159,7 @@
         this.formula.push({
           index: this.indexInFormula,
           value: sign,
-          name: 'знак'
+          name: ''
         });
         this.indexInFormula += 1;
       },
@@ -203,6 +207,21 @@
           this.operands[index].inFormula = false;
         }
         this.formula.pop();
+      },
+      async save() {
+        await this.$store.dispatch('getServerStatus');
+        await this.$store.dispatch('getTokenStatus');
+        if (this.$store.getters.serverStatus) {
+          await formulasServices.addFormula({
+            name: this.formulaName,
+            formula: this.formula
+          });
+          this.addFormula = false;
+          this.formulaName = '';
+          this.operands = [];
+          this.usedLetters = [];
+          this.formula = [];
+        }
       }
     }
   };

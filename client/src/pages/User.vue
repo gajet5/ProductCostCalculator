@@ -1,5 +1,6 @@
 <template>
   <div>
+    <lock-screen-component></lock-screen-component>
     <header-component>
     </header-component>
     <v-container>
@@ -90,7 +91,16 @@
               <v-spacer></v-spacer>
               <formula-component></formula-component>
             </v-card-title>
-            <span>Таблица формул</span>
+            <v-data-table
+              :headers="formulasHeaders"
+              :items="formulasList"
+              class="elevation-1"
+            >
+              <template slot="items" slot-scope="props">
+                <td>{{ props.item.name }}</td>
+                <td>{{ props.item.createDate }}</td>
+              </template>
+            </v-data-table>
           </v-card>
         </v-flex>
       </v-layout>
@@ -99,6 +109,7 @@
 </template>
 
 <script>
+  import lockScreenComponent from '../components/LockScreen';
   import headerComponent from '../components/Header';
   import formulaComponent from '../components/Formula';
   import moment from 'moment';
@@ -109,6 +120,7 @@
     async beforeMount() {
       await this.$store.dispatch('getServerStatus');
       await this.$store.dispatch('getTokenStatus');
+      await this.$store.dispatch('formulas/getFormulas');
       await this.$store.dispatch('user/getUserInfo');
 
       this.$store.commit('setBreadcrumbs', {
@@ -127,7 +139,8 @@
     },
     components: {
       headerComponent,
-      formulaComponent
+      formulaComponent,
+      lockScreenComponent
     },
     data() {
       return {
@@ -141,6 +154,10 @@
           v => !!v || 'Пароль должен быть указан',
           v => /^[a-zA-Z0-9]{4,}$/.test(v) || 'Пароль должен быть валидным',
           v => v === this.password || 'Пароли должны совпадать'
+        ],
+        formulasHeaders: [
+          { text: 'Имя', value: 'name' },
+          { text: 'Дата создания', value: 'createDate' }
         ]
       };
     },
@@ -159,6 +176,9 @@
       },
       userStatus() {
         return this.$store.getters['user/premium'];
+      },
+      formulasList() {
+        return this.$store.getters['formulas/list'];
       }
     },
     methods: {
