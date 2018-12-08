@@ -19,31 +19,39 @@
             <v-text-field
               label="Название формулы"
               solo
+              v-model="formulaName"
             ></v-text-field>
             <h2 class="mb-2">Формула</h2>
             <v-card class="grey lighten-3 pa-3">
-              <span>= </span>{{ formula }}
+              <span>= </span>
+              <span v-html="formulaStrin"></span>
             </v-card>
           </v-flex>
         </v-layout>
         <v-layout class="ma-2">
-          <v-btn dark color="primary">
-            <v-icon dark>add</v-icon>
+          <v-btn color="primary" :disabled="signCanAdded" @click="addOperator('+')">
+            <v-icon>add</v-icon>
           </v-btn>
-          <v-btn dark color="primary">
-            <v-icon dark>remove</v-icon>
+          <v-btn color="primary" :disabled="signCanAdded" @click="addOperator('-')">
+            <v-icon>remove</v-icon>
           </v-btn>
-          <v-btn dark color="primary">
-            <v-icon dark>*</v-icon>
+          <v-btn color="primary" :disabled="signCanAdded" @click="addOperator('*')">
+            *
           </v-btn>
-          <v-btn dark color="primary">
-            <v-icon dark class="btn-slash-possition-fix">/</v-icon>
+          <v-btn color="primary" :disabled="signCanAdded" @click="addOperator('/')">
+            /
           </v-btn>
-          <v-btn dark color="primary">
-            <v-icon dark class="btn-scob-possition-fix">(</v-icon>
+          <v-btn color="primary" :disabled="signCanAdded" @click="addOperator('%')">
+            %
           </v-btn>
-          <v-btn dark color="primary">
-            <v-icon dark class="btn-scob-possition-fix">)</v-icon>
+          <v-btn color="primary" @click="addOperator('(')">
+            (
+          </v-btn>
+          <v-btn color="primary" @click="addOperator(')')">
+            )
+          </v-btn>
+          <v-btn color="warning" @click="deleteLastChar">
+            <v-icon class="btn-scob-possition-fix">backspace</v-icon>
           </v-btn>
         </v-layout>
         <v-layout>
@@ -69,11 +77,18 @@
                   </v-list-tile-content>
                   <v-list-tile-action>
                     <div>
-                      <v-btn fab dark small color="green darken-1">
-                        <v-icon dark>add</v-icon>
-                      </v-btn>
-                      <v-btn fab dark small color="red darken-1" @click="deleteOperand(item)">
-                        <v-icon dark>delete</v-icon>
+                      <template v-if="!item.inFormula">
+                        <v-btn fab small color="green darken-1" @click="letterInFormula(item)" :disabled="!letterCanAdded && item.name">
+                          <v-icon class="white--text">add</v-icon>
+                        </v-btn>
+                      </template>
+                      <template v-else>
+                        <v-btn fab small color="red darken-1" @click="letterInFormula(item)">
+                          <v-icon class="white--text">remove</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-btn fab small color="red darken-1" @click="deleteOperand(item)">
+                        <v-icon class="white--text">delete</v-icon>
                       </v-btn>
                     </div>
                   </v-list-tile-action>
@@ -96,15 +111,69 @@
   export default {
     data() {
       return {
+        formulaName: '',
+        indexInFormula: 1,
         letters: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
         usedLetters: [],
         operands: [],
-        formula: '',
+        formula: [],
         addFormula: false,
         limitVariations: false
       };
     },
+    computed: {
+      formulaStrin() {
+        let string = '';
+        for (let item of this.formula) {
+          if (/[\w]/.test(item.value)) {
+            string += `<span class="pa-1 ma-1 orange darken-1 white--text">${item.value}</span>`;
+          } else {
+            string += item.value;
+          }
+        }
+        return string;
+      },
+      signCanAdded() {
+        let length = this.formula.length;
+        if (length) {
+          let last = this.formula[length - 1];
+          return !/[\w)]{1}$/.test(last.value);
+        }
+        return true;
+      },
+      letterCanAdded() {
+        let length = this.formula.length;
+        if (length) {
+          let last = this.formula[length - 1];
+          return /[\W)]{1}$/.test(last.value);
+        }
+        return true;
+      }
+    },
     methods: {
+      addOperator(sign) {
+        this.formula.push({
+          index: this.indexInFormula,
+          value: sign,
+          name: 'знак'
+        });
+        this.indexInFormula += 1;
+      },
+      letterInFormula(item) {
+        if (item.inFormula) {
+          item.inFormula = !item.inFormula;
+          let index = this.formula.findIndex(element => element.value === item.letter);
+          this.formula.splice(index, 1);
+        } else {
+          item.inFormula = !item.inFormula;
+          this.formula.push({
+            index: this.indexInFormula,
+            value: item.letter,
+            name: item.name
+          });
+          this.indexInFormula += 1;
+        }
+      },
       addOperand() {
         if (this.letters.length * this.letters.length === this.usedLetters.length) {
           return false;
@@ -114,6 +183,7 @@
         this.usedLetters.push(letter);
 
         this.operands.push({
+          inFormula: false,
           letter,
           name: ''
         });
@@ -121,24 +191,24 @@
       deleteOperand(item) {
         let indexOperand = this.operands.indexOf(item);
         let idexUsedLetter = this.usedLetters.indexOf(item.letter);
+        let indexInFormula = this.formula.findIndex(element => element.value === item.letter);
         this.operands.splice(indexOperand, 1);
         this.usedLetters.splice(idexUsedLetter, 1);
+        this.formula.splice(indexInFormula, 1);
+      },
+      deleteLastChar() {
+        let lastItem = this.formula[this.formula.length - 1];
+        if (/[\w]/.test(lastItem.value)) {
+          let index = this.operands.findIndex(element => element.letter === lastItem.value);
+          this.operands[index].inFormula = false;
+        }
+        this.formula.pop();
       }
     }
   };
 </script>
 
 <style scoped>
-  .btn-slash-possition-fix {
-    position: relative;
-    top: -3px;
-  }
-
-  .btn-scob-possition-fix {
-    position: relative;
-    top: -5px;
-  }
-
   .w-100 {
     width: 100%;
   }
