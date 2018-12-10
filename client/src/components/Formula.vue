@@ -1,6 +1,8 @@
 <template>
   <v-dialog v-model="addFormula" fullscreen hide-overlay transition="dialog-bottom-transition">
-    <v-btn slot="activator" color="primary" dark>Добавить</v-btn>
+    <v-btn slot="activator" color="primary" class="v-btn v-btn--bottom v-btn--floating v-btn--fixed v-btn--right" dark>
+      <v-icon>add</v-icon>
+    </v-btn>
     <v-card>
       <v-toolbar dark color="indigo darken-1">
         <v-btn icon dark @click="addFormula = false">

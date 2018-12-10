@@ -8,6 +8,7 @@ import Welcome from './pages/Welcome';
 import PageNotFound from './pages/PageNotFound';
 import Catalogs from './pages/Catalogs';
 import User from './pages/User';
+import Formulas from './pages/Formulas';
 import { store } from './store';
 
 Vue.use(VueRouter);
@@ -23,11 +24,8 @@ function ifAuthenticated(to, from, next) {
       }
       break;
     case '/catalogs':
-      if (!authStatus) {
-        next('/login');
-      }
-      break;
     case '/user':
+    case '/formulas':
       if (!authStatus) {
         next('/login');
       }
@@ -64,6 +62,11 @@ export default new VueRouter({
     {
       path: '/user',
       component: User,
+      beforeEnter: ifAuthenticated
+    },
+    {
+      path: '/formulas',
+      component: Formulas,
       beforeEnter: ifAuthenticated
     },
     {

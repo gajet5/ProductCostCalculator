@@ -79,31 +79,6 @@
           </v-card>
         </v-flex>
       </v-layout>
-      <v-layout class="mt-3">
-        <v-flex xs12>
-          <v-card>
-            <v-card-title primary-title>
-              <div>
-                <h3 class="headline mb-0">
-                  Формулы
-                </h3>
-              </div>
-              <v-spacer></v-spacer>
-              <formula-component></formula-component>
-            </v-card-title>
-            <v-data-table
-              :headers="formulasHeaders"
-              :items="formulasList"
-              class="elevation-1"
-            >
-              <template slot="items" slot-scope="props">
-                <td>{{ props.item.name }}</td>
-                <td>{{ props.item.createDate }}</td>
-              </template>
-            </v-data-table>
-          </v-card>
-        </v-flex>
-      </v-layout>
     </v-container>
   </div>
 </template>
@@ -111,7 +86,6 @@
 <script>
   import lockScreenComponent from '../components/LockScreen';
   import headerComponent from '../components/Header';
-  import formulaComponent from '../components/Formula';
   import moment from 'moment';
 
   moment.locale('ru');
@@ -139,7 +113,6 @@
     },
     components: {
       headerComponent,
-      formulaComponent,
       lockScreenComponent
     },
     data() {
@@ -154,10 +127,6 @@
           v => !!v || 'Пароль должен быть указан',
           v => /^[a-zA-Z0-9]{4,}$/.test(v) || 'Пароль должен быть валидным',
           v => v === this.password || 'Пароли должны совпадать'
-        ],
-        formulasHeaders: [
-          { text: 'Имя', value: 'name' },
-          { text: 'Дата создания', value: 'createDate' }
         ]
       };
     },
@@ -176,9 +145,6 @@
       },
       userStatus() {
         return this.$store.getters['user/premium'];
-      },
-      formulasList() {
-        return this.$store.getters['formulas/list'];
       }
     },
     methods: {

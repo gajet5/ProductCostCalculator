@@ -13,6 +13,9 @@
         <v-icon>account_circle</v-icon>
       </v-btn>
       <v-list>
+        <v-list-tile @click="goToFormulas">
+          <v-list-tile-title>Формулы</v-list-tile-title>
+        </v-list-tile>
         <v-list-tile @click="goToSettings">
           <v-list-tile-title>Настройки</v-list-tile-title>
         </v-list-tile>
@@ -29,6 +32,9 @@
   export default {
     props: ['title'],
     methods: {
+      goToFormulas() {
+        this.$router.push('/formulas');
+      },
       goToSettings() {
         this.$router.push('/user');
       },
