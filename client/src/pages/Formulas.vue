@@ -42,6 +42,7 @@
   import lockScreenComponent from '../components/LockScreen';
   import headerComponent from '../components/Header';
   import formulaComponent from '../components/Formula';
+  import moment from 'moment';
 
   export default {
     async beforeMount() {
@@ -81,7 +82,13 @@
         return this.$store.getters.breadcrumbs;
       },
       formulasList() {
-        return this.$store.getters['formulas/list'];
+        let list = this.$store.getters['formulas/list'];
+
+        for (let item of list) {
+          item.createDate = moment(item.createDate).format('DD.MM.YYYY HH:mm');
+        }
+
+        return list;
       }
     }
   };

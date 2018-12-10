@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="addFormula" fullscreen hide-overlay transition="dialog-bottom-transition">
-    <v-btn slot="activator" color="primary" class="v-btn v-btn--bottom v-btn--floating v-btn--fixed v-btn--right" dark>
+    <v-btn slot="activator" color="indigo darken-1" class="v-btn v-btn--bottom v-btn--floating v-btn--fixed v-btn--right" dark>
       <v-icon>add</v-icon>
     </v-btn>
     <v-card>
@@ -32,23 +32,23 @@
             </v-card>
           </v-flex>
         </v-layout>
-        <v-layout class="ma-2">
-          <v-btn color="primary" :disabled="signCanAdded" @click="addOperator('+')">
+        <v-layout class="ma-2" wrap>
+          <v-btn color="indigo darken-1" class="white--text" :disabled="signCanAdded" @click="addOperator('+')">
             <v-icon>add</v-icon>
           </v-btn>
-          <v-btn color="primary" :disabled="signCanAdded" @click="addOperator('-')">
+          <v-btn color="indigo darken-1" class="white--text" :disabled="signCanAdded" @click="addOperator('-')">
             <v-icon>remove</v-icon>
           </v-btn>
-          <v-btn color="primary" :disabled="signCanAdded" @click="addOperator('*')">
+          <v-btn color="indigo darken-1" class="white--text" :disabled="signCanAdded" @click="addOperator('*')">
             *
           </v-btn>
-          <v-btn color="primary" :disabled="signCanAdded" @click="addOperator('/')">
+          <v-btn color="indigo darken-1" class="white--text" :disabled="signCanAdded" @click="addOperator('/')">
             /
           </v-btn>
-          <v-btn color="primary" @click="addOperator('(')">
+          <v-btn color="indigo darken-1" class="white--text" @click="addOperator('(')">
             (
           </v-btn>
-          <v-btn color="primary" @click="addOperator(')')">
+          <v-btn color="indigo darken-1" class="white--text" @click="addOperator(')')">
             )
           </v-btn>
           <v-btn color="warning" @click="deleteLastChar" :disabled="!backspaceDisabled">
@@ -77,7 +77,7 @@
                     </div>
                   </v-list-tile-content>
                   <v-list-tile-action>
-                    <div>
+                    <div class="flex no-wrap">
                       <template v-if="!item.inFormula">
                         <v-btn fab small color="green darken-1" @click="letterInFormula(item)" :disabled="!letterCanAdded || item.name === ''">
                           <v-icon class="white--text">add</v-icon>
@@ -96,7 +96,7 @@
                 </v-list-tile>
               </v-list>
               <v-card-actions>
-                <v-btn flat color="primary" @click="addOperand" :disabled="limitVariations">Добавить</v-btn>
+                <v-btn flat color="indigo darken-1" @click="addOperand" :disabled="limitVariations">Добавить</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
