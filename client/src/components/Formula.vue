@@ -51,7 +51,7 @@
           <v-btn color="primary" @click="addOperator(')')">
             )
           </v-btn>
-          <v-btn color="warning" @click="deleteLastChar">
+          <v-btn color="warning" @click="deleteLastChar" :disabled="!backspaceDisabled">
             <v-icon class="btn-scob-possition-fix">backspace</v-icon>
           </v-btn>
         </v-layout>
@@ -154,6 +154,9 @@
           return /[\W)]{1}$/.test(last.value);
         }
         return true;
+      },
+      backspaceDisabled() {
+        return !!this.formula.length;
       }
     },
     methods: {
