@@ -3,7 +3,8 @@ const config = require('../config');
 
 mongoose.connect(config.mongodbUrl, {
     useNewUrlParser: true,
-    useCreateIndex: true
+    useCreateIndex: true,
+    useFindAndModify: false
 });
 
 mongoose.connection.on('error', console.error.bind(console, 'connection error:'));

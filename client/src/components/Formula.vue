@@ -1,6 +1,20 @@
 <template>
   <v-dialog v-model="addFormula" fullscreen hide-overlay transition="dialog-bottom-transition">
-    <v-btn slot="activator" color="indigo darken-1" class="v-btn v-btn--bottom v-btn--floating v-btn--fixed v-btn--right" dark>
+    <v-btn
+      slot="activator"
+      class="v-btn"
+      color="warning"
+      v-if="functionParams"
+    >
+      <v-icon>edit</v-icon>
+    </v-btn>
+    <v-btn
+      slot="activator"
+      color="indigo darken-1"
+      class="v-btn v-btn--bottom v-btn--floating v-btn--fixed v-btn--right"
+      dark
+      v-else
+    >
       <v-icon>add</v-icon>
     </v-btn>
     <v-card>
@@ -45,10 +59,10 @@
           <v-btn color="indigo darken-1" class="white--text" :disabled="signCanAdded" @click="addOperator('/')">
             /
           </v-btn>
-          <v-btn color="indigo darken-1" class="white--text" @click="addOperator('(')">
+          <v-btn color="indigo darken-1" class="white--text" :disabled="bracketOpenCanAdded" @click="addOperator('(')">
             (
           </v-btn>
-          <v-btn color="indigo darken-1" class="white--text" @click="addOperator(')')">
+          <v-btn color="indigo darken-1" class="white--text" :disabled="bracketCloseCanAdded" @click="addOperator(')')">
             )
           </v-btn>
           <v-btn color="warning" @click="deleteLastChar" :disabled="!backspaceDisabled">
@@ -111,12 +125,44 @@
   import formulasServices from '../services/formulas';
 
   export default {
+    created() {
+      let indexArr = [];
+
+      if (!this.functionParams) {
+        return false;
+      }
+
+      this.formulaId = this.functionParams._id;
+      this.formulaName = this.functionParams.name;
+
+      for (let item of this.functionParams.formula) {
+        indexArr.push(item.index);
+        this.formula.push(item);
+
+        if (/[\w]/.test(item.value)) {
+          this.usedLetters.push(item.value);
+
+          this.operands.push({
+            inFormula: true,
+            letter: item.value,
+            name: item.name
+          });
+        }
+      }
+
+      this.indexInFormula = Math.max.apply(null, indexArr) + 1;
+      if (!isFinite(this.indexInFormula)) {
+        this.indexInFormula = 1;
+      }
+    },
+    props: ['functionParams'],
     data() {
       return {
+        formulaId: '',
         formulaName: '',
         nameRules: [
           v => !!v || 'Имя должено быть указано',
-          v => /^[a-zA-Zа-яА-Я ]{3,}$/.test(v) || 'Имя должено быть валидным'
+          v => /^[a-zA-Zа-яА-Я ё0-9-]{3,}$/.test(v) || 'Имя должено быть валидным'
         ],
         indexInFormula: 1,
         letters: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
@@ -147,12 +193,27 @@
         }
         return true;
       },
-      letterCanAdded() {
-        let length = this.formula.length;
-        if (length) {
-          let last = this.formula[length - 1];
-          return /[\W)]{1}$/.test(last.value);
+      bracketOpenCanAdded() {
+        if (!this.formula.length) {
+          if (this.formula[this.formula.length - 1] === '(') {
+            return true;
+          }
         }
+
+        for (let item of this.formula) {
+          if (item.value === '(') {
+            return true;
+          }
+        }
+
+        return false;
+      },
+      bracketCloseCanAdded() {
+        // todo: Написать логику
+        return true;
+      },
+      letterCanAdded() {
+        // todo: Написать логику
         return true;
       },
       backspaceDisabled() {
@@ -185,7 +246,10 @@
       },
       addOperand() {
         if (this.letters.length * this.letters.length === this.usedLetters.length) {
+          this.limitVariations = true;
           return false;
+        } else {
+          this.limitVariations = false;
         }
 
         let letter = getLetter(this.usedLetters, this.letters);
@@ -214,19 +278,29 @@
         this.formula.pop();
       },
       async save() {
-        await this.$store.dispatch('getServerStatus');
-        await this.$store.dispatch('getTokenStatus');
-        if (this.$store.getters.serverStatus) {
-          await formulasServices.addFormula({
+        if (this.formulaId) {
+          await formulasServices.editFormula({
+            id: this.formulaId,
             name: this.formulaName,
             formula: this.formula
           });
           this.addFormula = false;
-          this.formulaName = '';
-          this.operands = [];
-          this.usedLetters = [];
-          this.formula = [];
+        } else {
+          await this.$store.dispatch('getServerStatus');
+          await this.$store.dispatch('getTokenStatus');
+          if (this.$store.getters.serverStatus) {
+            await formulasServices.addFormula({
+              name: this.formulaName,
+              formula: this.formula
+            });
+            this.addFormula = false;
+            this.formulaName = '';
+            this.operands = [];
+            this.usedLetters = [];
+            this.formula = [];
+          }
         }
+        this.$store.dispatch('formulas/getFormulas');
       }
     }
   };

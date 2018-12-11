@@ -19,22 +19,40 @@
                 </h3>
               </div>
               <v-spacer></v-spacer>
-              <formula-component></formula-component>
+              <v-text-field
+                v-model="search"
+                append-icon="search"
+                label="Поиск"
+                single-line
+                hide-details
+              ></v-text-field>
             </v-card-title>
             <v-data-table
               :headers="formulasHeaders"
               :items="formulasList"
               class="elevation-1"
+              :search="search"
             >
               <template slot="items" slot-scope="props">
-                <td>{{ props.item.name }}</td>
-                <td>{{ props.item.createDate }}</td>
+                <tr :key="props.item._id">
+                  <td>{{ props.item.name }}</td>
+                  <td>{{ props.item.createDate }}</td>
+                  <td class="justify-center layout">
+                    <formula-component :functionParams = 'props.item'></formula-component>
+                    <v-btn color="error">
+                      <v-icon small @click="removeFormula(props.item._id)">
+                        delete
+                      </v-icon>
+                    </v-btn>
+                  </td>
+                </tr>
               </template>
             </v-data-table>
           </v-card>
         </v-flex>
       </v-layout>
     </v-container>
+    <formula-component></formula-component>
   </div>
 </template>
 
@@ -43,6 +61,7 @@
   import headerComponent from '../components/Header';
   import formulaComponent from '../components/Formula';
   import moment from 'moment';
+  import formulasServices from '../services/formulas';
 
   export default {
     async beforeMount() {
@@ -71,9 +90,11 @@
     },
     data() {
       return {
+        search: '',
         formulasHeaders: [
           { text: 'Имя', value: 'name' },
-          { text: 'Дата создания', value: 'createDate' }
+          { text: 'Дата создания', value: 'createDate' },
+          { text: 'Действия', value: 'name', sortable: false }
         ]
       };
     },
@@ -82,13 +103,19 @@
         return this.$store.getters.breadcrumbs;
       },
       formulasList() {
-        let list = this.$store.getters['formulas/list'];
+        let list = JSON.parse(JSON.stringify(this.$store.getters['formulas/list']));
 
         for (let item of list) {
           item.createDate = moment(item.createDate).format('DD.MM.YYYY HH:mm');
         }
 
         return list;
+      }
+    },
+    methods: {
+      async removeFormula(id) {
+        await formulasServices.removeFormula(id);
+        this.$store.dispatch('formulas/getFormulas');
       }
     }
   };
