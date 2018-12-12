@@ -30,9 +30,15 @@
             <v-data-table
               :headers="formulasHeaders"
               :items="formulasList"
-              class="elevation-1"
               :search="search"
+              rows-per-page-text="Формул на страницу"
+              :rows-per-page-items="rowsPerPageItems"
             >
+              <template slot="no-data">
+                <v-alert :value="true" color="info" icon="info" outline>
+                  Данные для отображения недоступны.
+                </v-alert>
+              </template>
               <template slot="items" slot-scope="props">
                 <tr :key="props.item._id">
                   <td>{{ props.item.name }}</td>
@@ -90,12 +96,17 @@
     },
     data() {
       return {
+        loading: true,
         search: '',
         formulasHeaders: [
           { text: 'Имя', value: 'name' },
           { text: 'Дата создания', value: 'createDate' },
           { text: 'Действия', value: 'name', sortable: false }
-        ]
+        ],
+        rowsPerPageItems: [ 10, 20, 30, {
+          'text': 'Все',
+          'value': -1
+        }]
       };
     },
     computed: {
@@ -110,6 +121,9 @@
         }
 
         return list;
+      },
+      totalCount() {
+        return this.$store.getters['formulas/totalCount'];
       }
     },
     methods: {

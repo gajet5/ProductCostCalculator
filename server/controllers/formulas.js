@@ -19,7 +19,8 @@ module.exports = {
                 status: 200,
                 data: {
                     message: 'Список формул пользователя',
-                    formulas
+                    formulas,
+                    totalCount: await formulasModel.find({ owner: userId }).countDocuments()
                 }
             });
         } catch (e) {
