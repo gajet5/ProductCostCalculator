@@ -33,6 +33,9 @@
               :search="search"
               rows-per-page-text="Формул на страницу"
               :rows-per-page-items="rowsPerPageItems"
+              :loading="loading"
+              :pagination.sync="pagination"
+              :total-items="totalCount"
             >
               <template slot="no-data">
                 <v-alert :value="true" color="info" icon="info" outline>
@@ -67,7 +70,6 @@
   import headerComponent from '../components/Header';
   import formulaComponent from '../components/Formula';
   import moment from 'moment';
-  import formulasServices from '../services/formulas';
 
   export default {
     async beforeMount() {
@@ -96,7 +98,6 @@
     },
     data() {
       return {
-        loading: true,
         search: '',
         formulasHeaders: [
           { text: 'Имя', value: 'name' },
@@ -106,7 +107,8 @@
         rowsPerPageItems: [ 10, 20, 30, {
           'text': 'Все',
           'value': -1
-        }]
+        }],
+        pagination: {}
       };
     },
     computed: {
@@ -124,12 +126,14 @@
       },
       totalCount() {
         return this.$store.getters['formulas/totalCount'];
+      },
+      loading() {
+        return this.$store.getters['formulas/loading'];
       }
     },
     methods: {
       async removeFormula(id) {
-        await formulasServices.removeFormula(id);
-        this.$store.dispatch('formulas/getFormulas');
+        await this.$store.dispatch('formulas/removeFormula', id);
       }
     }
   };

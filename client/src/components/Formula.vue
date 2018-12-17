@@ -251,16 +251,20 @@
     },
     watch: {
       formula() {
+        if (!this.formula.length) {
+          return false;
+        }
+
         if (/[+\-*/]/.test(this.formula[0].value)) {
           this.formula.splice(0, 1);
         }
 
-        let currentValue;
-        let nextValue;
-
         for (let i = 0; i < this.formula.length; i += 1) {
-          currentValue = this.formula[i].value;
-          nextValue = this.formula[i + 1].value;
+          if (this.formula.length - 1 === i) {
+            break;
+          }
+          let currentValue = this.formula[i].value;
+          let nextValue = this.formula[i + 1].value;
 
           if (/[+\-*/]/.test(currentValue) && /[+\-*/]/.test(nextValue)) {
             this.formula.splice(i, 1);
@@ -360,7 +364,6 @@
           this.usedLetters = [];
           this.formula = [];
         }
-        await this.$store.dispatch('formulas/getFormulas');
       }
     }
   };
