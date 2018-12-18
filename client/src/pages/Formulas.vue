@@ -30,12 +30,12 @@
             <v-data-table
               :headers="formulasHeaders"
               :items="formulasList"
-              :search="search"
+              :pagination.sync="pagination"
+              :total-items="totalItems"
               rows-per-page-text="Формул на страницу"
               :rows-per-page-items="rowsPerPageItems"
               :loading="loading"
-              :pagination.sync="pagination"
-              :total-items="totalCount"
+              :search="search"
             >
               <template slot="no-data">
                 <v-alert :value="true" color="info" icon="info" outline>
@@ -47,7 +47,9 @@
                   <td>{{ props.item.name }}</td>
                   <td>{{ props.item.createDate }}</td>
                   <td class="justify-center layout">
-                    <formula-component :functionParams = 'props.item'></formula-component>
+                    <formula-component
+                      :functionParams = 'props.item'
+                    ></formula-component>
                     <v-btn color="error">
                       <v-icon small @click="removeFormula(props.item._id)">
                         delete
@@ -73,10 +75,6 @@
 
   export default {
     async beforeMount() {
-      await this.$store.dispatch('getServerStatus');
-      await this.$store.dispatch('getTokenStatus');
-      await this.$store.dispatch('formulas/getFormulas');
-
       this.$store.commit('setBreadcrumbs', {
         add: true,
         item: {
@@ -85,6 +83,10 @@
           href: '/formulas'
         }
       });
+
+      await this.$store.dispatch('getServerStatus');
+      await this.$store.dispatch('getTokenStatus');
+      await this.$store.dispatch('formulas/getFormulas', this.pagination);
     },
     beforeDestroy() {
       this.$store.commit('setBreadcrumbs', {
@@ -104,10 +106,7 @@
           { text: 'Дата создания', value: 'createDate' },
           { text: 'Действия', value: 'name', sortable: false }
         ],
-        rowsPerPageItems: [ 10, 20, 30, {
-          'text': 'Все',
-          'value': -1
-        }],
+        rowsPerPageItems: [10, 20, 30, 50],
         pagination: {}
       };
     },
@@ -124,16 +123,26 @@
 
         return list;
       },
-      totalCount() {
-        return this.$store.getters['formulas/totalCount'];
+      totalItems() {
+        return this.$store.getters['formulas/totalItems'];
       },
       loading() {
         return this.$store.getters['formulas/loading'];
       }
     },
+    watch: {
+      async pagination() {
+        if (this.$store.getters.serverStatus) {
+          await this.$store.dispatch('formulas/getFormulas', this.pagination);
+        }
+      }
+    },
     methods: {
       async removeFormula(id) {
         await this.$store.dispatch('formulas/removeFormula', id);
+      },
+      async updatePagination() {
+        await this.$store.dispatch('formulas/getFormulas');
       }
     }
   };

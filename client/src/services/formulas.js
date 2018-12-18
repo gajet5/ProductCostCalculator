@@ -1,27 +1,29 @@
 import Api from './Api';
 
 export default {
-  async getFormulas() {
+  async getFormulas(payload) {
     try {
-      let response = await Api().get('formulas/list');
+      let { sortBy, descending, page, rowsPerPage } = payload;
+      let queryString = `formulas/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}`;
+      let response = await Api().get(queryString);
       return response.data;
     } catch (e) {
       console.log(e);
       return false;
     }
   },
-  async addFormula(data) {
+  async addFormula(payload) {
     try {
-      let response = await Api().post('formulas/add', data);
+      let response = await Api().post('formulas/add', payload);
       return response.data;
     } catch (e) {
       console.log(e);
       return false;
     }
   },
-  async editFormula(data) {
+  async editFormula(payload) {
     try {
-      let response = await Api().patch('formulas/edit', data);
+      let response = await Api().patch('formulas/edit', payload);
       return response.data;
     } catch (e) {
       console.log(e);

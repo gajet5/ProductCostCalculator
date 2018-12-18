@@ -3,7 +3,7 @@ import formulasServices from '../../services/formulas';
 export default {
   namespaced: true,
   state: {
-    totalCount: 0,
+    totalItems: 0,
     formulas: [],
     loading: true
   },
@@ -11,8 +11,8 @@ export default {
     list(state) {
       return state.formulas;
     },
-    totalCount(state) {
-      return state.totalCount;
+    totalItems(state) {
+      return state.totalItems;
     },
     loading(state) {
       return state.loading;
@@ -22,20 +22,20 @@ export default {
     setFormulas(state, payload) {
       state.formulas = payload;
     },
-    setTotalCount(state, payload) {
-      state.totalCount = payload;
+    setTotalItems(state, payload) {
+      state.totalItems = payload;
     },
     setLoading(state, payload) {
       state.loading = payload;
     }
   },
   actions: {
-    async getFormulas(context) {
+    async getFormulas(context, payload) {
       context.commit('setLoading', true);
-      let resolve = await formulasServices.getFormulas();
-      context.commit('setFormulas', resolve.data.formulas);
-      context.commit('setTotalCount', resolve.data.totalCount);
+      let resolve = await formulasServices.getFormulas(payload);
       context.commit('setLoading', false);
+      context.commit('setTotalItems', resolve.data.totalItems);
+      context.commit('setFormulas', resolve.data.formulas);
     },
     async editFormula(context, payload) {
       await formulasServices.editFormula(payload);

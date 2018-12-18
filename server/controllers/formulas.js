@@ -5,22 +5,24 @@ module.exports = {
     async list(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
-        let limit = req.query.limit;
-        let skip = req.query.skip;
+        // let sortBy = req.query.sortBy;
+        // let descending = req.query.descending;
+        let page = parseInt(req.query.page);
+        let rowsPerPage = parseInt(req.query.rowsPerPage);
 
         try {
             let formulas = await formulasModel.find({
                 owner: userId
             }, null, {
-                skip: skip || 0
-            }).limit(limit || 20);
+                skip: rowsPerPage * (page - 1) || 0
+            }).limit(rowsPerPage || 10);
 
             return res.json({
                 status: 200,
                 data: {
                     message: 'Список формул пользователя',
                     formulas,
-                    totalCount: await formulasModel.find({ owner: userId }).countDocuments()
+                    totalItems: await formulasModel.find({ owner: userId }).countDocuments()
                 }
             });
         } catch (e) {

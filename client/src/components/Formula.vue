@@ -249,38 +249,7 @@
         return bracketOpen !== bracketClose;
       }
     },
-    watch: {
-      formula() {
-        if (!this.formula.length) {
-          return false;
-        }
-
-        if (/[+\-*/]/.test(this.formula[0].value)) {
-          this.formula.splice(0, 1);
-        }
-
-        for (let i = 0; i < this.formula.length; i += 1) {
-          if (this.formula.length - 1 === i) {
-            break;
-          }
-          let currentValue = this.formula[i].value;
-          let nextValue = this.formula[i + 1].value;
-
-          if (/[+\-*/]/.test(currentValue) && /[+\-*/]/.test(nextValue)) {
-            this.formula.splice(i, 1);
-          }
-        }
-      }
-    },
     methods: {
-      addOperator(sign) {
-        this.formula.push({
-          index: this.indexInFormula,
-          value: sign,
-          name: ''
-        });
-        this.indexInFormula += 1;
-      },
       letterInFormula(item) {
         if (item.inFormula) {
           item.inFormula = !item.inFormula;
@@ -295,6 +264,15 @@
           });
           this.indexInFormula += 1;
         }
+        this.checkFormula();
+      },
+      addOperator(sign) {
+        this.formula.push({
+          index: this.indexInFormula,
+          value: sign,
+          name: ''
+        });
+        this.indexInFormula += 1;
       },
       addOperand() {
         if (this.letters.length * this.letters.length === this.usedLetters.length) {
@@ -321,6 +299,7 @@
         this.operands.splice(indexOperand, 1);
         this.usedLetters.splice(idexUsedLetter, 1);
         this.formula.splice(indexInFormula, 1);
+        this.checkFormula();
       },
       deleteLastChar() {
         let lastItem = this.formula[this.formula.length - 1];
@@ -329,13 +308,11 @@
           this.operands[index].inFormula = false;
         }
         this.formula.pop();
+        this.checkFormula();
       },
       async save() {
         if (this.bracketCheck) {
           this.bracketCheckError = true;
-          setTimeout(() => {
-            this.bracketCheckError = false;
-          }, 6000);
           return false;
         }
 
@@ -363,6 +340,27 @@
           this.operands = [];
           this.usedLetters = [];
           this.formula = [];
+        }
+      },
+      checkFormula() {
+        if (!this.formula.length) {
+          return false;
+        }
+
+        if (/[+\-*/]/.test(this.formula[0].value)) {
+          this.formula.splice(0, 1);
+        }
+
+        for (let i = 0; i < this.formula.length; i += 1) {
+          if (this.formula.length - 1 === i) {
+            break;
+          }
+          let currentValue = this.formula[i].value;
+          let nextValue = this.formula[i + 1].value;
+
+          if (/[+\-*/]/.test(currentValue) && /[+\-*/]/.test(nextValue)) {
+            this.formula.splice(i, 1);
+          }
         }
       }
     }
