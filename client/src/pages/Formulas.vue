@@ -20,11 +20,11 @@
               </div>
               <v-spacer></v-spacer>
               <v-text-field
-                v-model="search"
                 append-icon="search"
                 label="Поиск"
                 single-line
                 hide-details
+                v-model="pagination.search"
               ></v-text-field>
             </v-card-title>
             <v-data-table
@@ -35,7 +35,6 @@
               rows-per-page-text="Формул на страницу"
               :rows-per-page-items="rowsPerPageItems"
               :loading="loading"
-              :search="search"
             >
               <template slot="no-data">
                 <v-alert :value="true" color="info" icon="info" outline>
@@ -49,6 +48,7 @@
                   <td class="justify-center layout">
                     <formula-component
                       :functionParams = 'props.item'
+                      @updateFormulasList="updateFormulasList"
                     ></formula-component>
                     <v-btn color="error">
                       <v-icon small @click="removeFormula(props.item._id)">
@@ -63,7 +63,7 @@
         </v-flex>
       </v-layout>
     </v-container>
-    <formula-component></formula-component>
+    <formula-component @updateFormulasList="updateFormulasList"></formula-component>
   </div>
 </template>
 
@@ -100,14 +100,17 @@
     },
     data() {
       return {
-        search: '',
         formulasHeaders: [
           { text: 'Имя', value: 'name' },
           { text: 'Дата создания', value: 'createDate' },
           { text: 'Действия', value: 'name', sortable: false }
         ],
         rowsPerPageItems: [10, 20, 30, 50],
-        pagination: {}
+        pagination: {
+          sortBy: 'createDate',
+          descending: false,
+          search: ''
+        }
       };
     },
     computed: {
@@ -131,18 +134,22 @@
       }
     },
     watch: {
-      async pagination() {
-        if (this.$store.getters.serverStatus) {
-          await this.$store.dispatch('formulas/getFormulas', this.pagination);
-        }
+      pagination: {
+        async handler() {
+          if (this.$store.getters.serverStatus) {
+            await this.$store.dispatch('formulas/getFormulas', this.pagination);
+          }
+        },
+        deep: true
       }
     },
     methods: {
       async removeFormula(id) {
         await this.$store.dispatch('formulas/removeFormula', id);
+        await this.$store.dispatch('formulas/getFormulas', this.pagination);
       },
-      async updatePagination() {
-        await this.$store.dispatch('formulas/getFormulas');
+      async updateFormulasList() {
+        await this.$store.dispatch('formulas/getFormulas', this.pagination);
       }
     }
   };

@@ -39,15 +39,12 @@ export default {
     },
     async editFormula(context, payload) {
       await formulasServices.editFormula(payload);
-      context.dispatch('getFormulas');
     },
     async addFormula(context, payload) {
       await formulasServices.addFormula(payload);
-      context.dispatch('getFormulas');
     },
     async removeFormula(context, payload) {
       await formulasServices.removeFormula(payload);
-      context.dispatch('getFormulas');
     }
   }
 };

@@ -3,8 +3,8 @@ import Api from './Api';
 export default {
   async getFormulas(payload) {
     try {
-      let { sortBy, descending, page, rowsPerPage } = payload;
-      let queryString = `formulas/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}`;
+      let { sortBy, descending, page, rowsPerPage, search } = payload;
+      let queryString = `formulas/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}&search=${search}`;
       let response = await Api().get(queryString);
       return response.data;
     } catch (e) {

@@ -25,20 +25,22 @@
         <v-toolbar-title>Настройки</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn dark flat @click="save" :disabled="!formulaName">Сохранить</v-btn>
+          <v-btn dark flat @click="save" :disabled="!nameValid">Сохранить</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-container>
         <v-layout>
           <v-flex>
             <h2 class="mb-2">Название</h2>
-            <v-text-field
-              label="Название формулы"
-              solo
-              v-model="formulaName"
-              required
-              :rules="nameRules"
-            ></v-text-field>
+            <v-form v-model="nameValid">
+              <v-text-field
+                label="Название формулы"
+                solo
+                v-model="formulaName"
+                required
+                :rules="nameRules"
+              ></v-text-field>
+            </v-form>
             <h2 class="mb-2">Формула</h2>
             <v-card class="grey lighten-3 pa-3">
               <span class="mr-1">= </span>
@@ -179,6 +181,7 @@
           v => !!v || 'Имя должено быть указано',
           v => /^[\w\dа-яА-Я .\-ё]{3,}$/.test(v) || 'Имя должено быть валидным'
         ],
+        nameValid: false,
         indexInFormula: 1,
         letters: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
         usedLetters: [],
@@ -341,6 +344,7 @@
           this.usedLetters = [];
           this.formula = [];
         }
+        this.$emit('updateFormulasList');
       },
       checkFormula() {
         if (!this.formula.length) {

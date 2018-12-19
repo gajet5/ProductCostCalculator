@@ -1,21 +1,27 @@
 const formulasModel = require('../models/formulas');
 
 module.exports = {
-    // GET /formulas/list?limit={number}&skip={number}
+    // GET /formulas/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}&search=${search}
     async list(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
-        // let sortBy = req.query.sortBy;
-        // let descending = req.query.descending;
+        let sortBy = req.query.sortBy;
+        let descending = req.query.descending === 'true';
         let page = parseInt(req.query.page);
         let rowsPerPage = parseInt(req.query.rowsPerPage);
+        let search = req.query.search.toString('utf8');
 
         try {
             let formulas = await formulasModel.find({
-                owner: userId
+                owner: userId,
+                name: new RegExp(search, 'i')
             }, null, {
-                skip: rowsPerPage * (page - 1) || 0
-            }).limit(rowsPerPage || 10);
+                skip: rowsPerPage * (page - 1) || 0,
+                sort: {
+                    [sortBy]: descending ? 1 : -1
+                },
+                limit: rowsPerPage || 10
+            });
 
             return res.json({
                 status: 200,
@@ -26,6 +32,7 @@ module.exports = {
                 }
             });
         } catch (e) {
+            console.log(e);
             return res.json({
                 status: 500,
                 data: {
