@@ -1,6 +1,5 @@
 <template>
   <div>
-    <lock-screen-component></lock-screen-component>
     <header-component>
     </header-component>
     <v-container>
@@ -84,7 +83,6 @@
 </template>
 
 <script>
-  import lockScreenComponent from '../components/LockScreen';
   import headerComponent from '../components/Header';
   import moment from 'moment';
 
@@ -92,9 +90,6 @@
 
   export default {
     async beforeMount() {
-      await this.$store.dispatch('getServerStatus');
-      await this.$store.dispatch('getTokenStatus');
-      await this.$store.dispatch('formulas/getFormulas');
       await this.$store.dispatch('user/getUserInfo');
 
       this.$store.commit('setBreadcrumbs', {
@@ -112,8 +107,7 @@
       });
     },
     components: {
-      headerComponent,
-      lockScreenComponent
+      headerComponent
     },
     data() {
       return {

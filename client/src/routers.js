@@ -13,7 +13,10 @@ import { store } from './store';
 
 Vue.use(VueRouter);
 
-function ifAuthenticated(to, from, next) {
+async function ifAuthenticated(to, from, next) {
+  await store.dispatch('getServerStatus');
+  await store.dispatch('getTokenStatus');
+
   let authStatus = !!store.getters.isAuthenticated || !!localStorage.getItem('token');
 
   switch (to.path) {
@@ -52,7 +55,8 @@ export default new VueRouter({
     },
     {
       path: '/registration/confirm/:id',
-      component: RegistrationConfirm
+      component: RegistrationConfirm,
+      beforeEnter: ifAuthenticated
     },
     {
       path: '/catalogs',

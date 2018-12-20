@@ -17,8 +17,6 @@
 
   export default {
     async beforeMount() {
-      await this.$store.dispatch('getServerStatus');
-      await this.$store.dispatch('getTokenStatus');
       await this.$store.dispatch('user/getUserInfo');
 
       this.$store.commit('setBreadcrumbs', {

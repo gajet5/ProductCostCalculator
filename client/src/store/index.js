@@ -17,7 +17,7 @@ export const store = new Vuex.Store({
     formulas
   },
   state: {
-    serverStatus: false,
+    serverStatus: true,
     token: '',
     breadcrumbs: []
   },

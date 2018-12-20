@@ -17,6 +17,7 @@ app.use(express.urlencoded({ extended: false }));
 
 const protectingTikenMiddleware = require('./middleware/protectingToken');
 const checkUserPremiumStatusMiddleware = require('./middleware/checkUserPremiumStatus');
+const checkSiteIpMiddleware = require('./middleware/checkSiteIp');
 
 const authRouter = require('./routers/auth');
 const statusRouter = require('./routers/status');
@@ -25,6 +26,7 @@ const tokenRouter = require('./routers/token');
 const catalogsRouter = require('./routers/catalogs');
 const formulasRouter = require('./routers/formulas');
 
+app.use(checkSiteIpMiddleware);
 app.use('/', statusRouter);
 app.use('/auth', authRouter);
 app.use(protectingTikenMiddleware);

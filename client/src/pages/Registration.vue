@@ -1,6 +1,5 @@
 <template>
   <div class="p-relative">
-    <lock-screen-component></lock-screen-component>
     <div class="bgImg">
       <div class="bgColor">
       </div>
@@ -81,15 +80,7 @@
 </template>
 
 <script>
-  import lockScreenComponent from '../components/LockScreen';
-
   export default {
-    async beforeMount() {
-      await this.$store.dispatch('getServerStatus');
-    },
-    components: {
-      lockScreenComponent
-    },
     data() {
       return {
         registredSuccess: false,
