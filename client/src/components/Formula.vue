@@ -1,16 +1,16 @@
 <template>
   <v-dialog
-    v-model="addFormula"
+    v-model="showFormulaDialog"
     fullscreen
     hide-overlay
     transition="dialog-bottom-transition"
-    :disabled="!userEmailIsAcive"
   >
     <v-btn
       slot="activator"
       class="v-btn"
       color="warning"
       v-if="functionParams"
+      @click.stop="userRules"
     >
       <v-icon>edit</v-icon>
     </v-btn>
@@ -20,12 +20,13 @@
       class="v-btn v-btn--bottom v-btn--floating v-btn--fixed v-btn--right"
       v-else
       dark
+      @click.stop="userRules"
     >
       <v-icon>add</v-icon>
     </v-btn>
     <v-card>
       <v-toolbar dark color="indigo darken-1">
-        <v-btn icon dark @click="addFormula = false">
+        <v-btn icon dark @click="showFormulaDialog = false">
           <v-icon>close</v-icon>
         </v-btn>
         <v-toolbar-title>Настройки</v-toolbar-title>
@@ -193,7 +194,7 @@
         usedLetters: [],
         operands: [],
         formula: [],
-        addFormula: false,
+        showFormulaDialog: false,
         limitVariations: false,
         snackbarEnabled: false,
         snackbarColor: '',
@@ -258,9 +259,6 @@
           }
         }
         return bracketOpen !== bracketClose;
-      },
-      userEmailIsAcive() {
-        return this.$store.getters['user/isActiveted'];
       }
     },
     methods: {
@@ -345,13 +343,13 @@
             name: this.formulaName,
             formula: this.formula
           });
-          this.addFormula = false;
+          this.showFormulaDialog = false;
         } else {
           await this.$store.dispatch('formulas/addFormula', {
             name: this.formulaName,
             formula: this.formula
           });
-          this.addFormula = false;
+          this.showFormulaDialog = false;
           this.formulaName = '';
           this.operands = [];
           this.usedLetters = [];
@@ -379,6 +377,14 @@
             this.formula.splice(i, 1);
           }
         }
+      },
+      userRules() {
+        if (!this.$store.getters['user/isActiveted']) {
+          this.$emit('userNotConfirmMail');
+          return false;
+        }
+
+        this.showFormulaDialog = true;
       }
     }
   };

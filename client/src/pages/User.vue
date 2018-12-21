@@ -29,7 +29,7 @@
                   :value="shopWarningEmailConfirm"
                   type="warning"
                 >
-                  Email не поддтверждён, часть функционала недоступно.
+                  Email не поддтверждён, функционал ограничен.
                 </v-alert>
               </div>
               <v-card-actions>

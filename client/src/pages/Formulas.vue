@@ -8,16 +8,6 @@
           <v-breadcrumbs :items="breadcrumbs" divider=">"></v-breadcrumbs>
         </v-flex>
       </v-layout>
-      <v-layout>
-        <v-flex>
-          <v-alert
-            :value="!shopWarningEmailConfirm"
-            type="warning"
-          >
-            Email не поддтверждён, часть функционала недоступно.
-          </v-alert>
-        </v-flex>
-      </v-layout>
       <v-layout class="mt-3">
         <v-flex xs12>
           <v-card>
@@ -58,6 +48,7 @@
                     <formula-component
                       :functionParams = 'props.item'
                       @updateFormulasList="updateFormulasList"
+                      @userNotConfirmMail="userNotConfirmMail"
                     ></formula-component>
                     <v-btn color="error">
                       <v-icon small @click="removeFormula(props.item._id)">
@@ -72,7 +63,24 @@
         </v-flex>
       </v-layout>
     </v-container>
-    <formula-component @updateFormulasList="updateFormulasList"></formula-component>
+    <formula-component
+      @updateFormulasList="updateFormulasList"
+      @userNotConfirmMail="userNotConfirmMail"
+    ></formula-component>
+    <v-snackbar
+      v-model="userRules"
+      :color="userRulesStatus"
+      :timeout="6000"
+    >
+      {{ userRulesText }}
+      <v-btn
+        dark
+        flat
+        @click="userRules = false"
+      >
+        Закрыть
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -113,7 +121,10 @@
           sortBy: 'createDate',
           descending: false,
           search: ''
-        }
+        },
+        userRules: false,
+        userRulesStatus: '',
+        userRulesText: ''
       };
     },
     computed: {
@@ -156,6 +167,11 @@
       },
       async updateFormulasList() {
         await this.$store.dispatch('formulas/getFormulas', this.pagination);
+      },
+      userNotConfirmMail() {
+        this.userRules = true;
+        this.userRulesStatus = 'warning';
+        this.userRulesText = 'Email не поддтверждён, функционал ограничен.';
       }
     }
   };
