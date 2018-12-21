@@ -1,5 +1,11 @@
 <template>
-  <v-dialog v-model="addFormula" fullscreen hide-overlay transition="dialog-bottom-transition">
+  <v-dialog
+    v-model="addFormula"
+    fullscreen
+    hide-overlay
+    transition="dialog-bottom-transition"
+    :disabled="!userEmailIsAcive"
+  >
     <v-btn
       slot="activator"
       class="v-btn"
@@ -12,8 +18,8 @@
       slot="activator"
       color="indigo darken-1"
       class="v-btn v-btn--bottom v-btn--floating v-btn--fixed v-btn--right"
-      dark
       v-else
+      dark
     >
       <v-icon>add</v-icon>
     </v-btn>
@@ -122,15 +128,15 @@
       </v-container>
     </v-card>
     <v-snackbar
-      v-model="bracketCheckError"
-      color="warning"
+      v-model="snackbarEnabled"
+      :color="snackbarColor"
       :timeout="6000"
     >
-      Ошибка в логике скобок.
+      {{ snackbarText }}
       <v-btn
         dark
         flat
-        @click="bracketCheckError = false"
+        @click="snackbarEnabled = false"
       >
         Закрыть
       </v-btn>
@@ -189,7 +195,9 @@
         formula: [],
         addFormula: false,
         limitVariations: false,
-        bracketCheckError: false
+        snackbarEnabled: false,
+        snackbarColor: '',
+        snackbarText: ''
       };
     },
     computed: {
@@ -250,6 +258,9 @@
           }
         }
         return bracketOpen !== bracketClose;
+      },
+      userEmailIsAcive() {
+        return this.$store.getters['user/isActiveted'];
       }
     },
     methods: {
@@ -315,7 +326,9 @@
       },
       async save() {
         if (this.bracketCheck) {
-          this.bracketCheckError = true;
+          this.snackbarEnabled = true;
+          this.snackbarColor = 'warning';
+          this.snackbarText = 'Ошибка в логике скобок.';
           return false;
         }
 

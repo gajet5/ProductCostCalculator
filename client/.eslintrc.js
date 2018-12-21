@@ -19,6 +19,7 @@ module.exports = {
       "named": "never",
       "asyncArrow": "always"
     }],
-    "no-new": 0
+    "no-new": 0,
+    "skipBlankLines": "true"
   }
 };

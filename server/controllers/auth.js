@@ -87,7 +87,7 @@ module.exports = {
             }
 
             try {
-                user = await user.update({
+                user = await user.updateOne({
                     isActiveted: true
                 });
 

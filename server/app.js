@@ -15,7 +15,7 @@ app.use(logger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const protectingTikenMiddleware = require('./middleware/protectingToken');
+const protectingTokenMiddleware = require('./middleware/protectingToken');
 const checkUserPremiumStatusMiddleware = require('./middleware/checkUserPremiumStatus');
 const checkSiteIpMiddleware = require('./middleware/checkSiteIp');
 
@@ -29,7 +29,7 @@ const formulasRouter = require('./routers/formulas');
 app.use(checkSiteIpMiddleware);
 app.use('/', statusRouter);
 app.use('/auth', authRouter);
-app.use(protectingTikenMiddleware);
+app.use(protectingTokenMiddleware);
 app.use('/token', tokenRouter);
 app.use(checkUserPremiumStatusMiddleware);
 app.use('/user', userRouter);

@@ -8,5 +8,6 @@ module.exports = {
             "named": "never",
             "asyncArrow": "always"
         }],
+        "skipBlankLines": "true"
     }
 };

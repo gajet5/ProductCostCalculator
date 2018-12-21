@@ -16,6 +16,7 @@ Vue.use(VueRouter);
 async function ifAuthenticated(to, from, next) {
   await store.dispatch('getServerStatus');
   await store.dispatch('getTokenStatus');
+  await store.dispatch('user/getUserInfo');
 
   let authStatus = !!store.getters.isAuthenticated || !!localStorage.getItem('token');
 

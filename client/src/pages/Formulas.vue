@@ -8,6 +8,16 @@
           <v-breadcrumbs :items="breadcrumbs" divider=">"></v-breadcrumbs>
         </v-flex>
       </v-layout>
+      <v-layout>
+        <v-flex>
+          <v-alert
+            :value="!shopWarningEmailConfirm"
+            type="warning"
+          >
+            Email не поддтверждён, часть функционала недоступно.
+          </v-alert>
+        </v-flex>
+      </v-layout>
       <v-layout class="mt-3">
         <v-flex xs12>
           <v-card>
@@ -124,6 +134,9 @@
       },
       loading() {
         return this.$store.getters['formulas/loading'];
+      },
+      shopWarningEmailConfirm() {
+        return this.$store.getters['user/isActiveted'];
       }
     },
     watch: {

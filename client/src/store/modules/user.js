@@ -48,6 +48,17 @@ export default {
         console.log(e.message);
         return false;
       }
+    },
+    async changePassword(context, newPassword) {
+      let result = await userServices.changePassword(newPassword);
+      return result.status === 200;
+    },
+    async reConfirmEmail(context) {
+      try {
+        return await userServices.reConfirmEmail(context.getters.email);
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 };

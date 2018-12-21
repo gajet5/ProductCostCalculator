@@ -17,7 +17,7 @@
                   <h3 class="headline mb-0">
                     {{email}}
                   </h3>
-                  <span class="grey--text">{{userStatus  ? 'Стандарт' : 'Демо'}}</span>
+                  <span class="grey--text">Тип аккаунта: {{userStatus  ? 'Стандарт' : 'Демо'}}</span>
                 </div>
                 <v-spacer></v-spacer>
                 <div v-show="userStatus">
@@ -34,7 +34,7 @@
               </div>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn flat color="success" v-show="shopWarningEmailConfirm">Подтвердить email</v-btn>
+                <v-btn flat color="success" v-show="shopWarningEmailConfirm" @click="reConfirmEmail">Подтвердить email</v-btn>
                 <v-btn flat @click="showPasswordChangeForm = !showPasswordChangeForm">Сменить пароль</v-btn>
               </v-card-actions>
             </div>
@@ -87,6 +87,20 @@
         </v-flex>
       </v-layout>
     </v-container>
+    <v-snackbar
+      v-model="sendConfirmEmail"
+      :color="sendConfirmEmailStatus"
+      :timeout="6000"
+    >
+      {{ sendConfirmEmailText }}
+      <v-btn
+        dark
+        flat
+        @click="sendConfirmEmail = false"
+      >
+        Закрыть
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -98,8 +112,6 @@
 
   export default {
     async beforeMount() {
-      await this.$store.dispatch('user/getUserInfo');
-
       this.$store.commit('setBreadcrumbs', {
         add: true,
         item: {
@@ -129,7 +141,10 @@
           v => !!v || 'Пароль должен быть указан',
           v => /^[a-zA-Z0-9]{4,}$/.test(v) || 'Пароль должен быть валидным',
           v => v === this.password || 'Пароли должны совпадать'
-        ]
+        ],
+        sendConfirmEmail: false,
+        sendConfirmEmailStatus: '',
+        sendConfirmEmailText: ''
       };
     },
     computed: {
@@ -150,8 +165,25 @@
       }
     },
     methods: {
-      changePassword() {
-        console.log(1);
+      async changePassword() {
+        let result = await this.$store.dispatch('user/changePassword', this.password);
+        if (result) {
+          this.$store.commit('setToken');
+          this.$router.push('/');
+        }
+      },
+      async reConfirmEmail() {
+        let result = await this.$store.dispatch('user/reConfirmEmail');
+
+        if (result.status === 200) {
+          this.sendConfirmEmail = true;
+          this.sendConfirmEmailStatus = 'success';
+          this.sendConfirmEmailText = 'Сообщение отправлено.';
+        } else {
+          this.sendConfirmEmail = true;
+          this.sendConfirmEmailStatus = 'error';
+          this.sendConfirmEmailText = result.data.message;
+        }
       }
     }
   };
