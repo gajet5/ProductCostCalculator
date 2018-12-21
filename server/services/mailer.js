@@ -6,11 +6,11 @@ const config = require('../config');
 let smtpTransport = nodemailer.createTransport(config.mailOptions);
 
 module.exports = {
-    welcome(email, id) {
+    emailConfirm(email, id) {
         let mailOptions = {
             from: config.mailOptions.auth.user,
             to: email,
-            subject: '[PCC] Успешная регистрация',
+            subject: '[PCC] Подтверждение email',
             html: pug.renderFile(path.join(path.resolve(__dirname), '..', 'template', 'welcomeMail.pug'), { confirmLink: `${config.site}/registration/confirm/${id}` })
         };
 

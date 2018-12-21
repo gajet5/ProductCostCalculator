@@ -17,14 +17,11 @@
                   <h3 class="headline mb-0">
                     {{email}}
                   </h3>
-                  <span class="grey--text">{{userStatus  ? 'Премиум' : 'Стандарт'}}</span>
+                  <span class="grey--text">{{userStatus  ? 'Стандарт' : 'Демо'}}</span>
                 </div>
                 <v-spacer></v-spacer>
-                <div v-if="userStatus">
-                  <span>Премиум: {{premiumDateEnd}}</span>
-                </div>
-                <div v-else>
-                  <span>Купить премиум</span>
+                <div v-show="userStatus">
+                  <span>Полный доступ: {{premiumDateEnd}}</span>
                 </div>
               </v-card-title>
               <div>
@@ -37,7 +34,7 @@
               </div>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn flat color="success">Подтвердить email</v-btn>
+                <v-btn flat color="success" v-show="shopWarningEmailConfirm">Подтвердить email</v-btn>
                 <v-btn flat @click="showPasswordChangeForm = !showPasswordChangeForm">Сменить пароль</v-btn>
               </v-card-actions>
             </div>
@@ -75,6 +72,17 @@
                 </v-form>
               </v-card-text>
             </v-slide-y-transition>
+          </v-card>
+        </v-flex>
+      </v-layout>
+      <v-layout class="mt-3">
+        <v-flex xs12>
+          <v-card>
+            <v-card-title primary-title>
+              <h3 class="headline mb-0">
+                Активировать аккаунт
+              </h3>
+            </v-card-title>
           </v-card>
         </v-flex>
       </v-layout>

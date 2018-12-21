@@ -8,8 +8,7 @@ export default {
   actions: {
     async checkEmail(context, payload) {
       try {
-        let response = await authServices.emailExist(payload.email);
-        return response.data;
+        return await authServices.emailExist(payload.email);
       } catch (e) {
         console.log(e.message);
         return false;
@@ -17,11 +16,10 @@ export default {
     },
     async registration(context, payload) {
       try {
-        let response = await authServices.registration({
+        return await authServices.registration({
           email: payload.email,
           password: payload.password
         });
-        return response.data;
       } catch (e) {
         console.log(e.message);
         return false;
@@ -29,8 +27,7 @@ export default {
     },
     async confirm(context, payload) {
       try {
-        let response = await authServices.confirm(payload.id);
-        return response.data;
+        return await authServices.confirm(payload.id);
       } catch (e) {
         console.log(e.message);
         return false;
@@ -38,8 +35,7 @@ export default {
     },
     async login(context, payload) {
       try {
-        let response = await authServices.login(payload);
-        return response.data;
+        return await authServices.login(payload);
       } catch (e) {
         console.log(e.message);
         return false;

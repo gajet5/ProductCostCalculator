@@ -31,7 +31,7 @@ module.exports = {
             });
 
             if (config.sendMail) {
-                mailer.welcome(user.email, user._id);
+                mailer.emailConfirm(user.email, user._id);
             }
 
             return res.json({

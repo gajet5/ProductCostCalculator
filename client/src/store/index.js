@@ -77,8 +77,8 @@ export const store = new Vuex.Store({
     async getServerStatus(ctx) {
       async function wrapper() {
         try {
-          let { data } = await statusService.getServerStatus();
-          if (data.status === 200) {
+          let result = await statusService.getServerStatus();
+          if (result.status === 200) {
             ctx.commit('setServerStatus', true);
           }
         } catch (e) {
@@ -92,8 +92,8 @@ export const store = new Vuex.Store({
     },
     async getTokenStatus(ctx) {
       try {
-        let responce = await statusService.getTokenStatus();
-        if (responce.data.status !== 200) {
+        let result = await statusService.getTokenStatus();
+        if (result.status !== 200) {
           ctx.commit('setToken', false);
         }
       } catch (e) {

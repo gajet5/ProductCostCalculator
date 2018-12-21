@@ -5,8 +5,8 @@ export default {
     try {
       let { sortBy, descending, page, rowsPerPage, search } = payload;
       let queryString = `formulas/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}&search=${search}`;
-      let response = await Api().get(queryString);
-      return response.data;
+      let { data } = await Api().get(queryString);
+      return data;
     } catch (e) {
       console.log(e);
       return false;
@@ -14,8 +14,8 @@ export default {
   },
   async addFormula(payload) {
     try {
-      let response = await Api().post('formulas/add', payload);
-      return response.data;
+      let { data } = await Api().post('formulas/add', payload);
+      return data;
     } catch (e) {
       console.log(e);
       return false;
@@ -23,8 +23,8 @@ export default {
   },
   async editFormula(payload) {
     try {
-      let response = await Api().patch('formulas/edit', payload);
-      return response.data;
+      let { data } = await Api().patch('formulas/edit', payload);
+      return data;
     } catch (e) {
       console.log(e);
       return false;
@@ -32,12 +32,12 @@ export default {
   },
   async removeFormula(id) {
     try {
-      let response = await Api().delete('formulas/remove', {
+      let { data } = await Api().delete('formulas/remove', {
         data: {
           id: `${id}`
         }
       });
-      return response.data;
+      return data;
     } catch (e) {
       console.log(e);
       return false;

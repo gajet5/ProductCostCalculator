@@ -130,9 +130,10 @@
         }
       },
       async checkEmail() {
-        this.emailIsDublicate = await this.$store.dispatch('auth/checkEmail', {
+        let result = await this.$store.dispatch('auth/checkEmail', {
           email: this.email
-        }).status === 200;
+        });
+        this.emailIsDublicate = result.status === 200;
       },
       goToHomePage() {
         this.$router.push('/');
