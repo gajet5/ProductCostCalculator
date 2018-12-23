@@ -15,13 +15,13 @@
               <v-card-title primary-title>
                 <div>
                   <h3 class="headline mb-0">
-                    {{email}}
+                    {{ email }}
                   </h3>
-                  <span class="grey--text">Тип аккаунта: {{userStatus  ? 'Стандарт' : 'Демо'}}</span>
+                  <span class="grey--text">Тип аккаунта: {{ userStatus  ? 'Стандарт' : 'Демо' }}</span>
                 </div>
                 <v-spacer></v-spacer>
                 <div v-show="userStatus">
-                  <span>Полный доступ: {{premiumDateEnd}}</span>
+                  <span>Полный доступ: {{ premiumDateEnd }}</span>
                 </div>
               </v-card-title>
               <div>
@@ -83,20 +83,30 @@
                 Активировать аккаунт
               </h3>
             </v-card-title>
+            <v-card-text>
+              <v-text-field
+                v-model="code"
+                label="Код активации"
+              ></v-text-field>
+              <v-btn
+                color="success"
+                @click="enablePremium"
+              >Активировать</v-btn>
+            </v-card-text>
           </v-card>
         </v-flex>
       </v-layout>
     </v-container>
     <v-snackbar
-      v-model="sendConfirmEmail"
-      :color="sendConfirmEmailStatus"
+      v-model="userSnack"
+      :color="userSnackStatus"
       :timeout="6000"
     >
-      {{ sendConfirmEmailText }}
+      {{ userSnackText }}
       <v-btn
         dark
         flat
-        @click="sendConfirmEmail = false"
+        @click="userSnack = false"
       >
         Закрыть
       </v-btn>
@@ -116,7 +126,7 @@
         add: true,
         item: {
           text: 'Личный кабинет',
-          disabled: true,
+          disabled: false,
           href: '/user'
         }
       });
@@ -142,9 +152,10 @@
           v => /^[a-zA-Z0-9]{4,}$/.test(v) || 'Пароль должен быть валидным',
           v => v === this.password || 'Пароли должны совпадать'
         ],
-        sendConfirmEmail: false,
-        sendConfirmEmailStatus: '',
-        sendConfirmEmailText: ''
+        userSnack: false,
+        userSnackStatus: '',
+        userSnackText: '',
+        code: ''
       };
     },
     computed: {
@@ -166,8 +177,7 @@
     },
     methods: {
       async changePassword() {
-        let result = await this.$store.dispatch('user/changePassword', this.password);
-        if (result) {
+        if (await this.$store.dispatch('user/changePassword', this.password)) {
           this.$store.commit('setToken');
           this.$router.push('/');
         }
@@ -176,13 +186,40 @@
         let result = await this.$store.dispatch('user/reConfirmEmail');
 
         if (result.status === 200) {
-          this.sendConfirmEmail = true;
-          this.sendConfirmEmailStatus = 'success';
-          this.sendConfirmEmailText = 'Сообщение отправлено.';
+          this.userSnack = true;
+          this.userSnackStatus = 'success';
+          this.userSnackText = 'Сообщение отправлено.';
         } else {
-          this.sendConfirmEmail = true;
-          this.sendConfirmEmailStatus = 'error';
-          this.sendConfirmEmailText = result.data.message;
+          this.userSnack = true;
+          this.userSnackStatus = 'error';
+          this.userSnackText = result.data.message;
+        }
+      },
+      async enablePremium() {
+        if (!this.code) {
+          this.userSnack = true;
+          this.userSnackStatus = 'warning';
+          this.userSnackText = 'Введите код активации';
+          return false;
+        }
+
+        if (this.$store.getters['user/premium']) {
+          this.userSnack = true;
+          this.userSnackStatus = 'info';
+          this.userSnackText = 'Аккаунт уже активирован';
+          return false;
+        }
+
+        let result = await this.$store.dispatch('user/enablePremium', this.code);
+
+        if (result.status === 200) {
+          this.userSnack = true;
+          this.userSnackStatus = 'success';
+          this.userSnackText = 'Аккаунт активирован';
+        } else {
+          this.userSnack = true;
+          this.userSnackStatus = 'error';
+          this.userSnackText = result.data.message;
         }
       }
     }

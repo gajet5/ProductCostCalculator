@@ -1,4 +1,5 @@
 const formulasModel = require('../models/formulas');
+const usetModel = require('../models/user');
 
 module.exports = {
     // GET /formulas/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}&search=${search}
@@ -60,6 +61,29 @@ module.exports = {
         }
 
         try {
+            let user = await usetModel.findById(userId);
+            let formulaTotal = await formulasModel.find({
+                owner: userId
+            }).countDocuments();
+
+            if (!user.isActiveted) {
+                return res.json({
+                    status: 204,
+                    data: {
+                        message: 'Акаунт пользователя не активирован'
+                    }
+                });
+            }
+
+            if (!user.premium && formulaTotal >= 1) {
+                return res.json({
+                    status: 204,
+                    data: {
+                        message: 'Акаунт пользователя находится в демо режиме'
+                    }
+                });
+            }
+
             await formulasModel.create({
                 name,
                 owner: userId,

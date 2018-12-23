@@ -20,6 +20,8 @@ module.exports = {
       "asyncArrow": "always"
     }],
     "no-new": 0,
-    "skipBlankLines": "true"
+    "no-trailing-spaces": ["error", {
+      "skipBlankLines": true
+    }]
   }
 };

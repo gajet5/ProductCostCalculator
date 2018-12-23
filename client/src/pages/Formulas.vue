@@ -46,7 +46,7 @@
                   <td>{{ props.item.createDate }}</td>
                   <td class="justify-center layout">
                     <formula-component
-                      :functionParams = 'props.item'
+                      :formulaParams = 'props.item'
                       @updateFormulasList="updateFormulasList"
                       @userNotConfirmMail="userNotConfirmMail"
                     ></formula-component>
@@ -66,6 +66,7 @@
     <formula-component
       @updateFormulasList="updateFormulasList"
       @userNotConfirmMail="userNotConfirmMail"
+      @userNotPremium="userNotPremium"
     ></formula-component>
     <v-snackbar
       v-model="userRules"
@@ -95,7 +96,7 @@
         add: true,
         item: {
           text: 'Формулы',
-          disabled: true,
+          disabled: false,
           href: '/formulas'
         }
       });
@@ -172,6 +173,11 @@
         this.userRules = true;
         this.userRulesStatus = 'warning';
         this.userRulesText = 'Email не поддтверждён, функционал ограничен.';
+      },
+      userNotPremium() {
+        this.userRules = true;
+        this.userRulesStatus = 'info';
+        this.userRulesText = 'В демо режиме допускается создание одной формулы.';
       }
     }
   };

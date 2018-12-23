@@ -15,5 +15,9 @@ module.exports = {
     auth: {
         jwtSecret: '',
         expTime: '7d'
+    },
+    codeGenerator: {
+        user: '',
+        password: ''
     }
 };

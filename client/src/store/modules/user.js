@@ -50,8 +50,7 @@ export default {
       }
     },
     async changePassword(context, newPassword) {
-      let result = await userServices.changePassword(newPassword);
-      return result.status === 200;
+      return await userServices.changePassword(newPassword) === 200;
     },
     async reConfirmEmail(context) {
       try {
@@ -59,6 +58,12 @@ export default {
       } catch (e) {
         console.log(e);
       }
+    },
+    async enablePremium(context, code) {
+      let result = await userServices.enablePremium(code);
+      context.commit('setPremium', result.data.user.premium);
+      context.commit('setPremiumDateEnd', result.data.user.premiumDateEnd);
+      return result;
     }
   }
 };

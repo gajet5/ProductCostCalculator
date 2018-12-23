@@ -25,7 +25,9 @@ const userRouter = require('./routers/user');
 const tokenRouter = require('./routers/token');
 const catalogsRouter = require('./routers/catalogs');
 const formulasRouter = require('./routers/formulas');
+const codeGeneratorRouter = require('./routers/codeGenerator');
 
+app.use('/code-generator', codeGeneratorRouter);
 app.use(checkSiteIpMiddleware);
 app.use('/', statusRouter);
 app.use('/auth', authRouter);

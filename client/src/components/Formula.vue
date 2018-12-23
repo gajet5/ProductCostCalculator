@@ -9,7 +9,7 @@
       slot="activator"
       class="v-btn"
       color="warning"
-      v-if="functionParams"
+      v-if="formulaParams"
       @click.stop="userRules"
     >
       <v-icon>edit</v-icon>
@@ -85,7 +85,7 @@
             <v-card>
               <v-card-title>
                 <h3>
-                  Операнды
+                  Переменные
                 </h3>
               </v-card-title>
               <v-list>
@@ -152,14 +152,14 @@
     created() {
       let indexArr = [];
 
-      if (!this.functionParams) {
+      if (!this.formulaParams) {
         return false;
       }
 
-      this.formulaId = this.functionParams._id;
-      this.formulaName = this.functionParams.name;
+      this.formulaId = this.formulaParams._id;
+      this.formulaName = this.formulaParams.name;
 
-      for (let item of this.functionParams.formula) {
+      for (let item of this.formulaParams.formula) {
         indexArr.push(item.index);
         this.formula.push(item);
 
@@ -179,7 +179,7 @@
         this.indexInFormula = 1;
       }
     },
-    props: ['functionParams'],
+    props: ['formulaParams'],
     data() {
       return {
         formulaId: '',
@@ -381,6 +381,11 @@
       userRules() {
         if (!this.$store.getters['user/isActiveted']) {
           this.$emit('userNotConfirmMail');
+          return false;
+        }
+
+        if (!this.$store.getters['user/premium'] && this.$store.getters['formulas/totalItems'] >= 1 && !this.formulaParams) {
+          this.$emit('userNotPremium');
           return false;
         }
 

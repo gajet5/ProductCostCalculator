@@ -1,4 +1,5 @@
 const userModel = require('../models/user');
+const codeActivationModel = require('../models/codeActivation');
 const mailer = require('../services/mailer');
 
 module.exports = {
@@ -134,7 +135,69 @@ module.exports = {
             return res.json({
                 status: 500,
                 data: {
-                    message: 'Ошибка при поиске пользователя.'
+                    message: 'Ошибка при поиске пользователя'
+                }
+            });
+        }
+    },
+
+    // POST /user/enable-premium
+    async enablePremium(req, res) {
+        const token = req.headers['x-access-token'];
+        let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
+        let code = req.body.code;
+
+        if (!code) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Данные о коде не переданы'
+                }
+            });
+        }
+
+        try {
+            let codeActivation = await codeActivationModel.findOne({
+                code
+            });
+            let user = await userModel.findById(userId);
+
+            if (!codeActivation || codeActivation.isActiveted) {
+                return res.json({
+                    status: 204,
+                    data: {
+                        message: 'Код не корректен'
+                    }
+                });
+            }
+
+            if (codeActivation && !codeActivation.isActiveted) {
+                await user.updateOne({
+                    premium: true,
+                    premiumDateEnd: Date.now() + 1000 * 60 * 60 * 24 * 30
+                });
+                await codeActivation.updateOne({
+                    owner: user._id,
+                    isActivaded: true
+                });
+
+                return res.json({
+                    status: 200,
+                    data: {
+                        message: 'Аккаунт успешно активирован',
+                        user: {
+                            premium: user.premium,
+                            premiumDateEnd: user.premiumDateEnd
+                        }
+                    }
+                });
+            }
+        } catch (e) {
+            console.log(e);
+            return res.json({
+                status: 500,
+                data: {
+                    message: 'Ошибка при активации аккаунта'
                 }
             });
         }
