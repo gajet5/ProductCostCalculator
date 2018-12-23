@@ -5,6 +5,7 @@ import axios from 'axios';
 import auth from './modules/auth';
 import user from './modules/user';
 import formulas from './modules/formulas';
+import catalogs from './modules/catalogs';
 import statusService from '../services/status';
 
 Vue.use(Vuex);
@@ -14,7 +15,8 @@ export const store = new Vuex.Store({
   modules: {
     auth,
     user,
-    formulas
+    formulas,
+    catalogs
   },
   state: {
     serverStatus: true,

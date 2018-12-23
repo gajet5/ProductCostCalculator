@@ -2,8 +2,8 @@ const router = require('express').Router();
 const catalogsController = require('../controllers/catalogs');
 
 router.get('/list', catalogsController.list);
-router.post('/create', catalogsController.create);
-router.patch('/rename', catalogsController.rename);
-router.delete('/delete', catalogsController.delete);
+router.post('/add', catalogsController.add);
+router.patch('/edit', catalogsController.edit);
+router.delete('/remove', catalogsController.remove);
 
 module.exports = router;

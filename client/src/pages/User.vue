@@ -221,6 +221,7 @@
           this.userSnackStatus = 'error';
           this.userSnackText = result.data.message;
         }
+        await this.$store.dispatch('user/getUserInfo');
       }
     }
   };

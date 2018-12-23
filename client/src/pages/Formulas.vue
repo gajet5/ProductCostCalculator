@@ -50,8 +50,8 @@
                       @updateFormulasList="updateFormulasList"
                       @userNotConfirmMail="userNotConfirmMail"
                     ></formula-component>
-                    <v-btn color="error">
-                      <v-icon small @click="removeFormula(props.item._id)">
+                    <v-btn color="error" @click="removeFormula(props.item._id)">
+                      <v-icon small>
                         delete
                       </v-icon>
                     </v-btn>
@@ -146,9 +146,6 @@
       },
       loading() {
         return this.$store.getters['formulas/loading'];
-      },
-      shopWarningEmailConfirm() {
-        return this.$store.getters['user/isActiveted'];
       }
     },
     watch: {
@@ -163,6 +160,9 @@
     },
     methods: {
       async removeFormula(id) {
+        if (!confirm('Вы уверены, что хотите удалить формулу?')) {
+          return false;
+        }
         await this.$store.dispatch('formulas/removeFormula', id);
         await this.$store.dispatch('formulas/getFormulas', this.pagination);
       },

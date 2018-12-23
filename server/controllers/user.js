@@ -178,7 +178,7 @@ module.exports = {
                 });
                 await codeActivation.updateOne({
                     owner: user._id,
-                    isActivaded: true
+                    isActivated: true
                 });
 
                 return res.json({

@@ -12,7 +12,7 @@ const activationCode = new Schema({
         required: true,
         default: 'null'
     },
-    isActiveted: {
+    isActivated: {
         type: Boolean,
         required: true,
         default: false

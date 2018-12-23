@@ -1,28 +1,38 @@
 const catalogsModel = require('../models/catalogs');
 
 module.exports = {
-    // GET /catalogs/list?limit={number}&skip={number}
+    // GET /catalogs/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}&search=${search}
     async list(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
-        let limit = req.query.limit;
-        let skip = req.query.skip;
+        let sortBy = req.query.sortBy;
+        let descending = req.query.descending === 'true';
+        let page = parseInt(req.query.page);
+        let rowsPerPage = parseInt(req.query.rowsPerPage);
+        let search = req.query.search.toString('utf8');
 
         try {
             let catalogs = await catalogsModel.find({
-                owner: userId
+                owner: userId,
+                name: new RegExp(search, 'i')
             }, null, {
-                skip: skip || 0
-            }).limit(limit || 20);
+                skip: rowsPerPage * (page - 1) || 0,
+                sort: {
+                    [sortBy]: descending ? 1 : -1
+                },
+                limit: rowsPerPage || 10
+            });
 
             return res.json({
                 status: 200,
                 data: {
                     message: 'Список каталогов пользователя',
-                    catalogs
+                    catalogs,
+                    totalItems: await catalogsModel.find({ owner: userId }).countDocuments()
                 }
             });
         } catch (e) {
+            console.log(e);
             return res.json({
                 status: 500,
                 data: {
@@ -32,8 +42,8 @@ module.exports = {
         }
     },
 
-    // POST /catalogs/create
-    async create(req, res) {
+    // POST /catalogs/add
+    async add(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
 
@@ -75,12 +85,12 @@ module.exports = {
         }
     },
 
-    // PATCH /catalogs/rename
-    async rename(req, res) {
+    // PATCH /catalogs/edit
+    async edit(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
-        let catalogId = req.body.catalogId;
-        let newName = req.body.newName;
+        let catalogId = req.body.id;
+        let newName = req.body.name;
 
         if (!catalogId || !newName) {
             return res.json({
@@ -93,7 +103,7 @@ module.exports = {
 
         try {
             let catalog = await catalogsModel.findOneAndUpdate({
-                id: catalogId,
+                _id: catalogId,
                 owner: userId
             }, {
                 name: newName
@@ -118,11 +128,11 @@ module.exports = {
         }
     },
 
-    // DELETE /catalogs/delete
-    async delete(req, res) {
+    // DELETE /catalogs/remove
+    async remove(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
-        let catalogId = req.body.catalogId;
+        let catalogId = req.body.id;
 
         if (!catalogId) {
             return res.json({
@@ -134,10 +144,11 @@ module.exports = {
         }
 
         try {
-            await catalogsModel.findOneAndDelete({
-                id: catalogId,
+            await catalogsModel.findOneAndRemove({
+                _id: catalogId,
                 owner: userId
             });
+
             return res.json({
                 status: 200,
                 data: {
