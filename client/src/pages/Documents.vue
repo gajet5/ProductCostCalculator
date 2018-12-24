@@ -14,7 +14,7 @@
             <v-card-title primary-title>
               <div>
                 <h3 class="headline mb-0">
-                  Каталоги
+                  Документы
                 </h3>
               </div>
               <v-spacer></v-spacer>
@@ -27,11 +27,11 @@
               ></v-text-field>
             </v-card-title>
             <v-data-table
-              :headers="catalogsHeaders"
-              :items="catalogsList"
+              :headers="documentsHeaders"
+              :items="documentsList"
               :pagination.sync="pagination"
               :total-items="totalItems"
-              rows-per-page-text="Каталогов на страницу"
+              rows-per-page-text="Документов на страницу"
               :rows-per-page-items="rowsPerPageItems"
               :loading="loading"
             >
@@ -41,21 +41,16 @@
                 </v-alert>
               </template>
               <template slot="items" slot-scope="props">
-                <tr :key="props.item._id" @click="goToCatalog(props.item._id)">
+                <tr :key="props.item._id">
                   <td>{{ props.item.name }}</td>
                   <td>{{ props.item.createDate }}</td>
                   <td class="justify-center layout">
-                    <v-btn color="success" @click="goToCatalog(props.item._id)">
-                      <v-icon small>
-                        input
-                      </v-icon>
-                    </v-btn>
-                    <catalog-component
-                      :catalogParams = 'props.item'
-                      @updateCatalogsList="updateCatalogsList"
+                    <document-component
+                      :documentParams = 'props.item'
+                      @updateDocumentsList="updateDocumentsList"
                       @userNotConfirmMail="userNotConfirmMail"
-                    ></catalog-component>
-                    <v-btn color="error" @click="removeCatalog(props.item._id)">
+                    ></document-component>
+                    <v-btn color="error" @click="removeDocument(props.item._id)">
                       <v-icon small>
                         delete
                       </v-icon>
@@ -68,11 +63,11 @@
         </v-flex>
       </v-layout>
     </v-container>
-    <catalog-component
-      @updateCatalogsList="updateCatalogsList"
+    <document-component
+      @updateDocumentsList="updateDocumentsList"
       @userNotConfirmMail="userNotConfirmMail"
       @userNotPremium="userNotPremium"
-    ></catalog-component>
+    ></document-component>
     <v-snackbar
       v-model="userRules"
       :color="userRulesStatus"
@@ -92,28 +87,32 @@
 
 <script>
   import headerComponent from '../components/Header';
-  import catalogComponent from '../components/Catalog';
+  import documentComponent from '../components/Document';
   import moment from 'moment';
 
   export default {
+    created() {
+      this.$store.commit('setCatalogSelected');
+      this.pagination.catalogSelected = this.$store.getters.catalogSelected;
+    },
     async beforeMount() {
       this.$store.commit('setBreadcrumbs', {
         add: true,
         clear: true,
         item: {
-          text: 'Каталог',
+          text: 'Документы',
           disabled: false,
-          href: '/catalogs'
+          href: '/documents'
         }
       });
     },
     components: {
       headerComponent,
-      catalogComponent
+      documentComponent
     },
     data() {
       return {
-        catalogsHeaders: [
+        documentsHeaders: [
           { text: 'Имя', value: 'name' },
           { text: 'Дата создания', value: 'createDate' },
           { text: 'Действия', value: 'name', sortable: false }
@@ -133,8 +132,8 @@
       breadcrumbs() {
         return this.$store.getters.breadcrumbs;
       },
-      catalogsList() {
-        let list = JSON.parse(JSON.stringify(this.$store.getters['catalogs/list']));
+      documentsList() {
+        let list = JSON.parse(JSON.stringify(this.$store.getters['documents/list']));
 
         for (let item of list) {
           item.createDate = moment(item.createDate).format('DD.MM.YYYY HH:mm');
@@ -143,32 +142,32 @@
         return list;
       },
       totalItems() {
-        return this.$store.getters['catalogs/totalItems'];
+        return this.$store.getters['documents/totalItems'];
       },
       loading() {
-        return this.$store.getters['catalogs/loading'];
+        return this.$store.getters['documents/loading'];
       }
     },
     watch: {
       pagination: {
         async handler() {
           if (this.$store.getters.serverStatus) {
-            await this.$store.dispatch('catalogs/getCatalogs', this.pagination);
+            await this.$store.dispatch('documents/getDocuments', this.pagination);
           }
         },
         deep: true
       }
     },
     methods: {
-      async removeCatalog(id) {
-        if (!confirm('Вы уверены, что хотите удалить каталог?')) {
+      async removeDocument(id) {
+        if (!confirm('Вы уверены, что хотите удалить документ?')) {
           return false;
         }
-        await this.$store.dispatch('catalogs/removeCatalog', id);
-        await this.$store.dispatch('catalogs/getCatalogs', this.pagination);
+        await this.$store.dispatch('documents/removeDocument', id);
+        await this.$store.dispatch('documents/getDocuments', this.pagination);
       },
-      async updateCatalogsList() {
-        await this.$store.dispatch('catalogs/getCatalogs', this.pagination);
+      async updateDocumentsList() {
+        await this.$store.dispatch('documents/getDocuments', this.pagination);
       },
       userNotConfirmMail() {
         this.userRules = true;
@@ -178,11 +177,7 @@
       userNotPremium() {
         this.userRules = true;
         this.userRulesStatus = 'info';
-        this.userRulesText = 'В демо режиме допускается создание одного каталога.';
-      },
-      goToCatalog(id) {
-        this.$store.commit('setCatalogSelected', id);
-        this.$router.push('/documents');
+        this.userRulesText = 'В демо режиме допускается создание одного документа.';
       }
     }
   };

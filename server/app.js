@@ -24,6 +24,7 @@ const statusRouter = require('./routers/status');
 const userRouter = require('./routers/user');
 const tokenRouter = require('./routers/token');
 const catalogsRouter = require('./routers/catalogs');
+const documentsRouter = require('./routers/documents');
 const formulasRouter = require('./routers/formulas');
 const codeGeneratorRouter = require('./routers/codeGenerator');
 
@@ -36,6 +37,7 @@ app.use('/token', tokenRouter);
 app.use(checkUserPremiumStatusMiddleware);
 app.use('/user', userRouter);
 app.use('/catalogs', catalogsRouter);
+app.use('/documents', documentsRouter);
 app.use('/formulas', formulasRouter);
 
 connection.once('open', () => {

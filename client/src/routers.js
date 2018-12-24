@@ -7,6 +7,7 @@ import RegistrationConfirm from './pages/RegistrationConfirm';
 import Welcome from './pages/Welcome';
 import PageNotFound from './pages/PageNotFound';
 import Catalogs from './pages/Catalogs';
+import Documents from './pages/Documents';
 import User from './pages/User';
 import Formulas from './pages/Formulas';
 import { store } from './store';
@@ -28,6 +29,7 @@ async function ifAuthenticated(to, from, next) {
       }
       break;
     case '/catalogs':
+    case '/documents':
     case '/user':
     case '/formulas':
       if (!authStatus) {
@@ -62,6 +64,11 @@ export default new VueRouter({
     {
       path: '/catalogs',
       component: Catalogs,
+      beforeEnter: ifAuthenticated
+    },
+    {
+      path: '/documents',
+      component: Documents,
       beforeEnter: ifAuthenticated
     },
     {

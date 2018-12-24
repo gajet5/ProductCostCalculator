@@ -6,6 +6,7 @@ import auth from './modules/auth';
 import user from './modules/user';
 import formulas from './modules/formulas';
 import catalogs from './modules/catalogs';
+import documents from './modules/documents';
 import statusService from '../services/status';
 
 Vue.use(Vuex);
@@ -16,12 +17,14 @@ export const store = new Vuex.Store({
     auth,
     user,
     formulas,
-    catalogs
+    catalogs,
+    documents
   },
   state: {
     serverStatus: true,
     token: '',
-    breadcrumbs: []
+    breadcrumbs: [],
+    catalogSelected: ''
   },
   getters: {
     serverStatus(state) {
@@ -32,6 +35,9 @@ export const store = new Vuex.Store({
     },
     breadcrumbs(state) {
       return state.breadcrumbs;
+    },
+    catalogSelected(state) {
+      return state.catalogSelected;
     }
   },
   mutations: {
@@ -73,6 +79,16 @@ export const store = new Vuex.Store({
       }
 
       localStorage.setItem('breadcrumbs', JSON.stringify(state.breadcrumbs));
+    },
+    setCatalogSelected(state, payload) {
+      if (!state.catalogSelected && !payload) {
+        state.catalogSelected = localStorage.getItem('catalogSelected');
+        return false;
+      }
+      if (payload) {
+        state.catalogSelected = payload;
+        localStorage.setItem('catalogSelected', state.catalogSelected);
+      }
     }
   },
   actions: {

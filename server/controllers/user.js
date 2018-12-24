@@ -162,7 +162,7 @@ module.exports = {
             });
             let user = await userModel.findById(userId);
 
-            if (!codeActivation || codeActivation.isActiveted) {
+            if (!codeActivation || codeActivation.isActivated) {
                 return res.json({
                     status: 204,
                     data: {

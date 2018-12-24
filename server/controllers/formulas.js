@@ -107,7 +107,7 @@ module.exports = {
         }
     },
 
-    // PATCH /formulas/add
+    // PATCH /formulas/edit
     async edit(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));

@@ -1,7 +1,7 @@
-const catalogsModel = require('../models/catalogs');
+const documentsModel = require('../models/documents');
 
 module.exports = {
-    // GET /catalogs/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}&search=${search}
+    // GET /documents/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}&search=${search}&catalogId=${catalogSelected}
     async list(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
@@ -10,10 +10,12 @@ module.exports = {
         let page = parseInt(req.query.page);
         let rowsPerPage = parseInt(req.query.rowsPerPage);
         let search = req.query.search.toString('utf8');
+        let catalogId = req.query.catalogId;
 
         try {
-            let catalogs = await catalogsModel.find({
+            let documents = await documentsModel.find({
                 owner: userId,
+                catalogId,
                 name: new RegExp(search, 'i')
             }, null, {
                 skip: rowsPerPage * (page - 1) || 0,
@@ -26,9 +28,9 @@ module.exports = {
             return res.json({
                 status: 200,
                 data: {
-                    message: 'Список каталогов пользователя',
-                    catalogs,
-                    totalItems: await catalogsModel.find({ owner: userId }).countDocuments()
+                    message: 'Список документов пользователя',
+                    documents,
+                    totalItems: await documentsModel.find({ owner: userId, catalogId }).countDocuments()
                 }
             });
         } catch (e) {
@@ -42,25 +44,27 @@ module.exports = {
         }
     },
 
-    // POST /catalogs/add
+    // POST /documents/add
     async add(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
 
         let name = req.body.name;
+        let catalogId = req.body.catalogId;
 
-        if (!name) {
+        if (!name && !catalogId) {
             return res.json({
                 status: 204,
                 data: {
-                    message: 'Данные о названии категории не переданны'
+                    message: 'Данные о названии не переданны'
                 }
             });
         }
 
         try {
-            await catalogsModel.create({
+            await documentsModel.create({
                 owner: userId,
+                catalogId,
                 name
             });
 
@@ -80,25 +84,25 @@ module.exports = {
         }
     },
 
-    // PATCH /catalogs/edit
+    // PATCH /documents/edit
     async edit(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
-        let catalogId = req.body.id;
+        let documentId = req.body.id;
         let newName = req.body.name;
 
-        if (!catalogId && !newName) {
+        if (!documentId && !newName) {
             return res.json({
                 status: 204,
                 data: {
-                    message: 'Данные о catalogId или newName категории не переданны'
+                    message: 'Данные о documentId или newName или catalogId не переданны'
                 }
             });
         }
 
         try {
-            await catalogsModel.findOneAndUpdate({
-                _id: catalogId,
+            await documentsModel.findOneAndUpdate({
+                _id: documentId,
                 owner: userId
             }, {
                 name: newName
@@ -106,7 +110,7 @@ module.exports = {
             return res.json({
                 status: 200,
                 data: {
-                    message: 'Каталог успешно переименован'
+                    message: 'Документ успешно изменён'
                 }
             });
         } catch (e) {
@@ -119,13 +123,13 @@ module.exports = {
         }
     },
 
-    // DELETE /catalogs/remove
+    // DELETE /documents/remove
     async remove(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
-        let catalogId = req.body.id;
+        let documentId = req.body.id;
 
-        if (!catalogId) {
+        if (!documentId) {
             return res.json({
                 status: 204,
                 data: {
@@ -135,8 +139,8 @@ module.exports = {
         }
 
         try {
-            await catalogsModel.findOneAndRemove({
-                _id: catalogId,
+            await documentsModel.findOneAndRemove({
+                _id: documentId,
                 owner: userId
             });
 
