@@ -44,6 +44,7 @@
                 <tr :key="props.item._id">
                   <td>{{ props.item.name }}</td>
                   <td>{{ props.item.createDate }}</td>
+                  <td>{{ props.item.totalCount }}</td>
                   <td class="justify-center layout">
                     <document-component
                       :documentParams = 'props.item'
@@ -92,13 +93,13 @@
 
   export default {
     created() {
+      this.$store.dispatch('formulas/getFormulasName');
       this.$store.commit('setCatalogSelected');
       this.pagination.catalogSelected = this.$store.getters.catalogSelected;
     },
     async beforeMount() {
       this.$store.commit('setBreadcrumbs', {
         add: true,
-        clear: true,
         item: {
           text: 'Документы',
           disabled: false,
@@ -115,6 +116,7 @@
         documentsHeaders: [
           { text: 'Имя', value: 'name' },
           { text: 'Дата создания', value: 'createDate' },
+          { text: 'Сумма', value: 'totalCount', sortable: false },
           { text: 'Действия', value: 'name', sortable: false }
         ],
         rowsPerPageItems: [10, 20, 30, 50],

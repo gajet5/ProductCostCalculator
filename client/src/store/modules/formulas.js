@@ -4,12 +4,20 @@ export default {
   namespaced: true,
   state: {
     totalItems: 0,
+    formula: null,
     formulas: [],
+    formulasName: [],
     loading: true
   },
   getters: {
+    formula(state) {
+      return state.formula;
+    },
     list(state) {
       return state.formulas;
+    },
+    namesList(state) {
+      return state.formulasName;
     },
     totalItems(state) {
       return state.totalItems;
@@ -19,8 +27,14 @@ export default {
     }
   },
   mutations: {
+    setFormula(state, payload) {
+      state.formula = payload;
+    },
     setFormulas(state, payload) {
       state.formulas = payload;
+    },
+    setFormulasName(state, payload) {
+      state.formulasName = payload;
     },
     setTotalItems(state, payload) {
       state.totalItems = payload;
@@ -30,12 +44,20 @@ export default {
     }
   },
   actions: {
+    async getFormula(context, payload) {
+      let resolve = await formulasServices.getFormula(payload);
+      context.commit('setFormula', resolve.data.formula);
+    },
     async getFormulas(context, payload) {
       context.commit('setLoading', true);
       let resolve = await formulasServices.getFormulas(payload);
       context.commit('setLoading', false);
       context.commit('setTotalItems', resolve.data.totalItems);
       context.commit('setFormulas', resolve.data.formulas);
+    },
+    async getFormulasName(context) {
+      let resolve = await formulasServices.getFormulasName();
+      context.commit('setFormulasName', resolve.data.names);
     },
     async editFormula(context, payload) {
       await formulasServices.editFormula(payload);

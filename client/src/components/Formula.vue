@@ -29,7 +29,6 @@
         <v-btn icon dark @click="showFormulaDialog = false">
           <v-icon>close</v-icon>
         </v-btn>
-        <v-toolbar-title>Настройки</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
           <v-btn dark flat @click="save" :disabled="!nameValid">Сохранить</v-btn>

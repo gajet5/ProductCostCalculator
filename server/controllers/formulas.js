@@ -2,6 +2,45 @@ const formulasModel = require('../models/formulas');
 const usetModel = require('../models/user');
 
 module.exports = {
+    // GET /formulas/formula?id=${payload}
+    async formula(req, res) {
+        const token = req.headers['x-access-token'];
+        let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
+        let formulaId = req.query.id;
+
+        if (!formulaId) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Данные о формуле не переданны'
+                }
+            });
+        }
+
+        try {
+            let formula = await formulasModel.findOne({
+                _id: formulaId,
+                owner: userId
+            });
+
+            return res.json({
+                status: 200,
+                data: {
+                    message: 'Список формул пользователя',
+                    formula
+                }
+            });
+        } catch (e) {
+            console.log(e);
+            return res.json({
+                status: 500,
+                data: {
+                    message: e.message
+                }
+            });
+        }
+    },
+
     // GET /formulas/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}&search=${search}
     async list(req, res) {
         const token = req.headers['x-access-token'];
@@ -30,6 +69,34 @@ module.exports = {
                     message: 'Список формул пользователя',
                     formulas,
                     totalItems: await formulasModel.find({ owner: userId }).countDocuments()
+                }
+            });
+        } catch (e) {
+            console.log(e);
+            return res.json({
+                status: 500,
+                data: {
+                    message: e.message
+                }
+            });
+        }
+    },
+
+    // GET /formulas/names-list
+    async namesList(req, res) {
+        const token = req.headers['x-access-token'];
+        let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
+
+        try {
+            let names = await formulasModel.find({
+                owner: userId
+            }).select('name');
+
+            return res.json({
+                status: 200,
+                data: {
+                    message: 'Список формул пользователя',
+                    names
                 }
             });
         } catch (e) {
