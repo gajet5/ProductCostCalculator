@@ -15,6 +15,10 @@ const Documents = new Schema({
         type: String,
         required: true
     },
+    options: {
+        type: Array,
+        required: true
+    },
     totalCount: {
         type: Number,
         default: 0

@@ -1,6 +1,7 @@
 const codeActivationModel = require('../models/codeActivation');
 const config = require('../config');
 const crypto = require('crypto');
+const fs = require('fs-extra');
 
 // GET /code-generator?user${string}&password=${string}&limit=${number}
 module.exports = async (req, res) => {
@@ -33,7 +34,8 @@ module.exports = async (req, res) => {
                 }
             } while (!code);
 
-            // todo: записывать результат в файл
+            // todo: Дописать сбор ключей в один файл
+            await fs.appendFile(`${Date.now()}.log`, code, 'utf8');
 
             await codeActivationModel.create({
                 code

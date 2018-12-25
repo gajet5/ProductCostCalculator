@@ -41,11 +41,11 @@
                 </v-alert>
               </template>
               <template slot="items" slot-scope="props">
-                <tr :key="props.item._id" @click="goToCatalog(props.item._id)">
+                <tr :key="props.item._id" @click.stop="goToCatalog(props.item._id)">
                   <td>{{ props.item.name }}</td>
                   <td>{{ props.item.createDate }}</td>
                   <td class="justify-center layout">
-                    <v-btn color="success" @click="goToCatalog(props.item._id)">
+                    <v-btn color="success" @click.stop="goToCatalog(props.item._id)">
                       <v-icon small>
                         input
                       </v-icon>
@@ -55,7 +55,7 @@
                       @updateCatalogsList="updateCatalogsList"
                       @userNotConfirmMail="userNotConfirmMail"
                     ></catalog-component>
-                    <v-btn color="error" @click="removeCatalog(props.item._id)">
+                    <v-btn color="error" @click.stop="removeCatalog(props.item._id)">
                       <v-icon small>
                         delete
                       </v-icon>

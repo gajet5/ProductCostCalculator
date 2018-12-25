@@ -168,8 +168,11 @@
         return false;
       }
 
+      console.log(this.documentParams);
+
       this.documentId = this.documentParams._id;
       this.documentName = this.documentParams.name;
+      this.options = this.documentParams.options;
     },
     props: ['documentParams'],
     data() {
@@ -257,14 +260,20 @@
         if (this.documentId) {
           await this.$store.dispatch('documents/editDocument', {
             id: this.documentId,
-            name: this.documentName
+            name: this.documentName,
+            totalCount: this.totalCount,
+            options: this.options
           });
+
           this.showDocumentDialog = false;
         } else {
           await this.$store.dispatch('documents/addDocument', {
             catalogId: this.$store.getters.catalogSelected,
-            name: this.documentName
+            name: this.documentName,
+            totalCount: this.totalCount,
+            options: this.options
           });
+
           this.showDocumentDialog = false;
           this.documentName = '';
         }
@@ -302,7 +311,6 @@
       },
       countFormula(item) {
         let expression = Parser.parse(item.formulaString.toLocaleLowerCase());
-        console.log(expression.toString());
         item.count = expression.evaluate(item.variables);
       }
     }

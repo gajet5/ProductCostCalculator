@@ -51,6 +51,8 @@ module.exports = {
 
         let name = req.body.name;
         let catalogId = req.body.catalogId;
+        let totalCount = req.body.totalCount;
+        let options = req.body.options;
 
         if (!name && !catalogId) {
             return res.json({
@@ -65,7 +67,9 @@ module.exports = {
             await documentsModel.create({
                 owner: userId,
                 catalogId,
-                name
+                name,
+                totalCount,
+                options
             });
 
             return res.json({
@@ -90,6 +94,8 @@ module.exports = {
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
         let documentId = req.body.id;
         let newName = req.body.name;
+        let totalCount = req.body.totalCount;
+        let options = req.body.options;
 
         if (!documentId && !newName) {
             return res.json({
@@ -105,7 +111,9 @@ module.exports = {
                 _id: documentId,
                 owner: userId
             }, {
-                name: newName
+                name: newName,
+                totalCount,
+                options
             });
             return res.json({
                 status: 200,
