@@ -64,22 +64,63 @@ export default new VueRouter({
     {
       path: '/catalogs',
       component: Catalogs,
-      beforeEnter: ifAuthenticated
+      beforeEnter: ifAuthenticated,
+      meta: {
+        breadcrumb: [
+          {
+            text: 'Каталоги',
+            disabled: true,
+            href: '/catalogs'
+          }
+        ]
+      }
     },
     {
       path: '/documents',
       component: Documents,
-      beforeEnter: ifAuthenticated
+      beforeEnter: ifAuthenticated,
+      meta: {
+        breadcrumb: [
+          {
+            text: 'Каталоги',
+            disabled: false,
+            href: '/catalogs'
+          },
+          {
+            text: 'Документы',
+            disabled: true,
+            href: '/documents'
+          }
+        ]
+      }
     },
     {
       path: '/user',
       component: User,
-      beforeEnter: ifAuthenticated
+      beforeEnter: ifAuthenticated,
+      meta: {
+        breadcrumb: [
+          {
+            text: 'Каталоги',
+            disabled: false,
+            href: '/catalogs'
+          }
+        ]
+      }
     },
     {
       path: '/formulas',
       component: Formulas,
-      beforeEnter: ifAuthenticated
+      beforeEnter: ifAuthenticated,
+      meta: {
+        breadcrumb: [
+          {
+            text: 'Каталоги',
+            disabled: false,
+            href: '/catalogs'
+          }
+        ]
+      }
     },
     {
       path: '*',

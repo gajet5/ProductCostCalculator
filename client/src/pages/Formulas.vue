@@ -91,21 +91,6 @@
   import moment from 'moment';
 
   export default {
-    async beforeMount() {
-      this.$store.commit('setBreadcrumbs', {
-        add: true,
-        item: {
-          text: 'Формулы',
-          disabled: false,
-          href: '/formulas'
-        }
-      });
-    },
-    beforeDestroy() {
-      this.$store.commit('setBreadcrumbs', {
-        remove: true
-      });
-    },
     components: {
       headerComponent,
       formulaComponent
@@ -130,7 +115,7 @@
     },
     computed: {
       breadcrumbs() {
-        return this.$store.getters.breadcrumbs;
+        return this.$route.meta.breadcrumb;
       },
       formulasList() {
         let list = JSON.parse(JSON.stringify(this.$store.getters['formulas/list']));

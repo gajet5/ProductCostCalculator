@@ -97,16 +97,6 @@
       this.$store.commit('setCatalogSelected');
       this.pagination.catalogSelected = this.$store.getters.catalogSelected;
     },
-    async beforeMount() {
-      this.$store.commit('setBreadcrumbs', {
-        add: true,
-        item: {
-          text: 'Документы',
-          disabled: false,
-          href: '/documents'
-        }
-      });
-    },
     components: {
       headerComponent,
       documentComponent
@@ -132,7 +122,7 @@
     },
     computed: {
       breadcrumbs() {
-        return this.$store.getters.breadcrumbs;
+        return this.$route.meta.breadcrumb;
       },
       documentsList() {
         let list = JSON.parse(JSON.stringify(this.$store.getters['documents/list']));

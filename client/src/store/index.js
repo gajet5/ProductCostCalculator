@@ -23,7 +23,6 @@ export const store = new Vuex.Store({
   state: {
     serverStatus: true,
     token: '',
-    breadcrumbs: [],
     catalogSelected: ''
   },
   getters: {
@@ -32,9 +31,6 @@ export const store = new Vuex.Store({
     },
     isAuthenticated(state) {
       return !!state.token;
-    },
-    breadcrumbs(state) {
-      return state.breadcrumbs;
     },
     catalogSelected(state) {
       return state.catalogSelected;
@@ -53,32 +49,6 @@ export const store = new Vuex.Store({
         delete axios.defaults.headers.common['x-access-token'];
       }
       state.token = token;
-    },
-    setBreadcrumbs(state, options) {
-      state.breadcrumbs = JSON.parse(localStorage.getItem('breadcrumbs'));
-
-      if (!state.breadcrumbs) {
-        state.breadcrumbs = [];
-      }
-
-      if (options.clear) {
-        state.breadcrumbs = [];
-      }
-
-      if (options.add) {
-        for (let item of state.breadcrumbs) {
-          if (item.text === options.item.text) {
-            return false;
-          }
-        }
-        state.breadcrumbs.push(options.item);
-      }
-
-      if (options.remove) {
-        state.breadcrumbs.pop();
-      }
-
-      localStorage.setItem('breadcrumbs', JSON.stringify(state.breadcrumbs));
     },
     setCatalogSelected(state, payload) {
       if (!state.catalogSelected && !payload) {

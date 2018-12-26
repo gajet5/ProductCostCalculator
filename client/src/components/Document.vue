@@ -168,8 +168,6 @@
         return false;
       }
 
-      console.log(this.documentParams);
-
       this.documentId = this.documentParams._id;
       this.documentName = this.documentParams.name;
       this.options = this.documentParams.options;

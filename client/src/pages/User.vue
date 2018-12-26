@@ -121,21 +121,6 @@
   moment.locale('ru');
 
   export default {
-    async beforeMount() {
-      this.$store.commit('setBreadcrumbs', {
-        add: true,
-        item: {
-          text: 'Личный кабинет',
-          disabled: false,
-          href: '/user'
-        }
-      });
-    },
-    beforeDestroy() {
-      this.$store.commit('setBreadcrumbs', {
-        remove: true
-      });
-    },
     components: {
       headerComponent
     },
@@ -163,7 +148,7 @@
         return this.$store.getters['user/email'];
       },
       breadcrumbs() {
-        return this.$store.getters.breadcrumbs;
+        return this.$route.meta.breadcrumb;
       },
       shopWarningEmailConfirm() {
         return !this.$store.getters['user/isActiveted'];

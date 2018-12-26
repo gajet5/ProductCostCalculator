@@ -131,7 +131,7 @@
     },
     computed: {
       breadcrumbs() {
-        return this.$store.getters.breadcrumbs;
+        return this.$route.meta.breadcrumb;
       },
       catalogsList() {
         let list = JSON.parse(JSON.stringify(this.$store.getters['catalogs/list']));
