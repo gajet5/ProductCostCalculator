@@ -227,7 +227,7 @@
         let count = 0;
 
         for (let item of this.options) {
-          count += item.count;
+          count += parseFloat(item.count);
         }
 
         return count.toFixed(2);
