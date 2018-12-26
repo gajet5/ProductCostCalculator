@@ -230,7 +230,7 @@
           count += item.count;
         }
 
-        return count;
+        return count.toFixed(2);
       }
     },
     methods: {
