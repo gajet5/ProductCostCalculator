@@ -309,7 +309,9 @@
 
         this.operands.splice(indexOperand, 1);
         this.usedLetters.splice(idexUsedLetter, 1);
-        this.formula.splice(indexInFormula, 1);
+        if (indexInFormula !== -1) {
+          this.formula.splice(indexInFormula, 1);
+        }
         this.checkFormula();
       },
       deleteLastChar() {
