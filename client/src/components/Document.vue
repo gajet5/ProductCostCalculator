@@ -127,9 +127,10 @@
                           <v-flex xs11>
                             <v-text-field
                               :label="key.name"
-                              v-model="item.variables[key.value.toLocaleLowerCase()]"
-                              @input="countFormula(item)"
                               color="indigo darken-1"
+                              v-model="item.variables[key.value.toLocaleLowerCase()]"
+                              @keypress="inputCheck"
+                              @keyup="countFormula(item)"
                             ></v-text-field>
                           </v-flex>
                         </v-layout>
@@ -284,7 +285,7 @@
 
         for (let item of this.$store.getters['formulas/formula'].formula) {
           if (/\w/.test(item.value)) {
-            variables[item.value.toLocaleLowerCase()] = 0;
+            variables[item.value.toLocaleLowerCase()] = '';
           }
           formulaString += item.value;
         }
@@ -310,6 +311,14 @@
       countFormula(item) {
         let expression = Parser.parse(item.formulaString.toLocaleLowerCase());
         item.count = expression.evaluate(item.variables);
+      },
+      inputCheck(e) {
+        if (e.target.value.split(/\./).length === 2 && e.key === '.') {
+          e.preventDefault();
+        }
+        if (!/[0-9]|\./.test(e.key)) {
+          e.preventDefault();
+        }
       }
     }
   };
