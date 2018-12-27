@@ -96,17 +96,6 @@
   import moment from 'moment';
 
   export default {
-    async beforeMount() {
-      this.$store.commit('setBreadcrumbs', {
-        add: true,
-        clear: true,
-        item: {
-          text: 'Каталог',
-          disabled: false,
-          href: '/catalogs'
-        }
-      });
-    },
     components: {
       headerComponent,
       catalogComponent
