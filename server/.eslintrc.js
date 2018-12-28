@@ -8,5 +8,8 @@ module.exports = {
             "named": "never",
             "asyncArrow": "always"
         }],
+        "no-trailing-spaces": ["error", {
+            "skipBlankLines": true
+        }]
     }
 };

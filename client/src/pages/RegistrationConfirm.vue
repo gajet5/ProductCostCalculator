@@ -105,16 +105,6 @@
     background-color: rgba(58, 58, 60, .6);
   }
 
-  /*.registrationConfirm-wrapper {*/
-  /*height: 100%;*/
-  /*position: relative;*/
-  /*color: white;*/
-  /*display: flex;*/
-  /*justify-content: center;*/
-  /*align-items: center;*/
-  /*flex-direction: column;*/
-  /*}*/
-
   .text-status {
     text-align: center;
     color: white;

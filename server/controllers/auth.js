@@ -31,7 +31,7 @@ module.exports = {
             });
 
             if (config.sendMail) {
-                mailer.welcome(user.email, user._id);
+                mailer.emailConfirm(user.email, user._id);
             }
 
             return res.json({
@@ -87,7 +87,7 @@ module.exports = {
             }
 
             try {
-                user = await user.update({
+                user = await user.updateOne({
                     isActiveted: true
                 });
 
@@ -115,7 +115,7 @@ module.exports = {
         }
     },
 
-    // GET /auth/emailExist?email=some@mail.ru
+    // GET /auth/emailExist?email={string}
     async emailExist(req, res) {
         let email = req.query.email;
 

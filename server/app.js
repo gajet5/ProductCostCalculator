@@ -15,19 +15,30 @@ app.use(logger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const protectingTikenMiddleware = require('./middleware/protectingToken');
+const protectingTokenMiddleware = require('./middleware/protectingToken');
+const checkUserPremiumStatusMiddleware = require('./middleware/checkUserPremiumStatus');
+const checkSiteIpMiddleware = require('./middleware/checkSiteIp');
 
 const authRouter = require('./routers/auth');
 const statusRouter = require('./routers/status');
 const userRouter = require('./routers/user');
 const tokenRouter = require('./routers/token');
+const catalogsRouter = require('./routers/catalogs');
+const documentsRouter = require('./routers/documents');
+const formulasRouter = require('./routers/formulas');
+const codeGeneratorRouter = require('./routers/codeGenerator');
 
+app.use('/code-generator', codeGeneratorRouter);
+app.use(checkSiteIpMiddleware);
 app.use('/', statusRouter);
 app.use('/auth', authRouter);
-app.use(protectingTikenMiddleware);
+app.use(protectingTokenMiddleware);
 app.use('/token', tokenRouter);
+app.use(checkUserPremiumStatusMiddleware);
 app.use('/user', userRouter);
-// app.use('/catalogs', catalogsRouter);
+app.use('/catalogs', catalogsRouter);
+app.use('/documents', documentsRouter);
+app.use('/formulas', formulasRouter);
 
 connection.once('open', () => {
     console.log('Connected to MongoDB');

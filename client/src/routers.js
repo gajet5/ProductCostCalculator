@@ -7,26 +7,31 @@ import RegistrationConfirm from './pages/RegistrationConfirm';
 import Welcome from './pages/Welcome';
 import PageNotFound from './pages/PageNotFound';
 import Catalogs from './pages/Catalogs';
+import Documents from './pages/Documents';
 import User from './pages/User';
+import Formulas from './pages/Formulas';
 import { store } from './store';
 
 Vue.use(VueRouter);
 
-function ifAuthenticated(to, from, next) {
+async function ifAuthenticated(to, from, next) {
+  await store.dispatch('getServerStatus');
+  await store.dispatch('getTokenStatus');
+  await store.dispatch('user/getUserInfo');
+
   let authStatus = !!store.getters.isAuthenticated || !!localStorage.getItem('token');
 
   switch (to.path) {
     case '/login':
+    case '/registration':
       if (authStatus) {
         next('/catalogs');
       }
       break;
     case '/catalogs':
-      if (!authStatus) {
-        next('/login');
-      }
-      break;
+    case '/documents':
     case '/user':
+    case '/formulas':
       if (!authStatus) {
         next('/login');
       }
@@ -48,21 +53,74 @@ export default new VueRouter({
     },
     {
       path: '/registration',
-      component: Registration
+      component: Registration,
+      beforeEnter: ifAuthenticated
     },
     {
       path: '/registration/confirm/:id',
-      component: RegistrationConfirm
+      component: RegistrationConfirm,
+      beforeEnter: ifAuthenticated
     },
     {
       path: '/catalogs',
       component: Catalogs,
-      beforeEnter: ifAuthenticated
+      beforeEnter: ifAuthenticated,
+      meta: {
+        breadcrumb: [
+          {
+            text: 'Каталоги',
+            disabled: true,
+            href: '/catalogs'
+          }
+        ]
+      }
+    },
+    {
+      path: '/documents',
+      component: Documents,
+      beforeEnter: ifAuthenticated,
+      meta: {
+        breadcrumb: [
+          {
+            text: 'Каталоги',
+            disabled: false,
+            href: '/catalogs'
+          },
+          {
+            text: 'Документы',
+            disabled: true,
+            href: '/documents'
+          }
+        ]
+      }
     },
     {
       path: '/user',
       component: User,
-      beforeEnter: ifAuthenticated
+      beforeEnter: ifAuthenticated,
+      meta: {
+        breadcrumb: [
+          {
+            text: 'Каталоги',
+            disabled: false,
+            href: '/catalogs'
+          }
+        ]
+      }
+    },
+    {
+      path: '/formulas',
+      component: Formulas,
+      beforeEnter: ifAuthenticated,
+      meta: {
+        breadcrumb: [
+          {
+            text: 'Каталоги',
+            disabled: false,
+            href: '/catalogs'
+          }
+        ]
+      }
     },
     {
       path: '*',

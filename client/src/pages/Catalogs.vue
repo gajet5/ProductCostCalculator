@@ -1,155 +1,189 @@
 <template>
   <div>
-    <header-component title="PCC - Каталоги">
-      <v-text-field v-if="searchLine"
-        v-model="search"
-        label="Search"
-        single-line
-      ></v-text-field>
-      <v-btn @click="searchLine = !searchLine" icon>
-        <v-icon>search</v-icon>
-      </v-btn>
-      <v-btn icon @click="openDialog">
-        <v-icon>add</v-icon>
-      </v-btn>
+    <header-component>
+      <v-toolbar-items>
+        <v-btn flat @click="goToFormulas">Формулы</v-btn>
+      </v-toolbar-items>
     </header-component>
     <v-container>
       <v-layout>
+        <v-flex>
+          <v-breadcrumbs :items="breadcrumbs" divider=">"></v-breadcrumbs>
+        </v-flex>
+      </v-layout>
+      <v-layout class="mt-3">
         <v-flex xs12>
-          <v-breadcrumbs :items="breadcrumbs" divider=">" mb-0></v-breadcrumbs>
+          <v-card>
+            <v-card-title primary-title>
+              <div>
+                <h3 class="headline mb-0">
+                  Каталоги
+                </h3>
+              </div>
+              <v-spacer></v-spacer>
+              <v-text-field
+                append-icon="search"
+                label="Поиск"
+                single-line
+                hide-details
+                v-model="pagination.search"
+              ></v-text-field>
+            </v-card-title>
+            <v-data-table
+              :headers="catalogsHeaders"
+              :items="catalogsList"
+              :pagination.sync="pagination"
+              :total-items="totalItems"
+              rows-per-page-text="Каталогов на страницу"
+              :rows-per-page-items="rowsPerPageItems"
+              :loading="loading"
+            >
+              <template slot="no-data">
+                <v-alert :value="true" color="info" icon="info" outline>
+                  Ни одного каталога не создано.
+                </v-alert>
+              </template>
+              <template slot="items" slot-scope="props">
+                <tr :key="props.item._id" @click.stop="goToCatalog(props.item._id)">
+                  <td>{{ props.item.name }}</td>
+                  <td>{{ props.item.createDate }}</td>
+                  <td class="justify-center layout">
+                    <v-btn color="success" @click.stop="goToCatalog(props.item._id)">
+                      <v-icon small>
+                        input
+                      </v-icon>
+                    </v-btn>
+                    <catalog-component
+                      :catalogParams = 'props.item'
+                      @updateCatalogsList="updateCatalogsList"
+                      @userNotConfirmMail="userNotConfirmMail"
+                    ></catalog-component>
+                    <v-btn color="error" @click.stop="removeCatalog(props.item._id)">
+                      <v-icon small>
+                        delete
+                      </v-icon>
+                    </v-btn>
+                  </td>
+                </tr>
+              </template>
+            </v-data-table>
+          </v-card>
         </v-flex>
       </v-layout>
     </v-container>
-    <v-container class="catalogs-table">
-      <v-dialog v-model="dialog" max-width="500px">
-        <v-card>
-          <v-card-title>
-            <span class="headline">{{ formTitle }}</span>
-          </v-card-title>
-
-          <v-card-text>
-            <v-text-field v-model="editedItem.name" label="Имя каталога"></v-text-field>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click.native="close">Отмена</v-btn>
-            <v-btn color="blue darken-1" flat @click.native="save">Сохранить</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-data-table
-        :headers="headers"
-        :items="catalogsList"
-        :search="search"
-        class="elevation-1"
+    <catalog-component
+      @updateCatalogsList="updateCatalogsList"
+      @userNotConfirmMail="userNotConfirmMail"
+      @userNotPremium="userNotPremium"
+    ></catalog-component>
+    <v-snackbar
+      v-model="userRules"
+      :color="userRulesStatus"
+      :timeout="6000"
+    >
+      {{ userRulesText }}
+      <v-btn
+        dark
+        flat
+        @click="userRules = false"
       >
-        <template slot="items" slot-scope="props">
-          <tr >
-            <td>{{ props.item.name }}</td>
-            <td class="text-xs-right">
-              <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-              <v-icon small @click="deleteItem(props.item)">delete</v-icon>
-            </td>
-          </tr>
-        </template>
-        <v-alert slot="no-results" :value="true" color="error" icon="warning">
-          Your search for "{{ search }}" found no results.
-        </v-alert>
-      </v-data-table>
+        Закрыть
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
 <script>
   import headerComponent from '../components/Header';
+  import catalogComponent from '../components/Catalog';
+  import moment from 'moment';
 
   export default {
-    async beforeMount() {
-      await this.$store.dispatch('getTokenStatus');
-      await this.$store.dispatch('getServerStatus');
-      this.$store.commit('addBreadcrumbs', {
-        text: 'Каталоги',
-        disabled: false,
-        href: '/catalogs'
-      });
-    },
     components: {
-      headerComponent
-    },
-    computed: {
-      formTitle() {
-        return this.editedIndex === -1 ? 'Создание каталога' : 'Редактирование каталога';
-      },
-      catalogsList() {
-        return this.$store.getters['catalogsList'];
-      }
-    },
-    watch: {
-      dialog(val) {
-        val || this.close();
-      },
-      breadcrumbs() {
-        return this.$store.getters.breadcrumbs;
-      }
-    },
-    methods: {
-      openDialog() {
-        this.dialog = true;
-      },
-      openCatalog(name) {
-        console.log(name);
-      },
-      editItem(item) {
-        this.editedIndex = this.catalogsList.indexOf(item);
-        this.editedItem = Object.assign({}, item);
-        this.dialog = true;
-      },
-
-      deleteItem(item) {
-        const index = this.catalogsList.indexOf(item);
-        confirm('Вы увренеы, что хотите удалить данный каталог?') && this.$store.dispatch('spliceList', { 'index': index });
-      },
-
-      close() {
-        this.dialog = false;
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem);
-          this.editedIndex = -1;
-        }, 300);
-      },
-
-      save() {
-        if (this.editedIndex > -1) {
-          this.$store.dispatch('assignList', { 'index': this.editedIndex, 'item': this.editedItem });
-        } else {
-          this.$store.dispatch('pushList', { 'item': this.editedItem });
-        }
-        this.close();
-      }
+      headerComponent,
+      catalogComponent
     },
     data() {
       return {
-        search: '',
-        searchLine: false,
-        dialog: false,
-        headers: [
-          { text: 'Имя каталога', align: 'left', sortable: true, value: 'name' },
-          { text: 'Действия с каталогом', value: 'name', sortable: false, align: 'right' }
+        catalogsHeaders: [
+          { text: 'Имя', value: 'name' },
+          { text: 'Дата создания', value: 'createDate' },
+          { text: 'Действия', value: 'name', sortable: false }
         ],
-        editedIndex: -1,
-        editedItem: {
-          name: ''
+        rowsPerPageItems: [10, 20, 30, 50],
+        pagination: {
+          sortBy: 'createDate',
+          descending: false,
+          search: ''
         },
-        defaultItem: {
-          name: ''
-        }
+        userRules: false,
+        userRulesStatus: '',
+        userRulesText: ''
       };
+    },
+    computed: {
+      breadcrumbs() {
+        return this.$route.meta.breadcrumb;
+      },
+      catalogsList() {
+        let list = JSON.parse(JSON.stringify(this.$store.getters['catalogs/list']));
+
+        for (let item of list) {
+          item.createDate = moment(item.createDate).format('DD.MM.YYYY HH:mm');
+        }
+
+        return list;
+      },
+      totalItems() {
+        return this.$store.getters['catalogs/totalItems'];
+      },
+      loading() {
+        return this.$store.getters['catalogs/loading'];
+      }
+    },
+    watch: {
+      pagination: {
+        async handler() {
+          if (this.$store.getters.serverStatus) {
+            await this.$store.dispatch('catalogs/getCatalogs', this.pagination);
+          }
+        },
+        deep: true
+      }
+    },
+    methods: {
+      async removeCatalog(id) {
+        if (!confirm('Вы уверены, что хотите удалить каталог?')) {
+          return false;
+        }
+        await this.$store.dispatch('catalogs/removeCatalog', id);
+        await this.$store.dispatch('catalogs/getCatalogs', this.pagination);
+        this.$store.commit('documents/setCatalogId', 'delete');
+      },
+      async updateCatalogsList() {
+        await this.$store.dispatch('catalogs/getCatalogs', this.pagination);
+      },
+      userNotConfirmMail() {
+        this.userRules = true;
+        this.userRulesStatus = 'warning';
+        this.userRulesText = 'Email не поддтверждён, функционал ограничен.';
+      },
+      userNotPremium() {
+        this.userRules = true;
+        this.userRulesStatus = 'info';
+        this.userRulesText = 'В демо режиме допускается создание одного каталога.';
+      },
+      goToCatalog(id) {
+        this.$store.commit('documents/setCatalogId', id);
+        this.$router.push('/documents');
+      },
+      goToFormulas() {
+        this.$router.push('/formulas');
+      }
     }
   };
 </script>
 
 <style scoped>
-  .catalogs-table {
-    margin-top: 100px;
-  }
+
 </style>

@@ -1,6 +1,5 @@
 <template>
   <div class="p-relative">
-    <lock-screen-component></lock-screen-component>
     <div class="bgImg">
       <div class="bgColor">
       </div>
@@ -81,15 +80,7 @@
 </template>
 
 <script>
-  import lockScreenComponent from '../components/LockScreen';
-
   export default {
-    async beforeMount() {
-      await this.$store.dispatch('getServerStatus');
-    },
-    components: {
-      lockScreenComponent
-    },
     data() {
       return {
         registredSuccess: false,
@@ -139,9 +130,10 @@
         }
       },
       async checkEmail() {
-        this.emailIsDublicate = await this.$store.dispatch('auth/checkEmail', {
+        let result = await this.$store.dispatch('auth/checkEmail', {
           email: this.email
-        }).status === 200;
+        });
+        this.emailIsDublicate = result.status === 200;
       },
       goToHomePage() {
         this.$router.push('/');

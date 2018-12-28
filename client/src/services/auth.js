@@ -3,7 +3,8 @@ import Api from './Api';
 export default {
   async registration(credentials) {
     try {
-      return await Api().post('auth/registration', credentials);
+      let { data } = await Api().post('auth/registration', credentials);
+      return data;
     } catch (e) {
       console.log(e);
       return false;
@@ -11,11 +12,8 @@ export default {
   },
   async emailExist(email) {
     try {
-      return await Api().get('auth/emailExist', {
-        params: {
-          email
-        }
-      });
+      let { data } = await Api().get(`auth/emailExist?email=${email}`);
+      return data;
     } catch (e) {
       console.log(e);
       return false;
@@ -23,9 +21,10 @@ export default {
   },
   async confirm(id) {
     try {
-      return await Api().patch('auth/confirm', {
+      let { data } = await Api().patch('auth/confirm', {
         id
       });
+      return data;
     } catch (e) {
       console.log(e);
       return false;
@@ -33,7 +32,8 @@ export default {
   },
   async login(credentials) {
     try {
-      return await Api().post('auth/login', credentials);
+      let { data } = await Api().post('auth/login', credentials);
+      return data;
     } catch (e) {
       console.log(e);
       return false;
