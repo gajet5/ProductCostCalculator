@@ -1,13 +1,11 @@
 <template>
   <div>
     <header-component>
+      <v-toolbar-items>
+        <v-btn flat @click="goToCatalogs">Каталоги</v-btn>
+      </v-toolbar-items>
     </header-component>
     <v-container>
-      <v-layout>
-        <v-flex>
-          <v-breadcrumbs :items="breadcrumbs" divider=">"></v-breadcrumbs>
-        </v-flex>
-      </v-layout>
       <v-layout class="mt-3">
         <v-flex xs12>
           <v-card>
@@ -114,9 +112,6 @@
       };
     },
     computed: {
-      breadcrumbs() {
-        return this.$route.meta.breadcrumb;
-      },
       formulasList() {
         let list = JSON.parse(JSON.stringify(this.$store.getters['formulas/list']));
 
@@ -163,6 +158,9 @@
         this.userRules = true;
         this.userRulesStatus = 'info';
         this.userRulesText = 'В демо режиме допускается создание одной формулы.';
+      },
+      goToCatalogs() {
+        this.$router.push('/catalogs');
       }
     }
   };

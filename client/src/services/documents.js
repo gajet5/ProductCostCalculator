@@ -3,8 +3,8 @@ import Api from './Api';
 export default {
   async getDocuments(payload) {
     try {
-      let { sortBy, descending, page, rowsPerPage, search, catalogSelected } = payload;
-      let queryString = `documents/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}&search=${search}&catalogId=${catalogSelected}`;
+      let { sortBy, descending, page, rowsPerPage, search, catalogId } = payload;
+      let queryString = `documents/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}&search=${search}&catalogId=${catalogId}`;
       let { data } = await Api().get(queryString);
       return data;
     } catch (e) {

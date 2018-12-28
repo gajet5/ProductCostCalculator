@@ -1,6 +1,9 @@
 <template>
   <div>
     <header-component>
+      <v-toolbar-items>
+        <v-btn flat @click="goToFormulas">Формулы</v-btn>
+      </v-toolbar-items>
     </header-component>
     <v-container>
       <v-layout>
@@ -92,14 +95,14 @@
   import moment from 'moment';
 
   export default {
-    beforeCreate() {
-      if (!this.$store.getters.catalogSelected) {
+    created() {
+      this.$store.commit('documents/setCatalogId');
+      if (!this.$store.getters['documents/catalogId']) {
         this.$router.push('/catalogs');
         return;
       }
       this.$store.dispatch('formulas/getFormulasName');
-      this.$store.commit('documents/setCatalogId');
-      this.pagination.catalogSelected = this.$store.getters['documents/catalogId'];
+      this.pagination.catalogId = this.$store.getters['documents/catalogId'];
     },
     components: {
       headerComponent,
@@ -129,7 +132,7 @@
         return this.$route.meta.breadcrumb;
       },
       documentsList() {
-        let list = JSON.parse(JSON.stringify(this.$store.getters['documents/list']));
+        let list = JSON.parse(JSON.stringify(this.$store.getters['documents/documents']));
 
         for (let item of list) {
           item.createDate = moment(item.createDate).format('DD.MM.YYYY HH:mm');
@@ -179,7 +182,11 @@
         this.userRulesText = 'В демо режиме допускается создание одного документа.';
       },
       async getDocuments() {
+        console.log(this.pagination);
         await this.$store.dispatch('documents/getDocuments', this.pagination);
+      },
+      goToFormulas() {
+        this.$router.push('/formulas');
       }
     }
   };

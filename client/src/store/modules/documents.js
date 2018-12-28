@@ -10,7 +10,7 @@ export default {
     catalogName: ''
   },
   getters: {
-    list(state) {
+    documents(state) {
       return state.documents;
     },
     totalItems(state) {
@@ -48,7 +48,7 @@ export default {
       }
       if (payload) {
         state.catalogId = payload;
-        localStorage.setItem('catalogId', state.catalogId);
+        localStorage.setItem('catalogId', payload);
       }
     },
     setCatalogName(state, payload) {

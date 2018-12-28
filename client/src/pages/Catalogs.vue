@@ -1,6 +1,9 @@
 <template>
   <div>
     <header-component>
+      <v-toolbar-items>
+        <v-btn flat @click="goToFormulas">Формулы</v-btn>
+      </v-toolbar-items>
     </header-component>
     <v-container>
       <v-layout>
@@ -173,6 +176,9 @@
       goToCatalog(id) {
         this.$store.commit('documents/setCatalogId', id);
         this.$router.push('/documents');
+      },
+      goToFormulas() {
+        this.$router.push('/formulas');
       }
     }
   };
