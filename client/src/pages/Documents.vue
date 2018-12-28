@@ -182,7 +182,6 @@
         this.userRulesText = 'В демо режиме допускается создание одного документа.';
       },
       async getDocuments() {
-        console.log(this.pagination);
         await this.$store.dispatch('documents/getDocuments', this.pagination);
       },
       goToFormulas() {
