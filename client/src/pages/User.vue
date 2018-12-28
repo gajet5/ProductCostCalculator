@@ -46,7 +46,7 @@
                     :append-icon="p1 ? 'visibility' : 'visibility_off'"
                     @click:append="() => (p1 = !p1)"
                     :type="p1 ? 'password' : 'text'"
-                    label="Введите пароль"
+                    label="Введите новый пароль"
                     required
                     :rules="passwordRules"
                   >
@@ -56,7 +56,7 @@
                     :append-icon="p2 ? 'visibility' : 'visibility_off'"
                     @click:append="() => (p2 = !p2)"
                     :type="p2 ? 'password' : 'text'"
-                    label="Повторите пароль"
+                    label="Повторите новый пароль"
                     required
                     :rules="passwordRules"
                   >

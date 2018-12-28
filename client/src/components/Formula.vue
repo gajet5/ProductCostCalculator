@@ -17,7 +17,10 @@
     <v-btn
       slot="activator"
       color="indigo darken-1"
-      class="v-btn v-btn--bottom v-btn--floating v-btn--fixed v-btn--right"
+      fab
+      fixed
+      bottom
+      right
       v-else
       dark
       @click.stop="userRules"
@@ -29,10 +32,10 @@
         <v-btn icon dark @click="showFormulaDialog = false">
           <v-icon>close</v-icon>
         </v-btn>
-        <v-spacer></v-spacer>
-        <v-toolbar-items>
-          <v-btn dark flat @click="save" :disabled="!nameValid">Сохранить</v-btn>
-        </v-toolbar-items>
+        <!--<v-spacer></v-spacer>-->
+        <!--<v-toolbar-items>-->
+          <!--<v-btn dark flat @click="save" :disabled="!nameValid">Сохранить</v-btn>-->
+        <!--</v-toolbar-items>-->
       </v-toolbar>
       <v-container>
         <v-layout>
@@ -127,6 +130,17 @@
         </v-layout>
       </v-container>
     </v-card>
+    <v-btn
+      color="success"
+      fab
+      @click="save"
+      :disabled="!nameValid"
+      fixed
+      bottom
+      right
+    >
+      <v-icon>save</v-icon>
+    </v-btn>
     <v-snackbar
       v-model="snackbarEnabled"
       :color="snackbarColor"

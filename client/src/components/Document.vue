@@ -17,7 +17,10 @@
     <v-btn
       slot="activator"
       color="indigo darken-1"
-      class="v-btn v-btn--bottom v-btn--floating v-btn--fixed v-btn--right"
+      fab
+      fixed
+      bottom
+      right
       v-else
       dark
       @click.stop="userRules"
@@ -30,10 +33,10 @@
           <v-icon>close</v-icon>
         </v-btn>
         <v-toolbar-title>Всего: {{ totalCount }}</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-toolbar-items>
-          <v-btn dark flat @click="save" :disabled="!nameValid">Сохранить</v-btn>
-        </v-toolbar-items>
+        <!--<v-spacer></v-spacer>-->
+        <!--<v-toolbar-items>-->
+          <!--<v-btn dark flat @click="save" :disabled="!nameValid">Сохранить</v-btn>-->
+        <!--</v-toolbar-items>-->
       </v-toolbar>
       <v-container grid-list-md>
         <v-layout>
@@ -41,7 +44,7 @@
             <h2 class="mb-2">Название</h2>
             <v-form v-model="nameValid">
               <v-text-field
-                label="Название каталога"
+                label="Название документа"
                 solo
                 v-model="documentName"
                 required
@@ -157,6 +160,17 @@
         </v-layout>
       </v-container>
     </v-card>
+    <v-btn
+      color="success"
+      fab
+      @click="save"
+      :disabled="!nameValid"
+      fixed
+      bottom
+      right
+    >
+      <v-icon>save</v-icon>
+    </v-btn>
   </v-dialog>
 </template>
 
@@ -267,7 +281,7 @@
           this.showDocumentDialog = false;
         } else {
           await this.$store.dispatch('documents/addDocument', {
-            catalogId: this.$store.getters.catalogSelected,
+            catalogId: this.$store.getters['documents/catalogId'],
             name: this.documentName,
             totalCount: this.totalCount,
             options: this.options
