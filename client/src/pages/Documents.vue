@@ -14,7 +14,7 @@
             <v-card-title primary-title>
               <div>
                 <h3 class="headline mb-0">
-                  Документы
+                  {{ catalogName }}
                 </h3>
               </div>
               <v-spacer></v-spacer>
@@ -37,7 +37,7 @@
             >
               <template slot="no-data">
                 <v-alert :value="true" color="info" icon="info" outline>
-                  Данные для отображения недоступны.
+                  Ни одного документа не создано.
                 </v-alert>
               </template>
               <template slot="items" slot-scope="props">
@@ -92,10 +92,14 @@
   import moment from 'moment';
 
   export default {
-    created() {
+    beforeCreate() {
+      if (!this.$store.getters.catalogSelected) {
+        this.$router.push('/catalogs');
+        return;
+      }
       this.$store.dispatch('formulas/getFormulasName');
-      this.$store.commit('setCatalogSelected');
-      this.pagination.catalogSelected = this.$store.getters.catalogSelected;
+      this.$store.commit('documents/setCatalogId');
+      this.pagination.catalogSelected = this.$store.getters['documents/catalogId'];
     },
     components: {
       headerComponent,
@@ -138,13 +142,16 @@
       },
       loading() {
         return this.$store.getters['documents/loading'];
+      },
+      catalogName() {
+        return this.$store.getters['documents/catalogName'];
       }
     },
     watch: {
       pagination: {
         async handler() {
           if (this.$store.getters.serverStatus) {
-            await this.$store.dispatch('documents/getDocuments', this.pagination);
+            await this.getDocuments();
           }
         },
         deep: true
@@ -156,10 +163,10 @@
           return false;
         }
         await this.$store.dispatch('documents/removeDocument', id);
-        await this.$store.dispatch('documents/getDocuments', this.pagination);
+        await this.getDocuments();
       },
       async updateDocumentsList() {
-        await this.$store.dispatch('documents/getDocuments', this.pagination);
+        await this.getDocuments();
       },
       userNotConfirmMail() {
         this.userRules = true;
@@ -170,6 +177,9 @@
         this.userRules = true;
         this.userRulesStatus = 'info';
         this.userRulesText = 'В демо режиме допускается создание одного документа.';
+      },
+      async getDocuments() {
+        await this.$store.dispatch('documents/getDocuments', this.pagination);
       }
     }
   };

@@ -1,3 +1,4 @@
+const catalogsModel = require('../models/catalogs');
 const documentsModel = require('../models/documents');
 
 module.exports = {
@@ -13,6 +14,8 @@ module.exports = {
         let catalogId = req.query.catalogId;
 
         try {
+            let { name } = await catalogsModel.findById(catalogId).select('name');
+
             let documents = await documentsModel.find({
                 owner: userId,
                 catalogId,
@@ -29,6 +32,7 @@ module.exports = {
                 status: 200,
                 data: {
                     message: 'Список документов пользователя',
+                    catalogName: name,
                     documents,
                     totalItems: await documentsModel.find({ owner: userId, catalogId }).countDocuments()
                 }

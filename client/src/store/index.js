@@ -22,8 +22,7 @@ export const store = new Vuex.Store({
   },
   state: {
     serverStatus: true,
-    token: '',
-    catalogSelected: ''
+    token: ''
   },
   getters: {
     serverStatus(state) {
@@ -31,9 +30,6 @@ export const store = new Vuex.Store({
     },
     isAuthenticated(state) {
       return !!state.token;
-    },
-    catalogSelected(state) {
-      return state.catalogSelected;
     }
   },
   mutations: {
@@ -49,16 +45,6 @@ export const store = new Vuex.Store({
         delete axios.defaults.headers.common['x-access-token'];
       }
       state.token = token;
-    },
-    setCatalogSelected(state, payload) {
-      if (!state.catalogSelected && !payload) {
-        state.catalogSelected = localStorage.getItem('catalogSelected');
-        return false;
-      }
-      if (payload) {
-        state.catalogSelected = payload;
-        localStorage.setItem('catalogSelected', state.catalogSelected);
-      }
     }
   },
   actions: {

@@ -37,7 +37,7 @@
             >
               <template slot="no-data">
                 <v-alert :value="true" color="info" icon="info" outline>
-                  Данные для отображения недоступны.
+                  Ни одной формулы не создано.
                 </v-alert>
               </template>
               <template slot="items" slot-scope="props">

@@ -37,7 +37,7 @@
             >
               <template slot="no-data">
                 <v-alert :value="true" color="info" icon="info" outline>
-                  Данные для отображения недоступны.
+                  Ни одного каталога не создано.
                 </v-alert>
               </template>
               <template slot="items" slot-scope="props">
@@ -155,6 +155,7 @@
         }
         await this.$store.dispatch('catalogs/removeCatalog', id);
         await this.$store.dispatch('catalogs/getCatalogs', this.pagination);
+        this.$store.commit('documents/setCatalogId', 'delete');
       },
       async updateCatalogsList() {
         await this.$store.dispatch('catalogs/getCatalogs', this.pagination);
@@ -170,7 +171,7 @@
         this.userRulesText = 'В демо режиме допускается создание одного каталога.';
       },
       goToCatalog(id) {
-        this.$store.commit('setCatalogSelected', id);
+        this.$store.commit('documents/setCatalogId', id);
         this.$router.push('/documents');
       }
     }

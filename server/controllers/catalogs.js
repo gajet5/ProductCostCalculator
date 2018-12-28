@@ -1,3 +1,4 @@
+const documentsModel = require('../models/documents');
 const catalogsModel = require('../models/catalogs');
 
 module.exports = {
@@ -135,6 +136,11 @@ module.exports = {
         }
 
         try {
+            await documentsModel.findOneAndRemove({
+                catalogId: catalogId,
+                owner: userId
+            });
+
             await catalogsModel.findOneAndRemove({
                 _id: catalogId,
                 owner: userId
