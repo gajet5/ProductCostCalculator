@@ -5,7 +5,7 @@
     scroll-off-screen
     scroll-target="#scrolling-techniques"
   >
-    <v-toolbar-title @click="goToHome" class="header-title">PCC <span class="hidden-md-and-down">- Калькуляция себестоимости продукции</span></v-toolbar-title>
+    <v-toolbar-title @click="goToCatalog" class="header-title">PCC <span class="hidden-md-and-down">- Калькуляция себестоимости продукции</span></v-toolbar-title>
     <v-spacer></v-spacer>
     <slot></slot>
     <v-menu transition="slide-y-transition" :nudge-bottom="50">
@@ -32,8 +32,8 @@
       goToSettings() {
         this.$router.push('/user');
       },
-      goToHome() {
-        this.$router.push('/');
+      goToCatalog() {
+        this.$router.push('/catalogs');
       },
       logOut() {
         this.$store.commit('setToken', '');

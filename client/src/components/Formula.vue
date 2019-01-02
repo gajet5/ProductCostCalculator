@@ -32,10 +32,6 @@
         <v-btn icon dark @click="showFormulaDialog = false">
           <v-icon>close</v-icon>
         </v-btn>
-        <!--<v-spacer></v-spacer>-->
-        <!--<v-toolbar-items>-->
-          <!--<v-btn dark flat @click="save" :disabled="!nameValid">Сохранить</v-btn>-->
-        <!--</v-toolbar-items>-->
       </v-toolbar>
       <v-container>
         <v-layout>

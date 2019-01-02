@@ -32,10 +32,6 @@
         <v-btn icon dark @click="showCatalogDialog = false">
           <v-icon>close</v-icon>
         </v-btn>
-        <!--<v-spacer></v-spacer>-->
-        <!--<v-toolbar-items>-->
-          <!--&lt;!&ndash;<v-btn dark flat @click="save" :disabled="!nameValid">Сохранить</v-btn>&ndash;&gt;-->
-        <!--</v-toolbar-items>-->
       </v-toolbar>
       <v-container>
         <v-layout>

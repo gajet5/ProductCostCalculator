@@ -33,10 +33,6 @@
           <v-icon>close</v-icon>
         </v-btn>
         <v-toolbar-title>Всего: {{ totalCount }}</v-toolbar-title>
-        <!--<v-spacer></v-spacer>-->
-        <!--<v-toolbar-items>-->
-          <!--<v-btn dark flat @click="save" :disabled="!nameValid">Сохранить</v-btn>-->
-        <!--</v-toolbar-items>-->
       </v-toolbar>
       <v-container grid-list-md>
         <v-layout>
@@ -64,6 +60,7 @@
                   v-model="positionSelected"
                   :items="positionsList"
                   color="indigo darken-1"
+                  placeholder="Выберите позицию или введите свою."
                 >
                 </v-combobox>
               </v-card-text>
@@ -81,6 +78,7 @@
                   item-text="name"
                   return-object
                   color="indigo darken-1"
+                  placeholder="Выберите формулу."
                 >
                 </v-autocomplete>
               </v-card-text>
@@ -327,12 +325,16 @@
         item.count = expression.evaluate(item.variables);
       },
       inputCheck(e) {
-        if (e.target.value.split(/\./).length === 2 && e.key === '.') {
+        let inputValue = e.target.value;
+
+        if (inputValue.split(/\./).length === 2 && (e.key === '.' || e.key === ',')) {
           e.preventDefault();
         }
-        if (!/[0-9]|\./.test(e.key)) {
+        if (!/[0-9]|\.|,/.test(e.key)) {
           e.preventDefault();
         }
+
+        e.target.value = inputValue.replace(/,/gi, '.', 'gi');
       }
     }
   };
