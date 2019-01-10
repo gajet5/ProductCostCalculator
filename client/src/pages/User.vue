@@ -1,9 +1,28 @@
 <template>
   <div>
     <header-component>
-      <v-toolbar-items>
-        <v-btn flat @click="goToCatalogs">Каталоги</v-btn>
-      </v-toolbar-items>
+      <v-tooltip bottom>
+        <v-btn
+          slot="activator"
+          color="primary"
+          dark
+          @click="goToCatalogs"
+        >
+          Каталоги
+        </v-btn>
+        <span>Перейти к каталогам</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <v-btn
+          slot="activator"
+          color="primary"
+          dark
+          @click="goToFormulas"
+        >
+          Формулы
+        </v-btn>
+        <span>Перейти к созданию формул</span>
+      </v-tooltip>
     </header-component>
     <v-container>
       <v-layout>
@@ -208,6 +227,9 @@
       },
       goToCatalogs() {
         this.$router.push('/catalogs');
+      },
+      goToFormulas() {
+        this.$router.push('/formulas');
       }
     }
   };
