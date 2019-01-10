@@ -174,7 +174,7 @@ module.exports = {
             if (codeActivation && !codeActivation.isActiveted) {
                 await user.updateOne({
                     premium: true,
-                    premiumDateEnd: Date.now() + 1000 * 60 * 60 * 24 * 30
+                    premiumDateEnd: Date.now() + 1000 * 60 * 60 * 24 * 30 * 12
                 });
                 await codeActivation.updateOne({
                     owner: user._id,

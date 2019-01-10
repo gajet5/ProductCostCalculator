@@ -7,7 +7,7 @@ export default {
       return data;
     } catch (e) {
       console.log(e);
-      return false;
+      throw new Error('Сервер не доступен');
     }
   },
   async getTokenStatus() {

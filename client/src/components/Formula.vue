@@ -67,10 +67,10 @@
             <v-btn color="indigo darken-1" class="white--text" :disabled="signCanAdded" @click="addOperator('/')">
               /
             </v-btn>
-            <v-btn color="indigo darken-1" class="white--text" @click="addOperator('(')">
+            <v-btn color="indigo darken-1" class="white--text" :disabled="!leftBracketCanAdd" @click="addOperator('(')">
               (
             </v-btn>
-            <v-btn color="indigo darken-1" class="white--text" :disabled="!bracketCheck" @click="addOperator(')')">
+            <v-btn color="indigo darken-1" class="white--text" :disabled="!rightBracketCanAdd" @click="addOperator(')')">
               )
             </v-btn>
             <v-btn color="warning" @click="deleteLastChar" :disabled="!backspaceDisabled">
@@ -241,6 +241,16 @@
         }
         return true;
       },
+      leftBracketCanAdd() {
+        if (this.formula.length === 0) {
+          return true;
+        }
+
+        return /[+\-*/]/.test(this.formula[this.formula.length - 1].value);
+      },
+      rightBracketCanAdd() {
+        return this.bracketCheck;
+      },
       letterCanAdded() {
         let length = this.formula.length;
         if (length) {
@@ -276,6 +286,7 @@
           item.inFormula = !item.inFormula;
           let index = this.formula.findIndex(element => element.value === item.letter);
           this.formula.splice(index, 1);
+          this.checkFormula();
         } else {
           item.inFormula = !item.inFormula;
           this.formula.push({
@@ -285,7 +296,6 @@
           });
           this.indexInFormula += 1;
         }
-        this.checkFormula();
       },
       addOperator(sign) {
         this.formula.push({
@@ -331,7 +341,6 @@
           this.operands[index].inFormula = false;
         }
         this.formula.pop();
-        this.checkFormula();
       },
       async save() {
         if (this.bracketCheck) {
@@ -373,10 +382,12 @@
           return false;
         }
 
+        // Удалять один знак в формуле
         if (/[+\-*/]/.test(this.formula[0].value)) {
           this.formula.splice(0, 1);
         }
 
+        // Удаление знака с права при удалении переменной
         for (let i = 0; i < this.formula.length; i += 1) {
           if (this.formula.length - 1 === i) {
             break;
@@ -384,7 +395,12 @@
           let currentValue = this.formula[i].value;
           let nextValue = this.formula[i + 1].value;
 
-          if (/[+\-*/]/.test(currentValue) && /[+\-*/]/.test(nextValue)) {
+          if (/[+\-*/]/.test(currentValue) && /\w/.test(nextValue)) {
+            this.formula.splice(i, 1);
+          }
+
+          if (/\(/.test(currentValue) && /\)/.test(nextValue)) {
+            this.formula.splice(i, 1);
             this.formula.splice(i, 1);
           }
         }

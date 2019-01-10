@@ -37,7 +37,7 @@ module.exports = {
             return res.json({
                 status: 200,
                 data: {
-                    message: 'Авторизация прошла успешно',
+                    message: 'Регистрация прошла успешно',
                     token: jwtSingUser({ userId: user.id })
                 }
             });
