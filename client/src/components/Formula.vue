@@ -347,6 +347,7 @@
           this.snackbarEnabled = true;
           this.snackbarColor = 'warning';
           this.snackbarText = 'Ошибка в логике скобок.';
+
           return false;
         }
 
@@ -363,18 +364,22 @@
             name: this.formulaName,
             formula: this.formula
           });
+
           this.showFormulaDialog = false;
         } else {
           await this.$store.dispatch('formulas/addFormula', {
             name: this.formulaName,
             formula: this.formula
           });
+
           this.showFormulaDialog = false;
           this.formulaName = '';
           this.operands = [];
           this.usedLetters = [];
           this.formula = [];
+          this.indexInFormula = 1;
         }
+
         this.$emit('updateFormulasList');
       },
       checkFormula() {

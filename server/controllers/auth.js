@@ -1,7 +1,9 @@
 const userModel = require('../models/user');
+const formulasModel = require('../models/formulas');
 const mailer = require('../services/mailer');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
+const defaultFormulas = require('../config/defaultFormulas');
 
 function jwtSingUser(data) {
     return jwt.sign(data, config.auth.jwtSecret, {
@@ -29,6 +31,14 @@ module.exports = {
                 email,
                 password
             });
+
+            for (let item of defaultFormulas) {
+                await formulasModel.create({
+                    owner: user._id,
+                    name: item.name,
+                    formula: item.formula
+                });
+            }
 
             if (config.sendMail) {
                 mailer.emailConfirm(user.email, user._id);
