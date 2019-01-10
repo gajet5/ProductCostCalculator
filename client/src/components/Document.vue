@@ -316,13 +316,18 @@
         this.formulaSelected = '';
       },
       deleteOption(option) {
-        let indexOption = this.options.indexOf(option);
-        console.log(indexOption);
-        this.options.splice(indexOption, 1);
+        if (confirm('Вы уверены, что хотите удалить эту опцию?')) {
+          let indexOption = this.options.indexOf(option);
+          console.log(indexOption);
+          this.options.splice(indexOption, 1);
+        }
       },
       countFormula(item) {
         let expression = Parser.parse(item.formulaString.toLocaleLowerCase());
-        item.count = expression.evaluate(item.variables);
+        item.count = expression.evaluate(item.variables).toFixed(2);
+        if (!isFinite(item.count)) {
+          item.count = 0;
+        }
       },
       inputCheck(e) {
         let inputValue = e.target.value;

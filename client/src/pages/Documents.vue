@@ -1,9 +1,17 @@
 <template>
   <div>
     <header-component>
-      <v-toolbar-items>
-        <v-btn flat @click="goToFormulas">Формулы</v-btn>
-      </v-toolbar-items>
+      <v-tooltip bottom>
+        <v-btn
+          slot="activator"
+          color="primary"
+          dark
+          @click="goToFormulas"
+        >
+          Формулы
+        </v-btn>
+        <span>Перейти к созданию формул</span>
+      </v-tooltip>
     </header-component>
     <v-container>
       <v-layout>
