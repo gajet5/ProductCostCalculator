@@ -61,6 +61,7 @@
                   :items="positionsList"
                   color="indigo darken-1"
                   placeholder="Выберите позицию или введите свою."
+                  item-text="name"
                 >
                 </v-combobox>
               </v-card-text>
@@ -266,35 +267,7 @@
         return this.$store.getters['formulas/namesList'];
       },
       positionsList() {
-        let positionsList = [
-          'Материал',
-          'Фурнитура',
-          'Лейбл',
-          'Упаковка',
-          'Лекало-Конструктор',
-          'Технолог',
-          'Закройщик',
-          'Портной',
-          'Декоратор',
-          'Вышивка',
-          'Материалы для вышивки',
-          'Аренда',
-          'Содержание оборудования',
-          'Интернет',
-          'Мобильная связь',
-          'Налоги',
-          'Директор',
-          'Помошник',
-          'Бухгалтер',
-          'Создание новой коллекции',
-          'Фотосет новой коллекции',
-          'Банковский счёт',
-          'Реклама',
-          'Маркетолог',
-          'Другое',
-          'Производство'
-        ];
-        return positionsList.sort();
+        return this.$store.getters['documents/positions'];
       },
       totalCount() {
         let count = 0;
@@ -364,7 +337,7 @@
         }
 
         this.options.unshift({
-          position: this.positionSelected,
+          position: this.positionSelected.name,
           formulaName: this.formulaSelected.name,
           count: 0,
           formula: this.$store.getters['formulas/formula'].formula,
@@ -372,6 +345,11 @@
           variables,
           comment: ''
         });
+
+        // todo: Если позиции нет, добавить в базу и обновить состояние
+        // if (!this.$store.getters['documents/positions'].find(item => item === this.positionSelected)) {
+        //   this.$store.commit('documents/setPositions', this.positionSelected);
+        // }
 
         this.positionSelected = '';
         this.formulaSelected = '';

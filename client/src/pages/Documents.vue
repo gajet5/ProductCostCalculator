@@ -145,7 +145,6 @@
         this.$router.push('/catalogs');
         return;
       }
-      this.$store.dispatch('formulas/getFormulasName');
       this.pagination.catalogId = this.$store.getters['documents/catalogId'];
     },
     components: {
@@ -201,7 +200,7 @@
       pagination: {
         async handler() {
           if (this.$store.getters.serverStatus) {
-            await this.getDocuments();
+            await this.updateDocumentsList();
           }
         },
         deep: true
@@ -224,6 +223,8 @@
         await this.getDocuments();
       },
       async updateDocumentsList() {
+        await this.$store.dispatch('documents/getPositions');
+        await this.$store.dispatch('formulas/getFormulasName');
         await this.getDocuments();
       },
       userNotConfirmMail() {

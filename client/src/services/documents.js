@@ -12,6 +12,15 @@ export default {
       return false;
     }
   },
+  async getPositions() {
+    try {
+      let { data } = await Api().get('documents/positions');
+      return data;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  },
   async addDocument(payload) {
     try {
       let { data } = await Api().post('documents/add', payload);

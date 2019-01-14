@@ -1,5 +1,6 @@
 const catalogsModel = require('../models/catalogs');
 const documentsModel = require('../models/documents');
+const positionsModel = require('../models/positions');
 
 module.exports = {
     // GET /documents/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}&search=${search}&catalogId=${catalogSelected}
@@ -35,6 +36,32 @@ module.exports = {
                     catalogName: name,
                     documents,
                     totalItems: await documentsModel.find({ owner: userId, catalogId }).countDocuments()
+                }
+            });
+        } catch (e) {
+            console.log(e);
+            return res.json({
+                status: 500,
+                data: {
+                    message: e.message
+                }
+            });
+        }
+    },
+
+    // GET /documents/positions
+    async getPositions(req, res) {
+        const token = req.headers['x-access-token'];
+        let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
+
+        try {
+            return res.json({
+                status: 200,
+                data: {
+                    message: 'Список позиций пользователя',
+                    positions: await positionsModel.find({
+                        owner: userId
+                    }).select('name')
                 }
             });
         } catch (e) {
