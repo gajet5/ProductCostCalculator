@@ -324,7 +324,14 @@
       },
       countFormula(item) {
         let expression = Parser.parse(item.formulaString.toLocaleLowerCase());
-        item.count = expression.evaluate(item.variables).toFixed(2);
+
+        if (Object.keys(item.variables).length === 1) {
+          item.count = expression.evaluate(item.variables);
+          item.count = parseFloat(item.count).toFixed(2);
+        } else {
+          item.count = expression.evaluate(item.variables).toFixed(2);
+        }
+
         if (!isFinite(item.count)) {
           item.count = 0;
         }
