@@ -17,7 +17,6 @@ app.use(express.urlencoded({ extended: false }));
 
 const protectingTokenMiddleware = require('./middleware/protectingToken');
 const checkUserPremiumStatusMiddleware = require('./middleware/checkUserPremiumStatus');
-const checkSiteIpMiddleware = require('./middleware/checkSiteIp');
 
 const authRouter = require('./routers/auth');
 const statusRouter = require('./routers/status');
@@ -29,7 +28,6 @@ const formulasRouter = require('./routers/formulas');
 const codeGeneratorRouter = require('./routers/codeGenerator');
 
 app.use('/code-generator', codeGeneratorRouter);
-app.use(checkSiteIpMiddleware);
 app.use('/', statusRouter);
 app.use('/auth', authRouter);
 app.use(protectingTokenMiddleware);
