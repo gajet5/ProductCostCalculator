@@ -61,7 +61,9 @@ module.exports = {
                     message: 'Список позиций пользователя',
                     positions: await positionsModel.find({
                         owner: userId
-                    }).select('name')
+                    }).select('name').sort({
+                        name: 1
+                    })
                 }
             });
         } catch (e) {
@@ -107,6 +109,43 @@ module.exports = {
                 status: 200,
                 data: {
                     message: 'Каталог успешно создан'
+                }
+            });
+        } catch (e) {
+            return res.json({
+                status: 500,
+                data: {
+                    message: e.message
+                }
+            });
+        }
+    },
+
+    // POST /documents/add-positions
+    async addPositions(req, res) {
+        const token = req.headers['x-access-token'];
+        let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
+        let name = req.body.name;
+
+        if (!name) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Данные о названии не переданны'
+                }
+            });
+        }
+
+        try {
+            await positionsModel.create({
+                owner: userId,
+                name
+            });
+
+            return res.json({
+                status: 200,
+                data: {
+                    message: 'Позиция успешно добавлена'
                 }
             });
         } catch (e) {
@@ -187,6 +226,43 @@ module.exports = {
                 status: 200,
                 data: {
                     message: 'Каталог успешно удалён'
+                }
+            });
+        } catch (e) {
+            return res.json({
+                status: 500,
+                data: {
+                    message: e.message
+                }
+            });
+        }
+    },
+
+    // DELETE /documents/delete-positions
+    async deletePositions(req, res) {
+        const token = req.headers['x-access-token'];
+        let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
+        let positionId = req.body.id;
+
+        if (!positionId) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Данные о id позиции не переданны'
+                }
+            });
+        }
+
+        try {
+            await positionsModel.findOneAndRemove({
+                _id: positionId,
+                owner: userId
+            });
+
+            return res.json({
+                status: 200,
+                data: {
+                    message: 'Позиции успешно удалёна'
                 }
             });
         } catch (e) {

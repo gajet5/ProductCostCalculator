@@ -213,14 +213,13 @@
         this.deleteDialog = true;
       },
       async removeDocument(id, name) {
-        this.deleteDialog = false;
+        await this.$store.dispatch('documents/removeDocument', id);
+        await this.getDocuments();
 
+        this.deleteDialog = false;
         this.userRules = true;
         this.userRulesStatus = 'info';
         this.userRulesText = `Документ ${name} удалён.`;
-
-        await this.$store.dispatch('documents/removeDocument', id);
-        await this.getDocuments();
       },
       async updateDocumentsList() {
         await this.$store.dispatch('documents/getPositions');

@@ -1,9 +1,11 @@
 const userModel = require('../models/user');
 const formulasModel = require('../models/formulas');
+const positionsModel = require('../models/positions');
 const mailer = require('../services/mailer');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const defaultFormulas = require('../config/defaultFormulas');
+const defaultPositions = require('../config/defaultPositions');
 
 function jwtSingUser(data) {
     return jwt.sign(data, config.auth.jwtSecret, {
@@ -37,6 +39,13 @@ module.exports = {
                     owner: user._id,
                     name: item.name,
                     formula: item.formula
+                });
+            }
+
+            for (let item of defaultPositions) {
+                await positionsModel.create({
+                    owner: user._id,
+                    name: item
                 });
             }
 

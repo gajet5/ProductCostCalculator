@@ -30,6 +30,15 @@ export default {
       return false;
     }
   },
+  async addPositions(payload) {
+    try {
+      let { data } = await Api().post('documents/add-positions', { name: payload });
+      return data;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  },
   async editDocument(payload) {
     try {
       let { data } = await Api().patch('documents/edit', payload);
@@ -42,6 +51,19 @@ export default {
   async removeDocument(id) {
     try {
       let { data } = await Api().delete('documents/remove', {
+        data: {
+          id: `${id}`
+        }
+      });
+      return data;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  },
+  async deletePositions(id) {
+    try {
+      let { data } = await Api().delete('documents/delete-positions', {
         data: {
           id: `${id}`
         }

@@ -62,7 +62,26 @@
                   color="indigo darken-1"
                   placeholder="Выберите позицию или введите свою."
                   item-text="name"
+                  item-value="_id"
+                  z-index="203"
                 >
+                  <template
+                    slot="item"
+                    slot-scope="{ item }"
+                  >
+                    <v-list-tile-content>
+                      {{ item.name }}
+                    </v-list-tile-content>
+                    <v-spacer></v-spacer>
+                    <v-list-tile-action @click.stop>
+                      <v-btn
+                        icon
+                        @click.stop.prevent="deletePositionsQuestion(item._id, item.name)"
+                      >
+                        <v-icon color="red">delete</v-icon>
+                      </v-btn>
+                    </v-list-tile-action>
+                  </template>
                 </v-combobox>
               </v-card-text>
             </v-card>
@@ -224,6 +243,42 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="deletePositionsDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline yellow"
+        >
+          <v-icon large class="mr-1" color="red">
+            warning
+          </v-icon>
+          Удалить параметр позиции?
+        </v-card-title>
+        <v-card-text>
+          Вы собираетесь удалить параметр позиции: <b>{{ deleteDialogName }}</b>.<br>
+          Удаляем?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="deletePositions(deleteDialogId, deleteDialogName)"
+          >
+            ОК
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="deletePositionsDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
@@ -258,6 +313,7 @@
         snackbarDocumentStatus: '',
         snackbarDocumentText: '',
         deleteDialog: false,
+        deletePositionsDialog: false,
         deleteDialogId: '',
         deleteDialogName: ''
       };
@@ -337,7 +393,7 @@
         }
 
         this.options.unshift({
-          position: this.positionSelected.name,
+          position: this.positionSelected.name ? this.positionSelected.name : this.positionSelected,
           formulaName: this.formulaSelected.name,
           count: 0,
           formula: this.$store.getters['formulas/formula'].formula,
@@ -346,13 +402,24 @@
           comment: ''
         });
 
-        // todo: Если позиции нет, добавить в базу и обновить состояние
-        // if (!this.$store.getters['documents/positions'].find(item => item === this.positionSelected)) {
-        //   this.$store.commit('documents/setPositions', this.positionSelected);
-        // }
+        await this.addPositions();
 
         this.positionSelected = '';
         this.formulaSelected = '';
+      },
+      async addPositions() {
+        let duplicate = false;
+
+        for (let item of this.$store.getters['documents/positions']) {
+          if (item.name === this.positionSelected.name) {
+            duplicate = true;
+          }
+        }
+
+        if (!duplicate) {
+          await this.$store.dispatch('documents/addPositions', this.positionSelected);
+          await this.$store.dispatch('documents/getPositions');
+        }
       },
       deleteOptionQuestion(id, name) {
         this.deleteDialogId = id;
@@ -360,14 +427,27 @@
         this.deleteDialog = true;
       },
       deleteOption(option, name) {
-        this.deleteDialog = false;
+        let indexOption = this.options.indexOf(option);
+        this.options.splice(indexOption, 1);
 
+        this.deleteDialog = false;
         this.snackbarDocument = true;
         this.snackbarDocumentStatus = 'info';
         this.snackbarDocumentText = `Позиция ${name} удалёна.`;
+      },
+      deletePositionsQuestion(id, name) {
+        this.deleteDialogId = id;
+        this.deleteDialogName = name;
+        this.deletePositionsDialog = true;
+      },
+      async deletePositions(id, name) {
+        await this.$store.dispatch('documents/deletePositions', id);
+        await this.$store.dispatch('documents/getPositions');
 
-        let indexOption = this.options.indexOf(option);
-        this.options.splice(indexOption, 1);
+        this.deletePositionsDialog = false;
+        this.snackbarDocument = true;
+        this.snackbarDocumentStatus = 'info';
+        this.snackbarDocumentText = `Параметр позиции ${name} удалён.`;
       },
       countFormula(item) {
         let expression = Parser.parse(item.formulaString.toLocaleLowerCase());

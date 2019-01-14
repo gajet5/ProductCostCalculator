@@ -82,12 +82,16 @@ export default {
       await documentsServices.addDocument(payload);
     },
     async addPositions(context, payload) {
+      await documentsServices.addPositions(payload);
     },
     async editDocument(context, payload) {
       await documentsServices.editDocument(payload);
     },
     async removeDocument(context, payload) {
       await documentsServices.removeDocument(payload);
+    },
+    async deletePositions(context, payload) {
+      await documentsServices.deletePositions(payload);
     }
   }
 };

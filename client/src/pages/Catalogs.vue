@@ -205,15 +205,14 @@
         this.deleteDialog = true;
       },
       async removeCatalog(id, name) {
-        this.deleteDialog = false;
-
-        this.userRules = true;
-        this.userRulesStatus = 'info';
-        this.userRulesText = `Каталог ${name} удалён.`;
-
         await this.$store.dispatch('catalogs/removeCatalog', id);
         await this.$store.dispatch('catalogs/getCatalogs', this.pagination);
         this.$store.commit('documents/setCatalogId', 'delete');
+
+        this.deleteDialog = false;
+        this.userRules = true;
+        this.userRulesStatus = 'info';
+        this.userRulesText = `Каталог ${name} удалён.`;
       },
       async updateCatalogsList() {
         await this.$store.dispatch('catalogs/getCatalogs', this.pagination);

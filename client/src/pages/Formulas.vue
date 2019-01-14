@@ -192,14 +192,13 @@
         this.deleteDialog = true;
       },
       async removeFormula(id, name) {
-        this.deleteDialog = false;
+        await this.$store.dispatch('formulas/removeFormula', id);
+        await this.$store.dispatch('formulas/getFormulas', this.pagination);
 
+        this.deleteDialog = false;
         this.userRules = true;
         this.userRulesStatus = 'info';
         this.userRulesText = `Формула ${name} удалёна.`;
-
-        await this.$store.dispatch('formulas/removeFormula', id);
-        await this.$store.dispatch('formulas/getFormulas', this.pagination);
       },
       async updateFormulasList() {
         await this.$store.dispatch('formulas/getFormulas', this.pagination);
