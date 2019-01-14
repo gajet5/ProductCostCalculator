@@ -56,11 +56,44 @@
                       @updateFormulasList="updateFormulasList"
                       @userNotConfirmMail="userNotConfirmMail"
                     ></formula-component>
-                    <v-btn color="error" @click="removeFormula(props.item._id)">
+                    <v-btn color="error" @click="removeFormulaQuestion">
                       <v-icon small>
                         delete
                       </v-icon>
                     </v-btn>
+                    <v-dialog
+                      v-model="deleteDialog"
+                      persistent
+                    >
+                      <v-card>
+                        <v-card-title
+                          class="headline grey lighten-2"
+                        >
+                          Удалить документ?
+                        </v-card-title>
+                        <v-card-text>
+                          Вы собираетесь удалить формулу: <b>{{ props.item.name }}</b>.<br>
+                          Удаляем?
+                        </v-card-text>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn
+                            color="green darken-1"
+                            flat="flat"
+                            @click="removeFormula(props.item._id, props.item.name)"
+                          >
+                            ОК
+                          </v-btn>
+                          <v-btn
+                            color="red darken-1"
+                            flat="flat"
+                            @click="deleteDialog = false"
+                          >
+                            Отмена
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
                   </td>
                 </tr>
               </template>
@@ -116,7 +149,9 @@
         },
         userRules: false,
         userRulesStatus: '',
-        userRulesText: ''
+        userRulesText: '',
+        deleteDialog: false,
+        confirmDeleteItem: false
       };
     },
     computed: {
@@ -147,10 +182,16 @@
       }
     },
     methods: {
+      removeFormulaQuestion() {
+        this.deleteDialog = true;
+      },
       async removeFormula(id) {
-        if (!confirm('Вы уверены, что хотите удалить формулу?')) {
-          return false;
-        }
+        this.deleteDialog = false;
+
+        this.userRules = true;
+        this.userRulesStatus = 'info';
+        this.userRulesText = `Формула ${name} удалёна.`;
+
         await this.$store.dispatch('formulas/removeFormula', id);
         await this.$store.dispatch('formulas/getFormulas', this.pagination);
       },

@@ -62,11 +62,44 @@
                       @updateDocumentsList="updateDocumentsList"
                       @userNotConfirmMail="userNotConfirmMail"
                     ></document-component>
-                    <v-btn color="error" @click="removeDocument(props.item._id)">
+                    <v-btn color="error" @click="removeDocumentQuestion">
                       <v-icon small>
                         delete
                       </v-icon>
                     </v-btn>
+                    <v-dialog
+                      v-model="deleteDialog"
+                      persistent
+                    >
+                      <v-card>
+                        <v-card-title
+                          class="headline grey lighten-2"
+                        >
+                          Удалить документ?
+                        </v-card-title>
+                        <v-card-text>
+                          Вы собираетесь удалить документ: <b>{{ props.item.name }}</b>.<br>
+                          Удаляем?
+                        </v-card-text>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn
+                            color="green darken-1"
+                            flat="flat"
+                            @click="removeDocument(props.item._id, props.item.name)"
+                          >
+                            ОК
+                          </v-btn>
+                          <v-btn
+                            color="red darken-1"
+                            flat="flat"
+                            @click="deleteDialog = false"
+                          >
+                            Отмена
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
                   </td>
                 </tr>
               </template>
@@ -132,7 +165,9 @@
         },
         userRules: false,
         userRulesStatus: '',
-        userRulesText: ''
+        userRulesText: '',
+        deleteDialog: false,
+        confirmDeleteItem: false
       };
     },
     computed: {
@@ -169,10 +204,16 @@
       }
     },
     methods: {
+      removeDocumentQuestion() {
+        this.deleteDialog = true;
+      },
       async removeDocument(id) {
-        if (!confirm('Вы уверены, что хотите удалить документ?')) {
-          return false;
-        }
+        this.deleteDialog = false;
+
+        this.userRules = true;
+        this.userRulesStatus = 'info';
+        this.userRulesText = `Документ ${name} удалён.`;
+
         await this.$store.dispatch('documents/removeDocument', id);
         await this.getDocuments();
       },
