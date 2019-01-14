@@ -150,8 +150,12 @@
                 </v-layout>
               </v-card-text>
               <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn flat color="error" @click="deleteOption(item)">Удалить</v-btn>
+                <v-spacer class="hidden-sm-and-down"></v-spacer>
+                <v-btn flat icon color="error" @click="deleteOptionQuestion(item, item.position)">
+                  <v-icon>
+                    delete
+                  </v-icon>
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -169,6 +173,56 @@
     >
       <v-icon>save</v-icon>
     </v-btn>
+    <v-snackbar
+      v-model="snackbarDocument"
+      :color="snackbarDocumentStatus"
+      :timeout="3000"
+    >
+      {{ snackbarDocumentText }}
+      <v-btn
+        dark
+        flat
+        @click="snackbarDocument = false"
+      >
+        Закрыть
+      </v-btn>
+    </v-snackbar>
+    <v-dialog
+      v-model="deleteDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline yellow"
+        >
+          <v-icon large class="mr-1" color="red">
+            warning
+          </v-icon>
+          Удалить позицию?
+        </v-card-title>
+        <v-card-text>
+          Вы собираетесь удалить позицию: <b>{{ deleteDialogName }}</b>.<br>
+          Удаляем?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="deleteOption(deleteDialogId, deleteDialogName)"
+          >
+            ОК
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="deleteDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
@@ -198,7 +252,13 @@
         nameValid: false,
         formulaSelected: '',
         positionSelected: '',
-        options: []
+        options: [],
+        snackbarDocument: false,
+        snackbarDocumentStatus: '',
+        snackbarDocumentText: '',
+        deleteDialog: false,
+        deleteDialogId: '',
+        deleteDialogName: ''
       };
     },
     computed: {
@@ -287,6 +347,7 @@
 
           this.showDocumentDialog = false;
           this.documentName = '';
+          this.options = [];
         }
         this.$emit('updateDocumentsList');
       },
@@ -315,12 +376,20 @@
         this.positionSelected = '';
         this.formulaSelected = '';
       },
-      deleteOption(option) {
-        if (confirm('Вы уверены, что хотите удалить эту опцию?')) {
-          let indexOption = this.options.indexOf(option);
-          console.log(indexOption);
-          this.options.splice(indexOption, 1);
-        }
+      deleteOptionQuestion(id, name) {
+        this.deleteDialogId = id;
+        this.deleteDialogName = name;
+        this.deleteDialog = true;
+      },
+      deleteOption(option, name) {
+        this.deleteDialog = false;
+
+        this.snackbarDocument = true;
+        this.snackbarDocumentStatus = 'info';
+        this.snackbarDocumentText = `Позиция ${name} удалёна.`;
+
+        let indexOption = this.options.indexOf(option);
+        this.options.splice(indexOption, 1);
       },
       countFormula(item) {
         let expression = Parser.parse(item.formulaString.toLocaleLowerCase());

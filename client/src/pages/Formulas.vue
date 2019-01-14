@@ -56,44 +56,11 @@
                       @updateFormulasList="updateFormulasList"
                       @userNotConfirmMail="userNotConfirmMail"
                     ></formula-component>
-                    <v-btn color="error" @click="removeFormulaQuestion">
+                    <v-btn color="error" @click="removeFormulaQuestion(props.item._id, props.item.name)">
                       <v-icon small>
                         delete
                       </v-icon>
                     </v-btn>
-                    <v-dialog
-                      v-model="deleteDialog"
-                      persistent
-                    >
-                      <v-card>
-                        <v-card-title
-                          class="headline grey lighten-2"
-                        >
-                          Удалить документ?
-                        </v-card-title>
-                        <v-card-text>
-                          Вы собираетесь удалить формулу: <b>{{ props.item.name }}</b>.<br>
-                          Удаляем?
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn
-                            color="green darken-1"
-                            flat="flat"
-                            @click="removeFormula(props.item._id, props.item.name)"
-                          >
-                            ОК
-                          </v-btn>
-                          <v-btn
-                            color="red darken-1"
-                            flat="flat"
-                            @click="deleteDialog = false"
-                          >
-                            Отмена
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
                   </td>
                 </tr>
               </template>
@@ -121,6 +88,42 @@
         Закрыть
       </v-btn>
     </v-snackbar>
+    <v-dialog
+      v-model="deleteDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline yellow"
+        >
+          <v-icon large class="mr-1" color="red">
+            warning
+          </v-icon>
+          Удалить документ?
+        </v-card-title>
+        <v-card-text>
+          Вы собираетесь удалить документ: <b>{{ deleteDialogName }}</b>.<br>
+          Удаляем?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="removeFormula(deleteDialogId, deleteDialogName)"
+          >
+            ОК
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="deleteDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -151,7 +154,8 @@
         userRulesStatus: '',
         userRulesText: '',
         deleteDialog: false,
-        confirmDeleteItem: false
+        deleteDialogId: '',
+        deleteDialogName: ''
       };
     },
     computed: {
@@ -182,10 +186,12 @@
       }
     },
     methods: {
-      removeFormulaQuestion() {
+      removeFormulaQuestion(id, name) {
+        this.deleteDialogId = id;
+        this.deleteDialogName = name;
         this.deleteDialog = true;
       },
-      async removeFormula(id) {
+      async removeFormula(id, name) {
         this.deleteDialog = false;
 
         this.userRules = true;

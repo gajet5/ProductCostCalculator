@@ -66,44 +66,11 @@
                       @updateCatalogsList="updateCatalogsList"
                       @userNotConfirmMail="userNotConfirmMail"
                     ></catalog-component>
-                    <v-btn color="error" @click.stop="removeCatalogQuestion">
+                    <v-btn color="error" @click.stop="removeCatalogQuestion(props.item._id, props.item.name)">
                       <v-icon small>
                         delete
                       </v-icon>
                     </v-btn>
-                    <v-dialog
-                      v-model="deleteDialog"
-                      persistent
-                    >
-                      <v-card>
-                        <v-card-title
-                          class="headline grey lighten-2"
-                        >
-                          Удалить каталог?
-                        </v-card-title>
-                        <v-card-text>
-                          Вы собираетесь удалить каталог: <b>{{ props.item.name }}</b>.<br>
-                          Удаляем?
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn
-                            color="green darken-1"
-                            flat="flat"
-                            @click="removeCatalog(props.item._id, props.item.name)"
-                          >
-                            ОК
-                          </v-btn>
-                          <v-btn
-                            color="red darken-1"
-                            flat="flat"
-                            @click="deleteDialog = false"
-                          >
-                            Отмена
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
                   </td>
                 </tr>
               </template>
@@ -131,6 +98,42 @@
         Закрыть
       </v-btn>
     </v-snackbar>
+    <v-dialog
+      v-model="deleteDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline yellow"
+        >
+          <v-icon large class="mr-1" color="red">
+            warning
+          </v-icon>
+          Удалить каталог?
+        </v-card-title>
+        <v-card-text>
+          Вы собираетесь удалить каталог: <b>{{ deleteDialogName }}</b>.<br>
+          Удаляем?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="removeCatalog(deleteDialogId, deleteDialogName)"
+          >
+            ОК
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="deleteDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -161,7 +164,8 @@
         userRulesStatus: '',
         userRulesText: '',
         deleteDialog: false,
-        confirmDeleteItem: false
+        deleteDialogId: '',
+        deleteDialogName: ''
       };
     },
     computed: {
@@ -195,7 +199,9 @@
       }
     },
     methods: {
-      removeCatalogQuestion() {
+      removeCatalogQuestion(id, name) {
+        this.deleteDialogId = id;
+        this.deleteDialogName = name;
         this.deleteDialog = true;
       },
       async removeCatalog(id, name) {
