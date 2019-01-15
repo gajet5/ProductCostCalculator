@@ -29,14 +29,10 @@
     </v-btn>
     <v-card>
       <v-toolbar dark color="indigo darken-1">
-        <v-btn icon dark @click="showDocumentDialog = false">
+        <v-btn icon dark @click="close">
           <v-icon>close</v-icon>
         </v-btn>
         <v-toolbar-title>Всего: {{ totalCount }}</v-toolbar-title>
-        <!--<v-spacer></v-spacer>-->
-        <!--<v-toolbar-items>-->
-          <!--<v-btn dark flat @click="save" :disabled="!nameValid">Сохранить</v-btn>-->
-        <!--</v-toolbar-items>-->
       </v-toolbar>
       <v-container grid-list-md>
         <v-layout>
@@ -47,6 +43,7 @@
                 label="Название документа"
                 solo
                 v-model="documentName"
+                @keydown="haveChange = true"
                 required
                 :rules="nameRules"
               ></v-text-field>
@@ -64,7 +61,28 @@
                   v-model="positionSelected"
                   :items="positionsList"
                   color="indigo darken-1"
+                  placeholder="Выберите позицию или введите свою."
+                  item-text="name"
+                  item-value="_id"
+                  z-index="203"
                 >
+                  <template
+                    slot="item"
+                    slot-scope="{ item }"
+                  >
+                    <v-list-tile-content>
+                      {{ item.name }}
+                    </v-list-tile-content>
+                    <v-spacer></v-spacer>
+                    <v-list-tile-action @click.stop>
+                      <v-btn
+                        icon
+                        @click.stop.prevent="deletePositionsQuestion(item._id, item.name)"
+                      >
+                        <v-icon color="red">delete</v-icon>
+                      </v-btn>
+                    </v-list-tile-action>
+                  </template>
                 </v-combobox>
               </v-card-text>
             </v-card>
@@ -81,6 +99,7 @@
                   item-text="name"
                   return-object
                   color="indigo darken-1"
+                  placeholder="Выберите формулу."
                 >
                 </v-autocomplete>
               </v-card-text>
@@ -152,8 +171,12 @@
                 </v-layout>
               </v-card-text>
               <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn flat color="error" @click="deleteOption(item)">Удалить</v-btn>
+                <v-spacer class="hidden-sm-and-down"></v-spacer>
+                <v-btn flat icon color="error" @click="deleteOptionQuestion(item, item.position)">
+                  <v-icon>
+                    delete
+                  </v-icon>
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -171,6 +194,127 @@
     >
       <v-icon>save</v-icon>
     </v-btn>
+    <v-snackbar
+      v-model="snackbarDocument"
+      :color="snackbarDocumentStatus"
+      :timeout="3000"
+    >
+      {{ snackbarDocumentText }}
+      <v-btn
+        dark
+        flat
+        @click="snackbarDocument = false"
+      >
+        Закрыть
+      </v-btn>
+    </v-snackbar>
+    <v-dialog
+      v-model="deleteDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline yellow"
+        >
+          <v-icon large class="mr-1" color="red">
+            warning
+          </v-icon>
+          Удалить позицию?
+        </v-card-title>
+        <v-card-text>
+          Вы собираетесь удалить позицию: <b>{{ deleteDialogName }}</b>.<br>
+          Удаляем?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="deleteOption(deleteDialogId, deleteDialogName)"
+          >
+            ОК
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="deleteDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="deletePositionsDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline yellow"
+        >
+          <v-icon large class="mr-1" color="red">
+            warning
+          </v-icon>
+          Удалить параметр позиции?
+        </v-card-title>
+        <v-card-text>
+          Вы собираетесь удалить параметр позиции: <b>{{ deleteDialogName }}</b>.<br>
+          Удаляем?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="deletePositions(deleteDialogId, deleteDialogName)"
+          >
+            ОК
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="deletePositionsDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="saveChangeDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline info white--text"
+        >
+          <v-icon large class="mr-1" color="white">
+            info
+          </v-icon>
+          Сохранить изменения?
+        </v-card-title>
+        <v-card-text>
+          В документе были совершены изменения, вы хотите их сохранить?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="save"
+          >
+            Сохранить
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="showDocumentDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
@@ -200,7 +344,16 @@
         nameValid: false,
         formulaSelected: '',
         positionSelected: '',
-        options: []
+        options: [],
+        snackbarDocument: false,
+        snackbarDocumentStatus: '',
+        snackbarDocumentText: '',
+        deleteDialog: false,
+        deletePositionsDialog: false,
+        deleteDialogId: '',
+        deleteDialogName: '',
+        haveChange: false,
+        saveChangeDialog: false
       };
     },
     computed: {
@@ -208,35 +361,7 @@
         return this.$store.getters['formulas/namesList'];
       },
       positionsList() {
-        let positionsList = [
-          'Материал',
-          'Фурнитура',
-          'Лейбл',
-          'Упаковка',
-          'Лекало-Конструктор',
-          'Технолог',
-          'Закройщик',
-          'Портной',
-          'Декоратор',
-          'Вышивка',
-          'Материалы для вышивки',
-          'Аренда',
-          'Содержание оборудования',
-          'Интернет',
-          'Мобильная связь',
-          'Налоги',
-          'Директор',
-          'Помошник',
-          'Бухгалтер',
-          'Создание новой коллекции',
-          'Фотосет новой коллекции',
-          'Банковский счёт',
-          'Реклама',
-          'Маркетолог',
-          'Другое',
-          'Производство'
-        ];
-        return positionsList.sort();
+        return this.$store.getters['documents/positions'];
       },
       totalCount() {
         let count = 0;
@@ -246,6 +371,11 @@
         }
 
         return count.toFixed(2);
+      }
+    },
+    watch: {
+      showDocumentDialog() {
+        this.haveChange = false;
       }
     },
     methods: {
@@ -289,10 +419,13 @@
 
           this.showDocumentDialog = false;
           this.documentName = '';
+          this.options = [];
         }
         this.$emit('updateDocumentsList');
       },
       async addOptions() {
+        this.haveChange = true;
+
         await this.$store.dispatch('formulas/getFormula', this.formulaSelected._id);
         let variables = {};
         let formulaString = '';
@@ -305,7 +438,7 @@
         }
 
         this.options.unshift({
-          position: this.positionSelected,
+          position: this.positionSelected.name ? this.positionSelected.name : this.positionSelected,
           formulaName: this.formulaSelected.name,
           count: 0,
           formula: this.$store.getters['formulas/formula'].formula,
@@ -314,24 +447,86 @@
           comment: ''
         });
 
+        await this.addPositions();
+
         this.positionSelected = '';
         this.formulaSelected = '';
       },
-      deleteOption(option) {
+      async addPositions() {
+        let duplicate = false;
+
+        for (let item of this.$store.getters['documents/positions']) {
+          if (item.name === this.positionSelected.name) {
+            duplicate = true;
+          }
+        }
+
+        if (!duplicate) {
+          await this.$store.dispatch('documents/addPositions', this.positionSelected);
+          await this.$store.dispatch('documents/getPositions');
+        }
+      },
+      deleteOptionQuestion(id, name) {
+        this.deleteDialogId = id;
+        this.deleteDialogName = name;
+        this.deleteDialog = true;
+      },
+      deleteOption(option, name) {
+        this.haveChange = true;
+
         let indexOption = this.options.indexOf(option);
-        console.log(indexOption);
         this.options.splice(indexOption, 1);
+
+        this.deleteDialog = false;
+        this.snackbarDocument = true;
+        this.snackbarDocumentStatus = 'info';
+        this.snackbarDocumentText = `Позиция ${name} удалёна.`;
+      },
+      deletePositionsQuestion(id, name) {
+        this.deleteDialogId = id;
+        this.deleteDialogName = name;
+        this.deletePositionsDialog = true;
+      },
+      async deletePositions(id, name) {
+        await this.$store.dispatch('documents/deletePositions', id);
+        await this.$store.dispatch('documents/getPositions');
+
+        this.deletePositionsDialog = false;
+        this.snackbarDocument = true;
+        this.snackbarDocumentStatus = 'info';
+        this.snackbarDocumentText = `Параметр позиции ${name} удалён.`;
       },
       countFormula(item) {
         let expression = Parser.parse(item.formulaString.toLocaleLowerCase());
-        item.count = expression.evaluate(item.variables);
+
+        if (Object.keys(item.variables).length === 1) {
+          item.count = expression.evaluate(item.variables);
+          item.count = parseFloat(item.count).toFixed(2);
+        } else {
+          item.count = expression.evaluate(item.variables).toFixed(2);
+        }
+
+        if (!isFinite(item.count)) {
+          item.count = 0;
+        }
       },
       inputCheck(e) {
-        if (e.target.value.split(/\./).length === 2 && e.key === '.') {
+        let inputValue = e.target.value;
+
+        if (inputValue.split(/\./).length === 2 && (e.key === '.' || e.key === ',')) {
           e.preventDefault();
         }
-        if (!/[0-9]|\./.test(e.key)) {
+        if (!/[0-9\-.,]/.test(e.key)) {
           e.preventDefault();
+        }
+
+        e.target.value = inputValue.replace(/,/gi, '.', 'gi');
+      },
+      close() {
+        if (this.haveChange) {
+          this.saveChangeDialog = true;
+        } else {
+          this.showDocumentDialog = false;
         }
       }
     }

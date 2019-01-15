@@ -4,8 +4,8 @@
       <v-parallax :src="pralaxImgOne" height="600">
           <v-layout >
             <v-flex class="main-header__wrapper">
-              <p class="display-2 text-xs-center text-logo mb-2">Калькулятор Стоимости Продукта</p>
-              <p class="headline text-xs-center text-logo">экономь своё время</p>
+              <p class="display-2 text-xs-center text-uppercase mb-2 text--white text-shadow">Калькулятор позиций</p>
+              <p class="headline text-xs-center text-uppercase text--white text-shadow">экономь своё время</p>
               <div class="text-xs-center">
                 <v-btn @click="goToRegistration" color="info">Регистрация</v-btn>
                 <v-btn @click="goToLogin" color="info">Войти</v-btn>
@@ -18,7 +18,7 @@
       </v-parallax>
     </section>
 
-    <section class="bg-gray">
+    <section class="bg-gray pt-5">
       <v-layout
         column
         wrap
@@ -42,9 +42,8 @@
                     <div class="headline text-xs-center">Лаконичный дизайн</div>
                   </v-card-title>
                   <v-card-text>
-                    Мы разрабатывали приложение которое сами будем использовать, поэтому мы пожошли основательно к вопросам дизайна.
-                    Каждый элемент интерфейса продуман и располагается в том месте где им удобнее всего пользоватся.
-                    Благодаря вам мы делаем продукт которым удобно пользоватся.
+                    При разработке калькулятора, я старался сделать его максимально удобным и понятным, так как сам буду его использовать.
+                    Важно отметить, что калькулятором удобно пользоваться не только с ПК, но и с мобильного устройства.
                   </v-card-text>
                 </v-card>
               </v-flex>
@@ -57,9 +56,8 @@
                     <div class="headline">Скорость работы</div>
                   </v-card-title>
                   <v-card-text>
-                    Простота дизайна позволяет получить высокую скорость загрузки инструмента.
-                    Мы не украшаем ненужными бантиками рабочий инструмент, тут нехватает глубины чтоб все блоки смотелись хорошо.
-                    Обязательно нужно придумать сюда какой либо текст для полноты картины, пока опишу так.
+                    В создании калькулятора, я использовал современные технологии хранения и обработки данных.
+                    Подобный подход позволяет работать даже в дороге при плохом качестве связи не беспокоясь о потери данных.
                   </v-card-text>
                 </v-card>
               </v-flex>
@@ -72,9 +70,8 @@
                     <div class="headline text-xs-center">Открыты для предложений</div>
                   </v-card-title>
                   <v-card-text>
-                    Мы рады получать обратную связь о нашем продукте, благодая отзывам мы становится лучше.
-                    Создавая сложный инструмент нет возможности знать наверняка, что нужно именно вам.
-                    Пишите нам предложения как мы можем улучшить продукт для вас.
+                    Я буду рад получить от вас обратную связь о калькуляторе, а так же мнение, что по вашему можно сделать лучше.
+                    Если у вас возникли вопросы по использованию калькулятора, вы так же можете их задать мне.
                   </v-card-text>
                 </v-card>
               </v-flex>
@@ -87,8 +84,8 @@
     <section>
       <v-parallax :src="pralaxImgSecound" height="380">
         <v-layout column align-center justify-center>
-          <div class="headline white--text mb-3 text-xs-center text-shadow">Простой способ расчитать стоимость</div>
-          <em class="text-shadow">Посчитай стоимость продукта уже сейчас</em>
+          <div class="headline white--text mb-3 text-xs-center text-shadow">Простой способ получить стоимость</div>
+          <em class="text-shadow">Расчитать финальтую цену по нескольким позициям</em>
           <v-btn
             class="blue lighten-2 mt-5"
             dark
@@ -107,46 +104,46 @@
           <v-flex xs12 sm4>
             <v-card class="elevation-0 transparent">
               <v-card-title primary-title class="layout justify-center">
-                <div class="headline">Company info</div>
+                <div class="headline">О проекте</div>
               </v-card-title>
               <v-card-text>
-                Cras facilisis mi vitae nunc lobortis pharetra. Nulla volutpat tincidunt ornare.
-                Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
-                Nullam in aliquet odio. Aliquam eu est vitae tellus bibendum tincidunt. Suspendisse potenti.
+                Этот калькулятор был создан для облегчения подсчёта суммы по нескольким позициям.
+                Особенностью данного калькулятора является функционал создания собственных формул для ведения расчётов.
+                Главная цель для меня, сделать ресурс удобным для работы с мобильного телефона.
               </v-card-text>
             </v-card>
           </v-flex>
           <v-flex xs12 sm4 offset-sm1>
             <v-card class="elevation-0 transparent">
               <v-card-title primary-title class="layout justify-center">
-                <div class="headline">Contact us</div>
+                <div class="headline">Как связатся</div>
               </v-card-title>
               <v-card-text>
-                Cras facilisis mi vitae nunc lobortis pharetra. Nulla volutpat tincidunt ornare.
+                Если у вас есть идея как улучшить функционал или вы нашли ошибку, пишите.
               </v-card-text>
               <v-list class="transparent">
-                <v-list-tile>
-                  <v-list-tile-action>
-                    <v-icon class="blue--text text--lighten-2">phone</v-icon>
-                  </v-list-tile-action>
-                  <v-list-tile-content>
-                    <v-list-tile-title>777-867-5309</v-list-tile-title>
-                  </v-list-tile-content>
-                </v-list-tile>
-                <v-list-tile>
-                  <v-list-tile-action>
-                    <v-icon class="blue--text text--lighten-2">place</v-icon>
-                  </v-list-tile-action>
-                  <v-list-tile-content>
-                    <v-list-tile-title>Chicago, US</v-list-tile-title>
-                  </v-list-tile-content>
-                </v-list-tile>
+                <!--<v-list-tile>-->
+                  <!--<v-list-tile-action>-->
+                    <!--<v-icon class="blue&#45;&#45;text text&#45;&#45;lighten-2">phone</v-icon>-->
+                  <!--</v-list-tile-action>-->
+                  <!--<v-list-tile-content>-->
+                    <!--<v-list-tile-title>777-867-5309</v-list-tile-title>-->
+                  <!--</v-list-tile-content>-->
+                <!--</v-list-tile>-->
+                <!--<v-list-tile>-->
+                  <!--<v-list-tile-action>-->
+                    <!--<v-icon class="blue&#45;&#45;text text&#45;&#45;lighten-2">place</v-icon>-->
+                  <!--</v-list-tile-action>-->
+                  <!--<v-list-tile-content>-->
+                    <!--<v-list-tile-title>Chicago, US</v-list-tile-title>-->
+                  <!--</v-list-tile-content>-->
+                <!--</v-list-tile>-->
                 <v-list-tile>
                   <v-list-tile-action>
                     <v-icon class="blue--text text--lighten-2">email</v-icon>
                   </v-list-tile-action>
                   <v-list-tile-content>
-                    <v-list-tile-title>john@vuetifyjs.com</v-list-tile-title>
+                    <v-list-tile-title>ilf@bk.ru</v-list-tile-title>
                   </v-list-tile-content>
                 </v-list-tile>
               </v-list>

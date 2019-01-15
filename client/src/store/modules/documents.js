@@ -7,7 +7,8 @@ export default {
     documents: [],
     loading: true,
     catalogId: '',
-    catalogName: ''
+    catalogName: '',
+    positions: []
   },
   getters: {
     documents(state) {
@@ -24,6 +25,9 @@ export default {
     },
     catalogName(state) {
       return state.catalogName;
+    },
+    positions(state) {
+      return state.positions;
     }
   },
   mutations: {
@@ -53,6 +57,9 @@ export default {
     },
     setCatalogName(state, payload) {
       state.catalogName = payload;
+    },
+    setPositions(state, payload) {
+      state.positions = payload;
     }
   },
   actions: {
@@ -67,14 +74,24 @@ export default {
       context.commit('setDocuments', resolve.data.documents);
       context.commit('setCatalogName', resolve.data.catalogName);
     },
-    async editDocument(context, payload) {
-      await documentsServices.editDocument(payload);
+    async getPositions(context) {
+      let resolve = await documentsServices.getPositions();
+        context.commit('setPositions', resolve.data.positions);
     },
     async addDocument(context, payload) {
       await documentsServices.addDocument(payload);
     },
+    async addPositions(context, payload) {
+      await documentsServices.addPositions(payload);
+    },
+    async editDocument(context, payload) {
+      await documentsServices.editDocument(payload);
+    },
     async removeDocument(context, payload) {
       await documentsServices.removeDocument(payload);
+    },
+    async deletePositions(context, payload) {
+      await documentsServices.deletePositions(payload);
     }
   }
 };

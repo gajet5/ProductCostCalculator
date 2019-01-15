@@ -1,13 +1,30 @@
 <template>
   <div>
     <header-component>
+      <v-tooltip bottom>
+        <v-btn
+          slot="activator"
+          color="primary"
+          dark
+          @click="goToCatalogs"
+        >
+          Каталоги
+        </v-btn>
+        <span>Перейти к каталогам</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <v-btn
+          slot="activator"
+          color="primary"
+          dark
+          @click="goToFormulas"
+        >
+          Формулы
+        </v-btn>
+        <span>Перейти к созданию формул</span>
+      </v-tooltip>
     </header-component>
     <v-container>
-      <v-layout>
-        <v-flex>
-          <v-breadcrumbs :items="breadcrumbs" divider=">"></v-breadcrumbs>
-        </v-flex>
-      </v-layout>
       <v-layout>
         <v-flex xs12>
           <v-card>
@@ -75,7 +92,7 @@
           </v-card>
         </v-flex>
       </v-layout>
-      <v-layout class="mt-3">
+      <v-layout class="mt-3" v-show="!userStatus">
         <v-flex xs12>
           <v-card>
             <v-card-title primary-title>
@@ -207,6 +224,12 @@
           this.userSnackText = result.data.message;
         }
         await this.$store.dispatch('user/getUserInfo');
+      },
+      goToCatalogs() {
+        this.$router.push('/catalogs');
+      },
+      goToFormulas() {
+        this.$router.push('/formulas');
       }
     }
   };

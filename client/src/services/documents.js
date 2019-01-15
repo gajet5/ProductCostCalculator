@@ -12,9 +12,27 @@ export default {
       return false;
     }
   },
+  async getPositions() {
+    try {
+      let { data } = await Api().get('documents/positions');
+      return data;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  },
   async addDocument(payload) {
     try {
       let { data } = await Api().post('documents/add', payload);
+      return data;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  },
+  async addPositions(payload) {
+    try {
+      let { data } = await Api().post('documents/add-positions', { name: payload });
       return data;
     } catch (e) {
       console.log(e);
@@ -33,6 +51,19 @@ export default {
   async removeDocument(id) {
     try {
       let { data } = await Api().delete('documents/remove', {
+        data: {
+          id: `${id}`
+        }
+      });
+      return data;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  },
+  async deletePositions(id) {
+    try {
+      let { data } = await Api().delete('documents/delete-positions', {
         data: {
           id: `${id}`
         }

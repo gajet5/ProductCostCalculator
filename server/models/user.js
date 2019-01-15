@@ -24,11 +24,11 @@ const User = new Schema({
     },
     premium: {
         type: Boolean,
-        default: false
+        default: true
     },
     premiumDateEnd: {
         type: Date,
-        default: Date.now
+        default: Date.now() + 1000 * 60 * 60 * 24 * 30
     },
     lastConfirmEmail: {
         type: Date,

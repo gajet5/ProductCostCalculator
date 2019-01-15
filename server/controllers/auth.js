@@ -1,7 +1,11 @@
 const userModel = require('../models/user');
+const formulasModel = require('../models/formulas');
+const positionsModel = require('../models/positions');
 const mailer = require('../services/mailer');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
+const defaultFormulas = require('../config/defaultFormulas');
+const defaultPositions = require('../config/defaultPositions');
 
 function jwtSingUser(data) {
     return jwt.sign(data, config.auth.jwtSecret, {
@@ -30,6 +34,21 @@ module.exports = {
                 password
             });
 
+            for (let item of defaultFormulas) {
+                await formulasModel.create({
+                    owner: user._id,
+                    name: item.name,
+                    formula: item.formula
+                });
+            }
+
+            for (let item of defaultPositions) {
+                await positionsModel.create({
+                    owner: user._id,
+                    name: item
+                });
+            }
+
             if (config.sendMail) {
                 mailer.emailConfirm(user.email, user._id);
             }
@@ -37,7 +56,7 @@ module.exports = {
             return res.json({
                 status: 200,
                 data: {
-                    message: 'Авторизация прошла успешно',
+                    message: 'Регистрация прошла успешно',
                     token: jwtSingUser({ userId: user.id })
                 }
             });

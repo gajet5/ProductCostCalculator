@@ -1,9 +1,17 @@
 <template>
   <div>
     <header-component>
-      <v-toolbar-items>
-        <v-btn flat @click="goToFormulas">Формулы</v-btn>
-      </v-toolbar-items>
+      <v-tooltip bottom>
+        <v-btn
+          slot="activator"
+          color="primary"
+          dark
+          @click="goToFormulas"
+        >
+          Формулы
+        </v-btn>
+        <span>Перейти к созданию формул</span>
+      </v-tooltip>
     </header-component>
     <v-container>
       <v-layout>
@@ -54,7 +62,7 @@
                       @updateDocumentsList="updateDocumentsList"
                       @userNotConfirmMail="userNotConfirmMail"
                     ></document-component>
-                    <v-btn color="error" @click="removeDocument(props.item._id)">
+                    <v-btn color="error" @click="removeDocumentQuestion(props.item._id, props.item.name)">
                       <v-icon small>
                         delete
                       </v-icon>
@@ -75,7 +83,7 @@
     <v-snackbar
       v-model="userRules"
       :color="userRulesStatus"
-      :timeout="6000"
+      :timeout="3000"
     >
       {{ userRulesText }}
       <v-btn
@@ -86,6 +94,42 @@
         Закрыть
       </v-btn>
     </v-snackbar>
+    <v-dialog
+      v-model="deleteDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline yellow"
+        >
+          <v-icon large class="mr-1" color="red">
+            warning
+          </v-icon>
+          Удалить документ?
+        </v-card-title>
+        <v-card-text>
+          Вы собираетесь удалить документ: <b>{{ deleteDialogName }}</b>.<br>
+          Удаляем?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="removeDocument(deleteDialogId, deleteDialogName)"
+          >
+            ОК
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="deleteDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -101,7 +145,6 @@
         this.$router.push('/catalogs');
         return;
       }
-      this.$store.dispatch('formulas/getFormulasName');
       this.pagination.catalogId = this.$store.getters['documents/catalogId'];
     },
     components: {
@@ -124,7 +167,10 @@
         },
         userRules: false,
         userRulesStatus: '',
-        userRulesText: ''
+        userRulesText: '',
+        deleteDialog: false,
+        deleteDialogId: '',
+        deleteDialogName: ''
       };
     },
     computed: {
@@ -154,21 +200,30 @@
       pagination: {
         async handler() {
           if (this.$store.getters.serverStatus) {
-            await this.getDocuments();
+            await this.updateDocumentsList();
           }
         },
         deep: true
       }
     },
     methods: {
-      async removeDocument(id) {
-        if (!confirm('Вы уверены, что хотите удалить документ?')) {
-          return false;
-        }
+      removeDocumentQuestion(id, name) {
+        this.deleteDialogId = id;
+        this.deleteDialogName = name;
+        this.deleteDialog = true;
+      },
+      async removeDocument(id, name) {
         await this.$store.dispatch('documents/removeDocument', id);
         await this.getDocuments();
+
+        this.deleteDialog = false;
+        this.userRules = true;
+        this.userRulesStatus = 'info';
+        this.userRulesText = `Документ ${name} удалён.`;
       },
       async updateDocumentsList() {
+        await this.$store.dispatch('documents/getPositions');
+        await this.$store.dispatch('formulas/getFormulasName');
         await this.getDocuments();
       },
       userNotConfirmMail() {
