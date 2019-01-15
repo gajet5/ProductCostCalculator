@@ -87,7 +87,7 @@
     <v-snackbar
       v-model="userRules"
       :color="userRulesStatus"
-      :timeout="6000"
+      :timeout="3000"
     >
       {{ userRulesText }}
       <v-btn

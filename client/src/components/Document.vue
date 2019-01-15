@@ -29,7 +29,7 @@
     </v-btn>
     <v-card>
       <v-toolbar dark color="indigo darken-1">
-        <v-btn icon dark @click="showDocumentDialog = false">
+        <v-btn icon dark @click="close">
           <v-icon>close</v-icon>
         </v-btn>
         <v-toolbar-title>Всего: {{ totalCount }}</v-toolbar-title>
@@ -43,6 +43,7 @@
                 label="Название документа"
                 solo
                 v-model="documentName"
+                @keydown="haveChange = true"
                 required
                 :rules="nameRules"
               ></v-text-field>
@@ -279,6 +280,41 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="saveChangeDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline info white--text"
+        >
+          <v-icon large class="mr-1" color="white">
+            info
+          </v-icon>
+          Сохранить изменения?
+        </v-card-title>
+        <v-card-text>
+          В документе были совершены изменения, вы хотите их сохранить?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="save"
+          >
+            Сохранить
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="showDocumentDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
@@ -315,7 +351,9 @@
         deleteDialog: false,
         deletePositionsDialog: false,
         deleteDialogId: '',
-        deleteDialogName: ''
+        deleteDialogName: '',
+        haveChange: false,
+        saveChangeDialog: false
       };
     },
     computed: {
@@ -333,6 +371,11 @@
         }
 
         return count.toFixed(2);
+      }
+    },
+    watch: {
+      showDocumentDialog() {
+        this.haveChange = false;
       }
     },
     methods: {
@@ -381,6 +424,8 @@
         this.$emit('updateDocumentsList');
       },
       async addOptions() {
+        this.haveChange = true;
+
         await this.$store.dispatch('formulas/getFormula', this.formulaSelected._id);
         let variables = {};
         let formulaString = '';
@@ -427,6 +472,8 @@
         this.deleteDialog = true;
       },
       deleteOption(option, name) {
+        this.haveChange = true;
+
         let indexOption = this.options.indexOf(option);
         this.options.splice(indexOption, 1);
 
@@ -469,11 +516,18 @@
         if (inputValue.split(/\./).length === 2 && (e.key === '.' || e.key === ',')) {
           e.preventDefault();
         }
-        if (!/[0-9]|\.|,/.test(e.key)) {
+        if (!/[0-9\-.,]/.test(e.key)) {
           e.preventDefault();
         }
 
         e.target.value = inputValue.replace(/,/gi, '.', 'gi');
+      },
+      close() {
+        if (this.haveChange) {
+          this.saveChangeDialog = true;
+        } else {
+          this.showDocumentDialog = false;
+        }
       }
     }
   };
