@@ -4,8 +4,8 @@
       <v-parallax :src="pralaxImgOne" height="600">
           <v-layout >
             <v-flex class="main-header__wrapper">
-              <p class="display-2 text-xs-center text-logo mb-2">Калькулятор Стоимости Продукта</p>
-              <p class="headline text-xs-center text-logo">экономь своё время</p>
+              <p class="display-2 text-xs-center text-uppercase mb-2 text--white text-shadow">Калькулятор Стоимости Продукта</p>
+              <p class="headline text-xs-center text-uppercase text--white text-shadow">экономь своё время</p>
               <div class="text-xs-center">
                 <v-btn @click="goToRegistration" color="info">Регистрация</v-btn>
                 <v-btn @click="goToLogin" color="info">Войти</v-btn>
