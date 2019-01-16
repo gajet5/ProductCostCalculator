@@ -38,7 +38,7 @@
                 </div>
                 <v-spacer></v-spacer>
                 <div v-show="userStatus">
-                  <span>Полный доступ: {{ premiumDateEnd }}</span>
+                  <span>Полный доступ на: {{ premiumDateEnd }}</span>
                 </div>
               </v-card-title>
               <div>
@@ -99,6 +99,8 @@
               <h3 class="headline mb-0">
                 Активировать аккаунт
               </h3>
+              <v-spacer></v-spacer>
+              <v-btn color="info" href="https://www.oplata.info/asp2/pay_wm.asp?id_d=1751698" target="_blank">Купить</v-btn>
             </v-card-title>
             <v-card-text>
               <v-text-field
@@ -117,7 +119,7 @@
     <v-snackbar
       v-model="userSnack"
       :color="userSnackStatus"
-      :timeout="6000"
+      :timeout="3000"
     >
       {{ userSnackText }}
       <v-btn
@@ -202,13 +204,6 @@
           this.userSnack = true;
           this.userSnackStatus = 'warning';
           this.userSnackText = 'Введите код активации';
-          return false;
-        }
-
-        if (this.$store.getters['user/premium']) {
-          this.userSnack = true;
-          this.userSnackStatus = 'info';
-          this.userSnackText = 'Аккаунт уже активирован';
           return false;
         }
 

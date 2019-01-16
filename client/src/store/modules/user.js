@@ -61,8 +61,12 @@ export default {
     },
     async enablePremium(context, code) {
       let result = await userServices.enablePremium(code);
-      context.commit('setPremium', result.data.user.premium);
-      context.commit('setPremiumDateEnd', result.data.user.premiumDateEnd);
+
+      if (result.status === 200) {
+        context.commit('setPremium', result.data.user.premium);
+        context.commit('setPremiumDateEnd', result.data.user.premiumDateEnd);
+      }
+
       return result;
     }
   }
