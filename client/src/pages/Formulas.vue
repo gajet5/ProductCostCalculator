@@ -1,18 +1,6 @@
 <template>
   <div>
-    <header-component>
-      <v-tooltip bottom>
-        <v-btn
-          slot="activator"
-          color="primary"
-          dark
-          @click="goToCatalogs"
-        >
-          Каталоги
-        </v-btn>
-        <span>Перейти к каталогам</span>
-      </v-tooltip>
-    </header-component>
+    <header-component></header-component>
     <v-container>
       <v-layout class="mt-3">
         <v-flex xs12>
@@ -40,6 +28,7 @@
               rows-per-page-text="Формул на страницу"
               :rows-per-page-items="rowsPerPageItems"
               :loading="loading"
+              no-results-text="Формулы не найдены"
             >
               <template slot="no-data">
                 <v-alert :value="true" color="info" icon="info" outline>
@@ -66,6 +55,9 @@
                     </v-btn>
                   </td>
                 </tr>
+              </template>
+              <template slot="pageText" slot-scope="props">
+                {{ props.pageStart }}-{{ props.pageStop }} из {{ props.itemsLength }}
               </template>
             </v-data-table>
           </v-card>
@@ -148,7 +140,7 @@
       return {
         formulasHeaders: [
           { text: 'Имя', value: 'name' },
-          { text: 'Дата создания', value: 'createDate' },
+          { text: 'Создано', value: 'createDate' },
           { text: 'Действия', value: 'name', sortable: false }
         ],
         rowsPerPageItems: [10, 20, 30, 50],
@@ -220,9 +212,6 @@
         this.userRules = true;
         this.userRulesStatus = 'info';
         this.userRulesText = 'В демо режиме допускается создание одной формулы.';
-      },
-      goToCatalogs() {
-        this.$router.push('/catalogs');
       },
       dateFormat(date) {
         return moment(date).format('DD.MM.YYYY HH:mm');

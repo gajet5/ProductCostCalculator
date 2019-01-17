@@ -153,6 +153,7 @@
                               v-model="item.variables[key.value.toLocaleLowerCase()]"
                               @keypress="inputCheck"
                               @keyup="countFormula(item)"
+                              @keydown="haveChange = true"
                             ></v-text-field>
                           </v-flex>
                         </v-layout>
@@ -308,7 +309,7 @@
           <v-btn
             color="red darken-1"
             flat="flat"
-            @click="showDocumentDialog = false"
+            @click="$emit('closeDocument', documentId)"
           >
             Отмена
           </v-btn>
@@ -329,7 +330,7 @@
 
       this.documentId = this.documentParams._id;
       this.documentName = this.documentParams.name;
-      this.options = this.documentParams.options;
+      this.options = JSON.parse(JSON.stringify(this.documentParams.options));
     },
     props: ['documentParams', 'showDocumentDialog'],
     data() {

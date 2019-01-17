@@ -1,18 +1,6 @@
 <template>
   <div>
-    <header-component>
-      <v-tooltip bottom>
-        <v-btn
-          slot="activator"
-          color="primary"
-          dark
-          @click="goToFormulas"
-        >
-          Формулы
-        </v-btn>
-        <span>Перейти к созданию формул</span>
-      </v-tooltip>
-    </header-component>
+    <header-component></header-component>
     <v-container>
       <v-layout>
         <v-flex>
@@ -45,6 +33,7 @@
               rows-per-page-text="Каталогов на страницу"
               :rows-per-page-items="rowsPerPageItems"
               :loading="loading"
+              no-results-text="Каталоги не найдены"
             >
               <template slot="no-data">
                 <v-alert :value="true" color="info" icon="info" outline>
@@ -73,6 +62,9 @@
                     </v-btn>
                   </td>
                 </tr>
+              </template>
+              <template slot="pageText" slot-scope="props">
+                {{ props.pageStart }}-{{ props.pageStop }} из {{ props.itemsLength }}
               </template>
             </v-data-table>
           </v-card>
@@ -151,7 +143,7 @@
       return {
         catalogsHeaders: [
           { text: 'Имя', value: 'name' },
-          { text: 'Дата создания', value: 'createDate' },
+          { text: 'Создано', value: 'createDate' },
           { text: 'Действия', value: 'name', sortable: false }
         ],
         rowsPerPageItems: [10, 20, 30, 50],
@@ -230,9 +222,6 @@
       goToCatalog(id) {
         this.$store.commit('documents/setCatalogId', id);
         this.$router.push('/documents');
-      },
-      goToFormulas() {
-        this.$router.push('/formulas');
       }
     }
   };
