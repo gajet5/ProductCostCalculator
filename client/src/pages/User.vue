@@ -1,7 +1,7 @@
 <template>
   <div>
     <header-component></header-component>
-    <v-container>
+    <v-container class="mt-3">
       <v-layout>
         <v-flex xs12>
           <v-card>

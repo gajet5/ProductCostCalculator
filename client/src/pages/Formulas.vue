@@ -1,8 +1,8 @@
 <template>
   <div>
     <header-component></header-component>
-    <v-container>
-      <v-layout class="mt-3">
+    <v-container class="mt-3">
+      <v-layout>
         <v-flex xs12>
           <v-card>
             <v-card-title primary-title>
