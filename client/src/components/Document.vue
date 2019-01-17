@@ -65,6 +65,8 @@
                   item-text="name"
                   item-value="_id"
                   :menu-props="{zIndex:'203'}"
+                  maxlength="50"
+                  counter
                 >
                   <template
                     slot="item"
@@ -154,6 +156,8 @@
                               @keypress="inputCheck"
                               @keyup="countFormula(item)"
                               @keydown="haveChange = true"
+                              maxlength="25"
+                              counter
                             ></v-text-field>
                           </v-flex>
                         </v-layout>
@@ -167,6 +171,8 @@
                       auto-grow
                       box
                       color="indigo darken-1"
+                      maxlength="5000"
+                      counter
                     ></v-textarea>
                   </v-flex>
                 </v-layout>

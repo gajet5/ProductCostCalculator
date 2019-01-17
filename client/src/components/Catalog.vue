@@ -44,6 +44,8 @@
                 v-model="catalogName"
                 required
                 :rules="nameRules"
+                maxlength="100"
+                counter
               ></v-text-field>
             </v-form>
           </v-flex>

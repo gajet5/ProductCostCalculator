@@ -44,6 +44,8 @@
                 v-model="formulaName"
                 required
                 :rules="nameRules"
+                maxlength="100"
+                counter
               ></v-text-field>
             </v-form>
             <h2 class="mb-2">Формула</h2>
@@ -96,6 +98,8 @@
                       <v-text-field
                         label="Название"
                         v-model="item.name"
+                        maxlength="100"
+                        counter
                       ></v-text-field>
                     </div>
                   </v-list-tile-content>

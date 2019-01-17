@@ -18,6 +18,8 @@
                 single-line
                 hide-details
                 v-model="pagination.search"
+                maxlength="100"
+                counter
               ></v-text-field>
             </v-card-title>
             <v-data-table
