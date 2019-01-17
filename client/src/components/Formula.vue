@@ -29,7 +29,7 @@
     </v-btn>
     <v-card>
       <v-toolbar dark color="indigo darken-1">
-        <v-btn icon dark @click="showFormulaDialog = false">
+        <v-btn icon dark @click="$emit('closeFormula', formulaId)">
           <v-icon>close</v-icon>
         </v-btn>
       </v-toolbar>
@@ -188,10 +188,10 @@
         this.indexInFormula = 1;
       }
     },
-    props: ['formulaParams'],
+    props: ['formulaParams', 'showFormulaDialog'],
     data() {
       return {
-        formulaId: '',
+        formulaId: 'newFormula',
         formulaName: '',
         nameRules: [
           v => !!v || 'Имя должено быть указано',
@@ -203,7 +203,6 @@
         usedLetters: [],
         operands: [],
         formula: [],
-        showFormulaDialog: false,
         limitVariations: false,
         snackbarEnabled: false,
         snackbarColor: '',
@@ -358,21 +357,18 @@
           return false;
         }
 
-        if (this.formulaId) {
+        if (this.formulaId !== 'newFormula') {
           await this.$store.dispatch('formulas/editFormula', {
             id: this.formulaId,
             name: this.formulaName,
             formula: this.formula
           });
-
-          this.showFormulaDialog = false;
         } else {
           await this.$store.dispatch('formulas/addFormula', {
             name: this.formulaName,
             formula: this.formula
           });
 
-          this.showFormulaDialog = false;
           this.formulaName = '';
           this.operands = [];
           this.usedLetters = [];
@@ -380,6 +376,7 @@
           this.indexInFormula = 1;
         }
 
+        this.$emit('closeFormula', this.formulaId);
         this.$emit('updateFormulasList');
       },
       checkFormula() {
@@ -421,7 +418,7 @@
           return false;
         }
 
-        this.showFormulaDialog = true;
+        this.$emit('openFormula', this.formulaId);
       }
     }
   };

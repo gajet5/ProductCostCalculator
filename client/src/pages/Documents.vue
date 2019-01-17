@@ -52,15 +52,18 @@
                 </v-alert>
               </template>
               <template slot="items" slot-scope="props">
-                <tr :key="props.item._id">
+                <tr :key="props.item._id" @click.prevent="openDocument(props.item._id)">
                   <td>{{ props.item.name }}</td>
-                  <td>{{ props.item.createDate }}</td>
+                  <td>{{ dateFormat(props.item.createDate) }}</td>
                   <td>{{ props.item.totalCount }}</td>
                   <td class="justify-center layout">
                     <document-component
+                      :showDocumentDialog = 'documentsDialogOptions[props.item._id]'
                       :documentParams = 'props.item'
                       @updateDocumentsList="updateDocumentsList"
                       @userNotConfirmMail="userNotConfirmMail"
+                      @openDocument = 'openDocument($event)'
+                      @closeDocument = 'closeDocument($event)'
                     ></document-component>
                     <v-btn color="error" @click="removeDocumentQuestion(props.item._id, props.item.name)">
                       <v-icon small>
@@ -76,9 +79,12 @@
       </v-layout>
     </v-container>
     <document-component
+      :showDocumentDialog = 'documentsDialogOptions.newDocument'
       @updateDocumentsList="updateDocumentsList"
       @userNotConfirmMail="userNotConfirmMail"
       @userNotPremium="userNotPremium"
+      @openDocument = 'openDocument($event)'
+      @closeDocument = 'closeDocument($event)'
     ></document-component>
     <v-snackbar
       v-model="userRules"
@@ -134,6 +140,7 @@
 </template>
 
 <script>
+  import Vue from 'vue';
   import headerComponent from '../components/Header';
   import documentComponent from '../components/Document';
   import moment from 'moment';
@@ -153,6 +160,7 @@
     },
     data() {
       return {
+        documentsDialogOptions: {},
         documentsHeaders: [
           { text: 'Имя', value: 'name' },
           { text: 'Дата создания', value: 'createDate' },
@@ -178,13 +186,7 @@
         return this.$route.meta.breadcrumb;
       },
       documentsList() {
-        let list = JSON.parse(JSON.stringify(this.$store.getters['documents/documents']));
-
-        for (let item of list) {
-          item.createDate = moment(item.createDate).format('DD.MM.YYYY HH:mm');
-        }
-
-        return list;
+        return this.$store.getters['documents/documents'];
       },
       totalItems() {
         return this.$store.getters['documents/totalItems'];
@@ -207,6 +209,16 @@
       }
     },
     methods: {
+      async updateDocumentsList() {
+        await this.$store.dispatch('documents/getPositions');
+        await this.$store.dispatch('formulas/getFormulasName');
+        await this.$store.dispatch('documents/getDocuments', this.pagination);
+
+        for (let document of this.$store.getters['documents/documents']) {
+          Vue.set(this.documentsDialogOptions, document._id, false);
+        }
+        Vue.set(this.documentsDialogOptions, 'newDocument', false);
+      },
       removeDocumentQuestion(id, name) {
         this.deleteDialogId = id;
         this.deleteDialogName = name;
@@ -214,17 +226,12 @@
       },
       async removeDocument(id, name) {
         await this.$store.dispatch('documents/removeDocument', id);
-        await this.getDocuments();
+        await this.$store.dispatch('documents/getDocuments', this.pagination);
 
         this.deleteDialog = false;
         this.userRules = true;
         this.userRulesStatus = 'info';
         this.userRulesText = `Документ ${name} удалён.`;
-      },
-      async updateDocumentsList() {
-        await this.$store.dispatch('documents/getPositions');
-        await this.$store.dispatch('formulas/getFormulasName');
-        await this.getDocuments();
       },
       userNotConfirmMail() {
         this.userRules = true;
@@ -236,11 +243,17 @@
         this.userRulesStatus = 'info';
         this.userRulesText = 'В демо режиме допускается создание одного документа.';
       },
-      async getDocuments() {
-        await this.$store.dispatch('documents/getDocuments', this.pagination);
-      },
       goToFormulas() {
         this.$router.push('/formulas');
+      },
+      dateFormat(date) {
+        return moment(date).format('DD.MM.YYYY HH:mm');
+      },
+      openDocument(id) {
+        this.documentsDialogOptions[id] = true;
+      },
+      closeDocument(id) {
+        this.documentsDialogOptions[id] = false;
       }
     }
   };

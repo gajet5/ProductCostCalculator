@@ -64,7 +64,7 @@
                   placeholder="Выберите позицию или введите свою."
                   item-text="name"
                   item-value="_id"
-                  z-index="203"
+                  :menu-props="{zIndex:'203'}"
                 >
                   <template
                     slot="item"
@@ -331,11 +331,10 @@
       this.documentName = this.documentParams.name;
       this.options = this.documentParams.options;
     },
-    props: ['documentParams'],
+    props: ['documentParams', 'showDocumentDialog'],
     data() {
       return {
-        documentId: '',
-        showDocumentDialog: false,
+        documentId: 'newDocument',
         documentName: '',
         nameRules: [
           v => !!v || 'Имя должено быть указано',
@@ -390,7 +389,7 @@
           return false;
         }
 
-        this.showDocumentDialog = true;
+        this.$emit('openDocument', this.documentId);
       },
       async save() {
         await this.$store.dispatch('getServerStatus');
@@ -400,15 +399,13 @@
           return false;
         }
 
-        if (this.documentId) {
+        if (this.documentId !== 'newDocument') {
           await this.$store.dispatch('documents/editDocument', {
             id: this.documentId,
             name: this.documentName,
             totalCount: this.totalCount,
             options: this.options
           });
-
-          this.showDocumentDialog = false;
         } else {
           await this.$store.dispatch('documents/addDocument', {
             catalogId: this.$store.getters['documents/catalogId'],
@@ -417,10 +414,10 @@
             options: this.options
           });
 
-          this.showDocumentDialog = false;
           this.documentName = '';
           this.options = [];
         }
+        this.$emit('closeDocument', this.documentId);
         this.$emit('updateDocumentsList');
       },
       async addOptions() {
@@ -526,7 +523,7 @@
         if (this.haveChange) {
           this.saveChangeDialog = true;
         } else {
-          this.showDocumentDialog = false;
+          this.$emit('closeDocument', this.documentId);
         }
       }
     }
