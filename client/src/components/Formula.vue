@@ -283,6 +283,21 @@
         return bracketOpen !== bracketClose;
       }
     },
+    watch: {
+      operands: {
+        handler(operands) {
+          for (let item of operands) {
+            let index = this.formula.findIndex(el => el.value === item.letter);
+            this.$store.commit('formulas/updateOperandName', {
+              formulaName: this.formulaName,
+              formulaIndex: index,
+              updateName: item.name
+            });
+          }
+        },
+        deep: true
+      }
+    },
     methods: {
       letterInFormula(item) {
         if (item.inFormula) {
@@ -303,8 +318,8 @@
       addOperator(sign) {
         this.formula.push({
           index: this.indexInFormula,
-          value: sign,
-          name: ''
+          name: '',
+          value: sign
         });
         this.indexInFormula += 1;
       },

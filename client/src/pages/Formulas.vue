@@ -50,7 +50,7 @@
                       @openFormula = 'openFormula($event)'
                       @closeFormula = 'closeFormula($event)'
                     ></formula-component>
-                    <v-btn color="error" @click="removeFormulaQuestion(props.item._id, props.item.name)">
+                    <v-btn color="error" @click.stop="removeFormulaQuestion(props.item._id, props.item.name)">
                       <v-icon small>
                         delete
                       </v-icon>

@@ -13,7 +13,8 @@ const Documents = new Schema({
     },
     name: {
         type: String,
-        required: true
+        required: true,
+        maxLength: 100
     },
     options: {
         type: Array,

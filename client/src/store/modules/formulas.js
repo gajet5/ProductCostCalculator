@@ -41,6 +41,10 @@ export default {
     },
     setLoading(state, payload) {
       state.loading = payload;
+    },
+    updateOperandName(state, payload) {
+      let index = state.formulas.findIndex(el => el.name === payload.formulaName);
+      state.formulas[index].formula[payload.formulaIndex].name = payload.updateName;
     }
   },
   actions: {
