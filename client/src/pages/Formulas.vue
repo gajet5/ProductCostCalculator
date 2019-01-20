@@ -186,7 +186,6 @@
         await this.$store.dispatch('formulas/getFormulas', this.pagination);
 
         for (let formula of this.$store.getters['formulas/list']) {
-          console.log(formula);
           Vue.set(this.formulasDialogOptions, formula._id, false);
         }
         Vue.set(this.formulasDialogOptions, 'newFormula', false);

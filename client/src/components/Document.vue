@@ -32,7 +32,7 @@
         <v-btn icon dark @click="close">
           <v-icon>close</v-icon>
         </v-btn>
-        <v-toolbar-title>Всего: {{ totalCount }}</v-toolbar-title>
+        <v-toolbar-title>Всего: {{ moneyFormat(totalCount) }}</v-toolbar-title>
       </v-toolbar>
       <v-container grid-list-md>
         <v-layout>
@@ -137,7 +137,7 @@
                 <div>
                   <h4 class="headline mb-0">
                     <span class="grey--text font-weight-light caption text-lowercase">{{ item.formulaString }} =</span>
-                    {{ item.count }}
+                    {{ moneyFormat(item.count) }}
                   </h4>
                 </div>
               </v-card-title>
@@ -534,6 +534,9 @@
         } else {
           this.$emit('closeDocument', this.documentId);
         }
+      },
+      moneyFormat(count) {
+        return Intl.NumberFormat('ru-RU').format(count).replace(/,/, '.');
       }
     }
   };

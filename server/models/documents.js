@@ -14,6 +14,7 @@ const Documents = new Schema({
     name: {
         type: String,
         required: true,
+        trim: true,
         maxLength: 100
     },
     options: {

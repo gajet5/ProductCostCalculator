@@ -163,6 +163,8 @@
 
   export default {
     created() {
+      this.createdMonemt = true;
+
       let indexArr = [];
 
       if (!this.formulaParams) {
@@ -191,10 +193,13 @@
       if (!isFinite(this.indexInFormula)) {
         this.indexInFormula = 1;
       }
+
+      this.createdMonemt = false;
     },
     props: ['formulaParams', 'showFormulaDialog'],
     data() {
       return {
+        createdMonemt: false,
         formulaId: 'newFormula',
         formulaName: '',
         nameRules: [
@@ -286,13 +291,15 @@
     watch: {
       operands: {
         handler(operands) {
-          for (let item of operands) {
-            let index = this.formula.findIndex(el => el.value === item.letter);
-            this.$store.commit('formulas/updateOperandName', {
-              formulaName: this.formulaName,
-              formulaIndex: index,
-              updateName: item.name
-            });
+          if (!this.createdMonemt) {
+            for (let item of operands) {
+              let index = this.formula.findIndex(el => el.value === item.letter);
+              this.$store.commit('formulas/updateOperandName', {
+                formulaName: this.formulaName,
+                formulaIndex: index,
+                updateName: item.name
+              });
+            }
           }
         },
         deep: true
@@ -403,12 +410,10 @@
           return false;
         }
 
-        // Удалять один знак в формуле
         if (/[+\-*/]/.test(this.formula[0].value)) {
           this.formula.splice(0, 1);
         }
 
-        // Удаление знака с права при удалении переменной
         for (let i = 0; i < this.formula.length; i += 1) {
           if (this.formula.length - 1 === i) {
             break;

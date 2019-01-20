@@ -9,11 +9,13 @@ const User = new Schema({
         type: String,
         unique: true,
         required: true,
+        trim: true,
         maxlength: 100
     },
     password: {
         type: String,
         required: true,
+        trim: true,
         maxlength: 100
     },
     registrationDate: {

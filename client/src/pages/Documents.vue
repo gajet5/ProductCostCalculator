@@ -239,7 +239,7 @@
         return moment(date).format('DD.MM.YYYY HH:mm');
       },
       moneyFormat(count) {
-        return Intl.NumberFormat('ru-RU').format(count);
+        return Intl.NumberFormat('ru-RU').format(count).replace(/,/, '.');
       },
       openDocument(id) {
         this.documentsDialogOptions[id] = true;
