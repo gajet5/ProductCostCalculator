@@ -24,7 +24,7 @@
                     ></v-img>
                   </div>
                   <v-card-text>
-                    1. Страница <strong>Каталоги</strong> отображает созданные вами каталоги. По умолчанию отображается 10 каталогов на страницу.
+                    1. Страница <strong>Каталоги</strong> отображает созданные каталоги. По умолчанию отображается 10 каталогов на страницу.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -52,7 +52,7 @@
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    8. Для поиска нужного вам каталога, используйте <v-icon>search</v-icon><strong>поиск</strong> в верхней части таблицы.
+                    8. Для поиска нужного каталога, используйте <v-icon>search</v-icon><strong>поиск</strong> в верхней части таблицы.
                   </v-card-text>
                 </v-card>
               </v-expansion-panel-content>
@@ -71,7 +71,7 @@
                     ></v-img>
                   </div>
                   <v-card-text>
-                    1. При создании каталога вам следует ввести название каталога.
+                    1. При создании каталога следует ввести название каталога.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -79,7 +79,7 @@
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    3. Если вы передумали нажмине на кнопку <v-icon>close</v-icon><strong>Закрыть</strong>. Находится сверху слева.
+                    3. Если передумали нажмите на кнопку <v-icon>close</v-icon><strong>Закрыть</strong>. Находится сверху слева.
                   </v-card-text>
                 </v-card>
               </v-expansion-panel-content>
@@ -98,7 +98,7 @@
                     ></v-img>
                   </div>
                   <v-card-text>
-                    1. Страница <strong>Документы</strong> отображает созданные вами каталоги. По умолчанию отображается 10 каталогов на страницу.
+                    1. Страница <strong>Документы</strong> отображает созданные документы. По умолчанию отображается 10 документов на страницу.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -118,11 +118,11 @@
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    6. Для удаление каталога нажмите на кнопку <v-icon>delete</v-icon><strong>Удалить</strong>.
+                    6. Для удаление документа нажмите на кнопку <v-icon>delete</v-icon><strong>Удалить</strong>.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    7. Для поиска нужного вам каталога, используйте <v-icon>search</v-icon><strong>поиск</strong> в верхней части таблицы.
+                    7. Для поиска нужного документа, используйте <v-icon>search</v-icon><strong>поиск</strong> в верхней части таблицы.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -145,7 +145,7 @@
                     ></v-img>
                   </div>
                   <v-card-text>
-                    1. При создании документа вам следует ввести название документа.
+                    1. При создании документа следует ввести название документа.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -153,7 +153,7 @@
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    3. Если вы передумали нажмине на кнопку <v-icon>close</v-icon><strong>Закрыть</strong>. Находится сверху слева.
+                    3. Если передумали нажмине на кнопку <v-icon>close</v-icon><strong>Закрыть</strong>. Находится сверху слева.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -176,11 +176,11 @@
                     ></v-img>
                   </div>
                   <v-card-text>
-                    1. При регистрации вы получили набор <strong>Позиций</strong> и <strong>Формул</strong>.
+                    1. При регистрации был созданн набор <strong>Позиций</strong> и <strong>Формул</strong> для аккаунта.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    2. <strong>Позиции</strong> - добавляются автоматически если вы вписываете новое значение. Так же позиции можно удалять.
+                    2. <strong>Позиции</strong> - добавляются автоматически при занесении нового значение. Позиции можно удалять по кнопке <v-icon>delete</v-icon><strong>Удалить</strong>.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -188,7 +188,7 @@
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    4. Для добавления элемента расчёта вам следует выбрать <strong>Позицию</strong> и <strong>Формулу</strong> по которой будет выполнятся расчёт. Затем нажать на <v-icon>add</v-icon><strong>Добавить</strong>
+                    4. Для добавления элемента расчёта следует выбрать <strong>Позицию</strong> и <strong>Формулу</strong> по которой будет выполнятся расчёт. Затем нажать на <v-icon>add</v-icon><strong>Добавить</strong>
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -196,15 +196,15 @@
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    6. Карточка элемента содержит название <strong>позиции</strong>, название <strong>формулы</strong>. <strong>Поля</strong> для занесения данных. В правом верхнем углу вы сможете найти <strong>формулу</strong>, а так же сумму расчёта. Ниже поле для <strong>комментария</strong>. В низу элемента вы найдёте кнопку <v-icon>delete</v-icon><strong>удаления</strong> элемента.
+                    6. Карточка элемента содержит название <strong>позиции</strong>, название <strong>формулы</strong>. <strong>Поля</strong> для занесения данных. В правом верхнем углу показана <strong>формула</strong>, а так же сумма расчёта. Ниже поле для <strong>комментария</strong>. В низу элемента присутсвует кнопка <v-icon>delete</v-icon><strong>удаления</strong> элемента.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    7. Кнопку <v-icon>save</v-icon><strong>Сохранить</strong> документ вы найдёте внизу справа.
+                    7. Кнопку <v-icon>save</v-icon><strong>Сохранить</strong> документ находится внизу справа.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    8. Общую сумму расчёта ищите сверху после слова <strong>Всего</strong>.
+                    8. Общая сумма расчёта документа расположена сверху после слова <strong>Всего</strong>.
                   </v-card-text>
                 </v-card>
               </v-expansion-panel-content>
@@ -223,7 +223,7 @@
                     ></v-img>
                   </div>
                   <v-card-text>
-                    1. Страница <strong>Формулы</strong> отображает созданные вами формулы. По умолчанию отображается 10 формул на страницу.
+                    1. Страница <strong>Формулы</strong> отображает созданные формулы. По умолчанию отображается 10 формул на страницу.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -243,7 +243,7 @@
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    6. Для поиска нужной вам формулы, используйте <v-icon>search</v-icon><strong>поиск</strong> в верхней части таблицы.
+                    6. Для поиска нужной формулы, используйте <v-icon>search</v-icon><strong>поиск</strong> в верхней части таблицы.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -266,7 +266,7 @@
                     ></v-img>
                   </div>
                   <v-card-text>
-                    1. При создании формулы вам следует ввести название формулы.
+                    1. При создании формулы следует ввести название формулы.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -274,7 +274,7 @@
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    3. Если вы передумали нажмине на кнопку <v-icon>close</v-icon><strong>Закрыть</strong>. Находится сверху слева.
+                    3. Если передумали нажмине на кнопку <v-icon>close</v-icon><strong>Закрыть</strong>. Находится сверху слева.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -305,7 +305,7 @@
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    3. Появится поле <strong>Переменной</strong>. Дайте название вашей переменной.
+                    3. Появится поле <strong>Переменной</strong>. Дайте название переменной.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -317,7 +317,7 @@
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    6. При конструировании формулы вам доступны простые математические действия: <code>+</code><strong>Сложение</strong>, <code>-</code><strong>Вычетание</strong>, <code>*</code><strong>Умножение</strong>Умножение, <code>/</code><strong>Деление</strong>, а так же <code>( )</code><strong>Скобки</strong>
+                    6. При конструировании формулы доступны базовые математические действия: <code>+</code><strong>Сложение</strong>, <code>-</code><strong>Вычетание</strong>, <code>*</code><strong>Умножение</strong>Умножение, <code>/</code><strong>Деление</strong>, а так же <code>( )</code><strong>Скобки</strong>
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -325,7 +325,7 @@
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    8. Для добавление действия в формулу нажмите на нужное вам действие.
+                    8. Для добавление действия в формулу нажмите на нужное действие.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -333,11 +333,11 @@
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    9. Ваша формула будет отображатся в специальном поле ниже заголовка <strong>Формула</strong>
+                    9. Формула будет отображатся в специальном поле ниже заголовка <strong>Формула</strong>
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    10. После того, как вы создали формулу, сохраните её нажав <v-icon>save</v-icon><strong>Сохранить</strong>
+                    10. После того, как формула создана, сохраните её нажав <v-icon>save</v-icon><strong>Сохранить</strong>
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
@@ -373,11 +373,11 @@
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    2. С права вы можете найти сколько осталось времени до окончания подписки.
+                    2. С права находится информация об оставшемся времени до окончания подписки.
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    3. Ниже кнопка <strong>Сменить пароль</strong> открывает форму смена пароля аккаунта.
+                    3. Кнопка <strong>Сменить пароль</strong> открывает форму смены пароля аккаунта.
                   </v-card-text>
                   <v-divider></v-divider>
                   <div class="d-flex justify-center mt-2">
@@ -391,7 +391,37 @@
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>
-                    1. В личном кабинете отображается <strong>Тип акаунта</strong>
+                    1. При демо режиме ниже панели информации будет расположен инструмент активации аккаунта.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    2. С права находится кнопка покупки ключа на 1 год.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    3. В демо режиме доступно создание 1 каталога, 1 документа и 1 формулы.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <div class="d-flex justify-center mt-2">
+                    <v-img
+                      :src="require('../static/img/help/userActivation.png')"
+                      max-width="1050px"
+                    ></v-img>
+                  </div>
+                  <v-card-text>
+                    <h4>Демо</h4>
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    1. Если аккаунт не активирован, в личном кабинете будет показано предупреждение.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    2. Так же станет доступка кнопка повторной отправки письма активации.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    2. Если аккаунт не активирован, функционал калькулятора недоступен.
                   </v-card-text>
                   <v-divider></v-divider>
                 </v-card>

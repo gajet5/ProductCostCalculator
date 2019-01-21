@@ -37,7 +37,7 @@
         <v-layout>
           <v-flex>
             <h2 class="mb-2">Название</h2>
-            <v-form v-model="nameValid">
+            <v-form v-model="nameValid" @submit.prevent="save">
               <v-text-field
                 label="Название каталога"
                 solo
@@ -104,6 +104,10 @@
         this.showCatalogDialog = true;
       },
       async save() {
+        if (!this.nameValid) {
+          return false;
+        }
+
         await this.$store.dispatch('getServerStatus');
         await this.$store.dispatch('getTokenStatus');
 

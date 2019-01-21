@@ -37,7 +37,7 @@
         <v-layout>
           <v-flex>
             <h2 class="mb-2">Название</h2>
-            <v-form v-model="nameValid">
+            <v-form v-model="nameValid" @submit.prevent="save">
               <v-text-field
                 label="Название формулы"
                 solo
@@ -368,6 +368,10 @@
         this.formula.pop();
       },
       async save() {
+        if (!this.nameValid) {
+          return false;
+        }
+
         if (this.bracketCheck) {
           this.snackbarEnabled = true;
           this.snackbarColor = 'warning';

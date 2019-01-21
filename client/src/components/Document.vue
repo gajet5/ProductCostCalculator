@@ -38,7 +38,7 @@
         <v-layout>
           <v-flex>
             <h2 class="mb-2">Название</h2>
-            <v-form v-model="nameValid">
+            <v-form v-model="nameValid" @submit.prevent="save">
               <v-text-field
                 label="Название документа"
                 solo
@@ -308,16 +308,24 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            color="green darken-1"
+            color="success"
             flat="flat"
             @click="save"
+            :disabled="!nameValid"
           >
             Сохранить
           </v-btn>
           <v-btn
-            color="red darken-1"
+            color="warning"
             flat="flat"
             @click="$emit('closeDocument', documentId)"
+          >
+            Не сохранять
+          </v-btn>
+          <v-btn
+            color="error"
+            flat="flat"
+            @click="saveChangeDialog = false"
           >
             Отмена
           </v-btn>
@@ -401,6 +409,10 @@
         this.$emit('openDocument', this.documentId);
       },
       async save() {
+        if (!this.nameValid) {
+          return false;
+        }
+
         await this.$store.dispatch('getServerStatus');
         await this.$store.dispatch('getTokenStatus');
 

@@ -50,7 +50,11 @@
           this.icon = 'done';
           this.text = 'Аккаунт подтверждён';
           this.icolor = 'green';
-          break;
+
+          setTimeout(() => {
+            this.$router.push('/login');
+          }, 5000);
+          return;
 
         case 204:
         case 400:
