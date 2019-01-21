@@ -17,10 +17,12 @@
                   Каталоги
                 </div>
                 <v-card>
-                  <v-img
-                    :src="require('../static/img/help/catalogs.png')"
-
-                  ></v-img>
+                  <div class="d-flex justify-center">
+                    <v-img
+                      :src="require('../static/img/help/catalogs.png')"
+                      max-width="1050px"
+                    ></v-img>
+                  </div>
                   <v-card-text>
                     1. Страница <strong>Каталоги</strong> отображает созданные вами каталоги. По умолчанию отображается 10 каталогов на страницу.
                   </v-card-text>
@@ -62,9 +64,12 @@
                   Создание каталога
                 </div>
                 <v-card>
-                  <v-img
-                    :src="require('../static/img/help/newCatalog.png')"
-                  ></v-img>
+                  <div class="d-flex justify-center">
+                    <v-img
+                      :src="require('../static/img/help/newCatalog.png')"
+                      max-width="1050px"
+                    ></v-img>
+                  </div>
                   <v-card-text>
                     1. При создании каталога вам следует ввести название каталога.
                   </v-card-text>
@@ -86,9 +91,12 @@
                   Документы
                 </div>
                 <v-card>
-                  <v-img
-                    :src="require('../static/img/help/documents.png')"
-                  ></v-img>
+                  <div class="d-flex justify-center">
+                    <v-img
+                      :src="require('../static/img/help/documents.png')"
+                      max-width="1050px"
+                    ></v-img>
+                  </div>
                   <v-card-text>
                     1. Страница <strong>Документы</strong> отображает созданные вами каталоги. По умолчанию отображается 10 каталогов на страницу.
                   </v-card-text>
@@ -130,9 +138,12 @@
                   Создание документ
                 </div>
                 <v-card>
-                  <v-img
-                    :src="require('../static/img/help/newDocument.png')"
-                  ></v-img>
+                  <div class="d-flex justify-center">
+                    <v-img
+                      :src="require('../static/img/help/newDocument.png')"
+                      max-width="1050px"
+                    ></v-img>
+                  </div>
                   <v-card-text>
                     1. При создании документа вам следует ввести название документа.
                   </v-card-text>
@@ -158,9 +169,12 @@
                   Занесение данных и расчёт
                 </div>
                 <v-card>
-                  <v-img
-                    :src="require('../static/img/help/workDocument.png')"
-                  ></v-img>
+                  <div class="d-flex justify-center">
+                    <v-img
+                      :src="require('../static/img/help/workDocument.png')"
+                      max-width="1050px"
+                    ></v-img>
+                  </div>
                   <v-card-text>
                     1. При регистрации вы получили набор <strong>Позиций</strong> и <strong>Формул</strong>.
                   </v-card-text>
@@ -202,9 +216,12 @@
                   Формулы
                 </div>
                 <v-card>
-                  <v-img
-                    :src="require('../static/img/help/formulas.png')"
-                  ></v-img>
+                  <div class="d-flex justify-center">
+                    <v-img
+                      :src="require('../static/img/help/formulas.png')"
+                      max-width="1050px"
+                    ></v-img>
+                  </div>
                   <v-card-text>
                     1. Страница <strong>Формулы</strong> отображает созданные вами формулы. По умолчанию отображается 10 формул на страницу.
                   </v-card-text>
@@ -242,9 +259,12 @@
                   Создание формулы
                 </div>
                 <v-card>
-                  <v-img
-                    :src="require('../static/img/help/newFormula.png')"
-                  ></v-img>
+                  <div class="d-flex justify-center">
+                    <v-img
+                      :src="require('../static/img/help/newFormula.png')"
+                      max-width="1050px"
+                    ></v-img>
+                  </div>
                   <v-card-text>
                     1. При создании формулы вам следует ввести название формулы.
                   </v-card-text>
@@ -270,9 +290,12 @@
                   Конструирование формулы
                 </div>
                 <v-card>
-                  <v-img
-                    :src="require('../static/img/help/buildFormula.png')"
-                  ></v-img>
+                  <div class="d-flex justify-center">
+                    <v-img
+                      :src="require('../static/img/help/buildFormula.png')"
+                      max-width="1050px"
+                    ></v-img>
+                  </div>
                   <v-card-text>
                     1. Для конструирования формулы следует создать и назвать переменные для будущей формулы.
                   </v-card-text>
@@ -330,9 +353,47 @@
                   Личный кабинет
                 </div>
                 <v-card>
+                  <v-card-title primary-title>
+                    <h3>
+                      Личный кабинет может быть в двух состояниях: <strong>Демо</strong> и <strong>Стандарт</strong>
+                    </h3>
+                  </v-card-title>
+                  <div class="d-flex justify-center">
+                    <v-img
+                      :src="require('../static/img/help/userStandart.png')"
+                      max-width="1050px"
+                    ></v-img>
+                  </div>
                   <v-card-text>
-                    В разработке
+                    <h4>Стандарт</h4>
                   </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    1. В личном кабинете отображается <strong>Тип акаунта</strong>
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    2. С права вы можете найти сколько осталось времени до окончания подписки.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    3. Ниже кнопка <strong>Сменить пароль</strong> открывает форму смена пароля аккаунта.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <div class="d-flex justify-center mt-2">
+                    <v-img
+                      :src="require('../static/img/help/userDemo.png')"
+                      max-width="1050px"
+                    ></v-img>
+                  </div>
+                  <v-card-text>
+                    <h4>Демо</h4>
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    1. В личном кабинете отображается <strong>Тип акаунта</strong>
+                  </v-card-text>
+                  <v-divider></v-divider>
                 </v-card>
               </v-expansion-panel-content>
             </v-expansion-panel>

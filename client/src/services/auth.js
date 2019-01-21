@@ -21,7 +21,7 @@ export default {
   },
   async confirm(id) {
     try {
-      let { data } = await Api().patch('auth/confirm', {
+      let { data } = await Api().post('auth/confirm', {
         id
       });
       return data;
