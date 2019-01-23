@@ -1,30 +1,7 @@
 <template>
   <div>
-    <header-component>
-      <v-tooltip bottom>
-        <v-btn
-          slot="activator"
-          color="primary"
-          dark
-          @click="goToCatalogs"
-        >
-          Каталоги
-        </v-btn>
-        <span>Перейти к каталогам</span>
-      </v-tooltip>
-      <v-tooltip bottom>
-        <v-btn
-          slot="activator"
-          color="primary"
-          dark
-          @click="goToFormulas"
-        >
-          Формулы
-        </v-btn>
-        <span>Перейти к созданию формул</span>
-      </v-tooltip>
-    </header-component>
-    <v-container>
+    <header-component></header-component>
+    <v-container class="mt-3">
       <v-layout>
         <v-flex xs12>
           <v-card>
@@ -38,7 +15,7 @@
                 </div>
                 <v-spacer></v-spacer>
                 <div v-show="userStatus">
-                  <span>Полный доступ: {{ premiumDateEnd }}</span>
+                  <span>Полный доступ на: {{ premiumDateEnd }}</span>
                 </div>
               </v-card-title>
               <div>
@@ -99,6 +76,8 @@
               <h3 class="headline mb-0">
                 Активировать аккаунт
               </h3>
+              <v-spacer></v-spacer>
+              <v-btn color="info" href="https://www.oplata.info/asp2/pay_wm.asp?id_d=1751698" target="_blank">Купить</v-btn>
             </v-card-title>
             <v-card-text>
               <v-text-field
@@ -117,7 +96,7 @@
     <v-snackbar
       v-model="userSnack"
       :color="userSnackStatus"
-      :timeout="6000"
+      :timeout="3000"
     >
       {{ userSnackText }}
       <v-btn
@@ -205,13 +184,6 @@
           return false;
         }
 
-        if (this.$store.getters['user/premium']) {
-          this.userSnack = true;
-          this.userSnackStatus = 'info';
-          this.userSnackText = 'Аккаунт уже активирован';
-          return false;
-        }
-
         let result = await this.$store.dispatch('user/enablePremium', this.code);
 
         if (result.status === 200) {
@@ -224,12 +196,6 @@
           this.userSnackText = result.data.message;
         }
         await this.$store.dispatch('user/getUserInfo');
-      },
-      goToCatalogs() {
-        this.$router.push('/catalogs');
-      },
-      goToFormulas() {
-        this.$router.push('/formulas');
       }
     }
   };

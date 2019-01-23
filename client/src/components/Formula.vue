@@ -29,7 +29,7 @@
     </v-btn>
     <v-card>
       <v-toolbar dark color="indigo darken-1">
-        <v-btn icon dark @click="showFormulaDialog = false">
+        <v-btn icon dark @click="$emit('closeFormula', formulaId)">
           <v-icon>close</v-icon>
         </v-btn>
       </v-toolbar>
@@ -37,13 +37,15 @@
         <v-layout>
           <v-flex>
             <h2 class="mb-2">Название</h2>
-            <v-form v-model="nameValid">
+            <v-form v-model="nameValid" @submit.prevent="save">
               <v-text-field
                 label="Название формулы"
                 solo
                 v-model="formulaName"
                 required
                 :rules="nameRules"
+                maxlength="100"
+                counter
               ></v-text-field>
             </v-form>
             <h2 class="mb-2">Формула</h2>
@@ -96,6 +98,8 @@
                       <v-text-field
                         label="Название"
                         v-model="item.name"
+                        maxlength="100"
+                        counter
                       ></v-text-field>
                     </div>
                   </v-list-tile-content>
@@ -159,6 +163,8 @@
 
   export default {
     created() {
+      this.createdMonemt = true;
+
       let indexArr = [];
 
       if (!this.formulaParams) {
@@ -187,15 +193,18 @@
       if (!isFinite(this.indexInFormula)) {
         this.indexInFormula = 1;
       }
+
+      this.createdMonemt = false;
     },
-    props: ['formulaParams'],
+    props: ['formulaParams', 'showFormulaDialog'],
     data() {
       return {
-        formulaId: '',
+        createdMonemt: false,
+        formulaId: 'newFormula',
         formulaName: '',
         nameRules: [
           v => !!v || 'Имя должено быть указано',
-          v => /^[\w\dа-яА-Я .\-ё]{3,}$/.test(v) || 'Имя должено быть валидным'
+          v => /^[\w\dа-яА-Я .\-ё#№]{3,}$/.test(v) || 'Имя должено быть валидным'
         ],
         nameValid: false,
         indexInFormula: 1,
@@ -203,7 +212,6 @@
         usedLetters: [],
         operands: [],
         formula: [],
-        showFormulaDialog: false,
         limitVariations: false,
         snackbarEnabled: false,
         snackbarColor: '',
@@ -280,6 +288,23 @@
         return bracketOpen !== bracketClose;
       }
     },
+    watch: {
+      operands: {
+        handler(operands) {
+          if (!this.createdMonemt) {
+            for (let item of operands) {
+              let index = this.formula.findIndex(el => el.value === item.letter);
+              this.$store.commit('formulas/updateOperandName', {
+                formulaName: this.formulaName,
+                formulaIndex: index,
+                updateName: item.name
+              });
+            }
+          }
+        },
+        deep: true
+      }
+    },
     methods: {
       letterInFormula(item) {
         if (item.inFormula) {
@@ -300,8 +325,8 @@
       addOperator(sign) {
         this.formula.push({
           index: this.indexInFormula,
-          value: sign,
-          name: ''
+          name: '',
+          value: sign
         });
         this.indexInFormula += 1;
       },
@@ -343,6 +368,10 @@
         this.formula.pop();
       },
       async save() {
+        if (!this.nameValid) {
+          return false;
+        }
+
         if (this.bracketCheck) {
           this.snackbarEnabled = true;
           this.snackbarColor = 'warning';
@@ -358,21 +387,18 @@
           return false;
         }
 
-        if (this.formulaId) {
+        if (this.formulaId !== 'newFormula') {
           await this.$store.dispatch('formulas/editFormula', {
             id: this.formulaId,
             name: this.formulaName,
             formula: this.formula
           });
-
-          this.showFormulaDialog = false;
         } else {
           await this.$store.dispatch('formulas/addFormula', {
             name: this.formulaName,
             formula: this.formula
           });
 
-          this.showFormulaDialog = false;
           this.formulaName = '';
           this.operands = [];
           this.usedLetters = [];
@@ -380,6 +406,7 @@
           this.indexInFormula = 1;
         }
 
+        this.$emit('closeFormula', this.formulaId);
         this.$emit('updateFormulasList');
       },
       checkFormula() {
@@ -387,12 +414,10 @@
           return false;
         }
 
-        // Удалять один знак в формуле
         if (/[+\-*/]/.test(this.formula[0].value)) {
           this.formula.splice(0, 1);
         }
 
-        // Удаление знака с права при удалении переменной
         for (let i = 0; i < this.formula.length; i += 1) {
           if (this.formula.length - 1 === i) {
             break;
@@ -421,7 +446,7 @@
           return false;
         }
 
-        this.showFormulaDialog = true;
+        this.$emit('openFormula', this.formulaId);
       }
     }
   };

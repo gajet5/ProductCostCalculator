@@ -1,5 +1,6 @@
 const formulasModel = require('../models/formulas');
 const usetModel = require('../models/user');
+const limits = require('../policy/limits');
 
 module.exports = {
     // GET /formulas/formula?id=${payload}
@@ -13,6 +14,15 @@ module.exports = {
                 status: 204,
                 data: {
                     message: 'Данные о формуле не переданны'
+                }
+            });
+        }
+
+        if (limits.string(formulaId, 50)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки formulaId не корректен.'
                 }
             });
         }
@@ -50,6 +60,15 @@ module.exports = {
         let page = parseInt(req.query.page);
         let rowsPerPage = parseInt(req.query.rowsPerPage);
         let search = req.query.search.toString('utf8');
+
+        if (limits.string(search, 100)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки search не корректен.'
+                }
+            });
+        }
 
         try {
             let formulas = await formulasModel.find({
@@ -114,7 +133,6 @@ module.exports = {
     async add(req, res) {
         const token = req.headers['x-access-token'];
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
-
         let name = req.body.name;
         let formula = req.body.formula;
 
@@ -123,6 +141,24 @@ module.exports = {
                 status: 204,
                 data: {
                     message: 'Данные о формуле не переданны'
+                }
+            });
+        }
+
+        if (limits.string(name, 100)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки search не корректен.'
+                }
+            });
+        }
+
+        if (limits.stringInArray(formula, 'name', 100)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки formula.name не корректен.'
                 }
             });
         }
@@ -192,6 +228,24 @@ module.exports = {
             });
         }
 
+        if (limits.string(id, 50) && limits.string(name, 100)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки id и name не корректен.'
+                }
+            });
+        }
+
+        if (limits.stringInArray(formula, 'name', 100)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки formula.name не корректен.'
+                }
+            });
+        }
+
         try {
             await formulasModel.findOneAndUpdate({
                 _id: id,
@@ -231,6 +285,15 @@ module.exports = {
                 status: 204,
                 data: {
                     message: 'Данные о формуле не переданны'
+                }
+            });
+        }
+
+        if (limits.string(id, 50)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки id не корректен.'
                 }
             });
         }

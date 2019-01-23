@@ -1,6 +1,7 @@
 const catalogsModel = require('../models/catalogs');
 const documentsModel = require('../models/documents');
 const positionsModel = require('../models/positions');
+const limits = require('../policy/limits');
 
 module.exports = {
     // GET /documents/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}&search=${search}&catalogId=${catalogSelected}
@@ -13,6 +14,15 @@ module.exports = {
         let rowsPerPage = parseInt(req.query.rowsPerPage);
         let search = req.query.search.toString('utf8');
         let catalogId = req.query.catalogId;
+
+        if (limits.string(search, 100)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки search не корректен.'
+                }
+            });
+        }
 
         try {
             let { name } = await catalogsModel.findById(catalogId).select('name');
@@ -39,7 +49,6 @@ module.exports = {
                 }
             });
         } catch (e) {
-            console.log(e);
             return res.json({
                 status: 500,
                 data: {
@@ -67,7 +76,6 @@ module.exports = {
                 }
             });
         } catch (e) {
-            console.log(e);
             return res.json({
                 status: 500,
                 data: {
@@ -87,11 +95,29 @@ module.exports = {
         let totalCount = req.body.totalCount;
         let options = req.body.options;
 
-        if (!name && !catalogId) {
+        if (!catalogId && !name && !totalCount && !options) {
             return res.json({
                 status: 204,
                 data: {
-                    message: 'Данные о названии не переданны'
+                    message: 'Данные о документе не переданны'
+                }
+            });
+        }
+
+        if (limits.string(catalogId, 50) && limits.string(name, 100)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки name не корректен.'
+                }
+            });
+        }
+
+        if (limits.stringInArray(options, 'comment', 5000)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки comment не корректен.'
                 }
             });
         }
@@ -136,6 +162,15 @@ module.exports = {
             });
         }
 
+        if (limits.string(name, 100)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки name не корректен.'
+                }
+            });
+        }
+
         try {
             await positionsModel.create({
                 owner: userId,
@@ -167,11 +202,29 @@ module.exports = {
         let totalCount = req.body.totalCount;
         let options = req.body.options;
 
-        if (!documentId && !newName) {
+        if (!documentId && !newName && !totalCount && !options) {
             return res.json({
                 status: 204,
                 data: {
-                    message: 'Данные о documentId или newName или catalogId не переданны'
+                    message: 'Данные о документе не переданны'
+                }
+            });
+        }
+
+        if (limits.string(documentId, 50) && limits.string(newName, 100)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки name не корректен.'
+                }
+            });
+        }
+
+        if (limits.stringInArray(options, 'comment', 5000)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки comment не корректен.'
                 }
             });
         }

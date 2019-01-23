@@ -2,6 +2,7 @@ const codeActivationModel = require('../models/codeActivation');
 const config = require('../config');
 const crypto = require('crypto');
 const fs = require('fs-extra');
+const path = require('path');
 
 // GET /code-generator?user${string}&password=${string}&limit=${number}
 module.exports = async (req, res) => {
@@ -19,11 +20,14 @@ module.exports = async (req, res) => {
     }
 
     try {
+        let codes = [];
+
         for (let i = 0; i < limit; i += 1) {
             let code;
 
             do {
                 code = crypto.randomBytes(32).toString('hex');
+                codes.push(code);
 
                 let value = await codeActivationModel.findOne({
                     code
@@ -34,13 +38,21 @@ module.exports = async (req, res) => {
                 }
             } while (!code);
 
-            // todo: Дописать сбор ключей в один файл
-            await fs.appendFile(`${Date.now()}.log`, code, 'utf8');
-
             await codeActivationModel.create({
                 code
             });
         }
+
+        let date = Date.now();
+        let codesPath = path.join(path.resolve(__dirname), '..', 'codes', `${date}.csv`);
+        await fs.ensureDir(path.join(path.resolve(__dirname), '..', 'codes'));
+        codes.forEach(async value => {
+            try {
+                await fs.appendFile(codesPath, `${value}\n`, 'utf8');
+            } catch (e) {
+                console.log(e);
+            }
+        });
 
         return res.json({
             status: 200,

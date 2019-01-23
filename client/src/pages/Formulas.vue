@@ -1,20 +1,8 @@
 <template>
   <div>
-    <header-component>
-      <v-tooltip bottom>
-        <v-btn
-          slot="activator"
-          color="primary"
-          dark
-          @click="goToCatalogs"
-        >
-          Каталоги
-        </v-btn>
-        <span>Перейти к каталогам</span>
-      </v-tooltip>
-    </header-component>
-    <v-container>
-      <v-layout class="mt-3">
+    <header-component></header-component>
+    <v-container class="mt-3">
+      <v-layout>
         <v-flex xs12>
           <v-card>
             <v-card-title primary-title>
@@ -30,6 +18,8 @@
                 single-line
                 hide-details
                 v-model="pagination.search"
+                maxlength="100"
+                counter
               ></v-text-field>
             </v-card-title>
             <v-data-table
@@ -40,6 +30,7 @@
               rows-per-page-text="Формул на страницу"
               :rows-per-page-items="rowsPerPageItems"
               :loading="loading"
+              no-results-text="Формулы не найдены"
             >
               <template slot="no-data">
                 <v-alert :value="true" color="info" icon="info" outline>
@@ -47,16 +38,19 @@
                 </v-alert>
               </template>
               <template slot="items" slot-scope="props">
-                <tr :key="props.item._id">
+                <tr :key="props.item._id" @click.prevent="openFormula(props.item._id)">
                   <td>{{ props.item.name }}</td>
-                  <td>{{ props.item.createDate }}</td>
+                  <td>{{ dateFormat(props.item.createDate) }}</td>
                   <td class="justify-center layout">
                     <formula-component
+                      :showFormulaDialog = 'formulasDialogOptions[props.item._id]'
                       :formulaParams = 'props.item'
                       @updateFormulasList="updateFormulasList"
                       @userNotConfirmMail="userNotConfirmMail"
+                      @openFormula = 'openFormula($event)'
+                      @closeFormula = 'closeFormula($event)'
                     ></formula-component>
-                    <v-btn color="error" @click="removeFormulaQuestion(props.item._id, props.item.name)">
+                    <v-btn color="error" @click.stop="removeFormulaQuestion(props.item._id, props.item.name)">
                       <v-icon small>
                         delete
                       </v-icon>
@@ -64,15 +58,21 @@
                   </td>
                 </tr>
               </template>
+              <template slot="pageText" slot-scope="props">
+                {{ props.pageStart }}-{{ props.pageStop }} из {{ props.itemsLength }}
+              </template>
             </v-data-table>
           </v-card>
         </v-flex>
       </v-layout>
     </v-container>
     <formula-component
+      :showFormulaDialog = 'formulasDialogOptions.newFormula'
       @updateFormulasList="updateFormulasList"
       @userNotConfirmMail="userNotConfirmMail"
       @userNotPremium="userNotPremium"
+      @openFormula = 'openFormula($event)'
+      @closeFormula = 'closeFormula($event)'
     ></formula-component>
     <v-snackbar
       v-model="userRules"
@@ -128,6 +128,7 @@
 </template>
 
 <script>
+  import Vue from 'vue';
   import headerComponent from '../components/Header';
   import formulaComponent from '../components/Formula';
   import moment from 'moment';
@@ -141,7 +142,7 @@
       return {
         formulasHeaders: [
           { text: 'Имя', value: 'name' },
-          { text: 'Дата создания', value: 'createDate' },
+          { text: 'Создано', value: 'createDate' },
           { text: 'Действия', value: 'name', sortable: false }
         ],
         rowsPerPageItems: [10, 20, 30, 50],
@@ -155,18 +156,13 @@
         userRulesText: '',
         deleteDialog: false,
         deleteDialogId: '',
-        deleteDialogName: ''
+        deleteDialogName: '',
+        formulasDialogOptions: {}
       };
     },
     computed: {
       formulasList() {
-        let list = JSON.parse(JSON.stringify(this.$store.getters['formulas/list']));
-
-        for (let item of list) {
-          item.createDate = moment(item.createDate).format('DD.MM.YYYY HH:mm');
-        }
-
-        return list;
+        return this.$store.getters['formulas/list'];
       },
       totalItems() {
         return this.$store.getters['formulas/totalItems'];
@@ -179,13 +175,21 @@
       pagination: {
         async handler() {
           if (this.$store.getters.serverStatus) {
-            await this.$store.dispatch('formulas/getFormulas', this.pagination);
+            this.updateFormulasList();
           }
         },
         deep: true
       }
     },
     methods: {
+      async updateFormulasList() {
+        await this.$store.dispatch('formulas/getFormulas', this.pagination);
+
+        for (let formula of this.$store.getters['formulas/list']) {
+          Vue.set(this.formulasDialogOptions, formula._id, false);
+        }
+        Vue.set(this.formulasDialogOptions, 'newFormula', false);
+      },
       removeFormulaQuestion(id, name) {
         this.deleteDialogId = id;
         this.deleteDialogName = name;
@@ -200,9 +204,6 @@
         this.userRulesStatus = 'info';
         this.userRulesText = `Формула ${name} удалёна.`;
       },
-      async updateFormulasList() {
-        await this.$store.dispatch('formulas/getFormulas', this.pagination);
-      },
       userNotConfirmMail() {
         this.userRules = true;
         this.userRulesStatus = 'warning';
@@ -213,8 +214,14 @@
         this.userRulesStatus = 'info';
         this.userRulesText = 'В демо режиме допускается создание одной формулы.';
       },
-      goToCatalogs() {
-        this.$router.push('/catalogs');
+      dateFormat(date) {
+        return moment(date).format('DD.MM.YYYY HH:mm');
+      },
+      openFormula(id) {
+        this.formulasDialogOptions[id] = true;
+      },
+      closeFormula(id) {
+        this.formulasDialogOptions[id] = false;
       }
     }
   };

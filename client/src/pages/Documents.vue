@@ -1,18 +1,6 @@
 <template>
   <div>
-    <header-component>
-      <v-tooltip bottom>
-        <v-btn
-          slot="activator"
-          color="primary"
-          dark
-          @click="goToFormulas"
-        >
-          Формулы
-        </v-btn>
-        <span>Перейти к созданию формул</span>
-      </v-tooltip>
-    </header-component>
+    <header-component></header-component>
     <v-container>
       <v-layout>
         <v-flex>
@@ -45,6 +33,7 @@
               rows-per-page-text="Документов на страницу"
               :rows-per-page-items="rowsPerPageItems"
               :loading="loading"
+              no-results-text="Документы не найдены"
             >
               <template slot="no-data">
                 <v-alert :value="true" color="info" icon="info" outline>
@@ -52,17 +41,20 @@
                 </v-alert>
               </template>
               <template slot="items" slot-scope="props">
-                <tr :key="props.item._id">
+                <tr :key="props.item._id" @click.stop="openDocument(props.item._id)">
                   <td>{{ props.item.name }}</td>
-                  <td>{{ props.item.createDate }}</td>
-                  <td>{{ props.item.totalCount }}</td>
+                  <td>{{ dateFormat(props.item.createDate) }}</td>
+                  <td>{{ moneyFormat(props.item.totalCount) }}</td>
                   <td class="justify-center layout">
                     <document-component
+                      :showDocumentDialog = 'documentsDialogOptions[props.item._id]'
                       :documentParams = 'props.item'
                       @updateDocumentsList="updateDocumentsList"
                       @userNotConfirmMail="userNotConfirmMail"
+                      @openDocument = 'openDocument($event)'
+                      @closeDocument = 'closeDocument($event)'
                     ></document-component>
-                    <v-btn color="error" @click="removeDocumentQuestion(props.item._id, props.item.name)">
+                    <v-btn color="error" @click.stop="removeDocumentQuestion(props.item._id, props.item.name)">
                       <v-icon small>
                         delete
                       </v-icon>
@@ -70,15 +62,21 @@
                   </td>
                 </tr>
               </template>
+              <template slot="pageText" slot-scope="props">
+                {{ props.pageStart }}-{{ props.pageStop }} из {{ props.itemsLength }}
+              </template>
             </v-data-table>
           </v-card>
         </v-flex>
       </v-layout>
     </v-container>
     <document-component
+      :showDocumentDialog = 'documentsDialogOptions.newDocument'
       @updateDocumentsList="updateDocumentsList"
       @userNotConfirmMail="userNotConfirmMail"
       @userNotPremium="userNotPremium"
+      @openDocument = 'openDocument($event)'
+      @closeDocument = 'closeDocument($event)'
     ></document-component>
     <v-snackbar
       v-model="userRules"
@@ -134,6 +132,7 @@
 </template>
 
 <script>
+  import Vue from 'vue';
   import headerComponent from '../components/Header';
   import documentComponent from '../components/Document';
   import moment from 'moment';
@@ -153,9 +152,10 @@
     },
     data() {
       return {
+        documentsDialogOptions: {},
         documentsHeaders: [
           { text: 'Имя', value: 'name' },
-          { text: 'Дата создания', value: 'createDate' },
+          { text: 'Создано', value: 'createDate' },
           { text: 'Сумма', value: 'totalCount', sortable: false },
           { text: 'Действия', value: 'name', sortable: false }
         ],
@@ -178,13 +178,7 @@
         return this.$route.meta.breadcrumb;
       },
       documentsList() {
-        let list = JSON.parse(JSON.stringify(this.$store.getters['documents/documents']));
-
-        for (let item of list) {
-          item.createDate = moment(item.createDate).format('DD.MM.YYYY HH:mm');
-        }
-
-        return list;
+        return this.$store.getters['documents/documents'];
       },
       totalItems() {
         return this.$store.getters['documents/totalItems'];
@@ -207,6 +201,16 @@
       }
     },
     methods: {
+      async updateDocumentsList() {
+        await this.$store.dispatch('documents/getPositions');
+        await this.$store.dispatch('formulas/getFormulasName');
+        await this.$store.dispatch('documents/getDocuments', this.pagination);
+
+        for (let document of this.$store.getters['documents/documents']) {
+          Vue.set(this.documentsDialogOptions, document._id, false);
+        }
+        Vue.set(this.documentsDialogOptions, 'newDocument', false);
+      },
       removeDocumentQuestion(id, name) {
         this.deleteDialogId = id;
         this.deleteDialogName = name;
@@ -214,17 +218,12 @@
       },
       async removeDocument(id, name) {
         await this.$store.dispatch('documents/removeDocument', id);
-        await this.getDocuments();
+        await this.$store.dispatch('documents/getDocuments', this.pagination);
 
         this.deleteDialog = false;
         this.userRules = true;
         this.userRulesStatus = 'info';
         this.userRulesText = `Документ ${name} удалён.`;
-      },
-      async updateDocumentsList() {
-        await this.$store.dispatch('documents/getPositions');
-        await this.$store.dispatch('formulas/getFormulasName');
-        await this.getDocuments();
       },
       userNotConfirmMail() {
         this.userRules = true;
@@ -236,11 +235,17 @@
         this.userRulesStatus = 'info';
         this.userRulesText = 'В демо режиме допускается создание одного документа.';
       },
-      async getDocuments() {
-        await this.$store.dispatch('documents/getDocuments', this.pagination);
+      dateFormat(date) {
+        return moment(date).format('DD.MM.YYYY HH:mm');
       },
-      goToFormulas() {
-        this.$router.push('/formulas');
+      moneyFormat(count) {
+        return Intl.NumberFormat('ru-RU').format(count).replace(/,/, '.');
+      },
+      openDocument(id) {
+        this.documentsDialogOptions[id] = true;
+      },
+      closeDocument(id) {
+        this.documentsDialogOptions[id] = false;
       }
     }
   };

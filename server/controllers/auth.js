@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const defaultFormulas = require('../config/defaultFormulas');
 const defaultPositions = require('../config/defaultPositions');
+const limits = require('../policy/limits');
 
 function jwtSingUser(data) {
     return jwt.sign(data, config.auth.jwtSecret, {
@@ -24,6 +25,15 @@ module.exports = {
                 status: 204,
                 data: {
                     message: 'Данные о пользователе не переданны.'
+                }
+            });
+        }
+
+        if (limits.string(email, 50) && limits.string(password, 50)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимиты строк не корректны.'
                 }
             });
         }
@@ -93,6 +103,15 @@ module.exports = {
             });
         }
 
+        if (limits.string(userId, 50)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит userId не корректен.'
+                }
+            });
+        }
+
         try {
             let user = userModel.findById(userId);
 
@@ -147,6 +166,15 @@ module.exports = {
             });
         }
 
+        if (limits.string(email, 50)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит email не корректен.'
+                }
+            });
+        }
+
         try {
             let user = await userModel.findOne({ email });
 
@@ -185,6 +213,15 @@ module.exports = {
                 status: 204,
                 data: {
                     message: 'Данные о пользователе не переданны.'
+                }
+            });
+        }
+
+        if (limits.string(email, 50) && limits.string(password, 50)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимиты строк не корректны.'
                 }
             });
         }

@@ -32,13 +32,13 @@
         <v-btn icon dark @click="close">
           <v-icon>close</v-icon>
         </v-btn>
-        <v-toolbar-title>Всего: {{ totalCount }}</v-toolbar-title>
+        <v-toolbar-title>Всего: {{ moneyFormat(totalCount) }}</v-toolbar-title>
       </v-toolbar>
       <v-container grid-list-md>
         <v-layout>
           <v-flex>
             <h2 class="mb-2">Название</h2>
-            <v-form v-model="nameValid">
+            <v-form v-model="nameValid" @submit.prevent="save">
               <v-text-field
                 label="Название документа"
                 solo
@@ -46,6 +46,8 @@
                 @keydown="haveChange = true"
                 required
                 :rules="nameRules"
+                maxlength="100"
+                counter
               ></v-text-field>
             </v-form>
           </v-flex>
@@ -64,7 +66,9 @@
                   placeholder="Выберите позицию или введите свою."
                   item-text="name"
                   item-value="_id"
-                  z-index="203"
+                  :menu-props="{zIndex:'203'}"
+                  maxlength="50"
+                  counter
                 >
                   <template
                     slot="item"
@@ -133,7 +137,7 @@
                 <div>
                   <h4 class="headline mb-0">
                     <span class="grey--text font-weight-light caption text-lowercase">{{ item.formulaString }} =</span>
-                    {{ item.count }}
+                    {{ moneyFormat(item.count) }}
                   </h4>
                 </div>
               </v-card-title>
@@ -153,6 +157,9 @@
                               v-model="item.variables[key.value.toLocaleLowerCase()]"
                               @keypress="inputCheck"
                               @keyup="countFormula(item)"
+                              @keydown="haveChange = true"
+                              maxlength="25"
+                              counter
                             ></v-text-field>
                           </v-flex>
                         </v-layout>
@@ -166,6 +173,8 @@
                       auto-grow
                       box
                       color="indigo darken-1"
+                      maxlength="5000"
+                      counter
                     ></v-textarea>
                   </v-flex>
                 </v-layout>
@@ -299,16 +308,24 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            color="green darken-1"
+            color="success"
             flat="flat"
             @click="save"
+            :disabled="!nameValid"
           >
             Сохранить
           </v-btn>
           <v-btn
-            color="red darken-1"
+            color="warning"
             flat="flat"
-            @click="showDocumentDialog = false"
+            @click="$emit('closeDocument', documentId)"
+          >
+            Не сохранять
+          </v-btn>
+          <v-btn
+            color="error"
+            flat="flat"
+            @click="saveChangeDialog = false"
           >
             Отмена
           </v-btn>
@@ -329,13 +346,12 @@
 
       this.documentId = this.documentParams._id;
       this.documentName = this.documentParams.name;
-      this.options = this.documentParams.options;
+      this.options = JSON.parse(JSON.stringify(this.documentParams.options));
     },
-    props: ['documentParams'],
+    props: ['documentParams', 'showDocumentDialog'],
     data() {
       return {
-        documentId: '',
-        showDocumentDialog: false,
+        documentId: 'newDocument',
         documentName: '',
         nameRules: [
           v => !!v || 'Имя должено быть указано',
@@ -390,9 +406,13 @@
           return false;
         }
 
-        this.showDocumentDialog = true;
+        this.$emit('openDocument', this.documentId);
       },
       async save() {
+        if (!this.nameValid) {
+          return false;
+        }
+
         await this.$store.dispatch('getServerStatus');
         await this.$store.dispatch('getTokenStatus');
 
@@ -400,15 +420,13 @@
           return false;
         }
 
-        if (this.documentId) {
+        if (this.documentId !== 'newDocument') {
           await this.$store.dispatch('documents/editDocument', {
             id: this.documentId,
             name: this.documentName,
             totalCount: this.totalCount,
             options: this.options
           });
-
-          this.showDocumentDialog = false;
         } else {
           await this.$store.dispatch('documents/addDocument', {
             catalogId: this.$store.getters['documents/catalogId'],
@@ -417,10 +435,10 @@
             options: this.options
           });
 
-          this.showDocumentDialog = false;
           this.documentName = '';
           this.options = [];
         }
+        this.$emit('closeDocument', this.documentId);
         this.$emit('updateDocumentsList');
       },
       async addOptions() {
@@ -526,8 +544,11 @@
         if (this.haveChange) {
           this.saveChangeDialog = true;
         } else {
-          this.showDocumentDialog = false;
+          this.$emit('closeDocument', this.documentId);
         }
+      },
+      moneyFormat(count) {
+        return Intl.NumberFormat('ru-RU').format(count).replace(/,/, '.');
       }
     }
   };

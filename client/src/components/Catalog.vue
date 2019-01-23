@@ -37,13 +37,15 @@
         <v-layout>
           <v-flex>
             <h2 class="mb-2">Название</h2>
-            <v-form v-model="nameValid">
+            <v-form v-model="nameValid" @submit.prevent="save">
               <v-text-field
                 label="Название каталога"
                 solo
                 v-model="catalogName"
                 required
                 :rules="nameRules"
+                maxlength="100"
+                counter
               ></v-text-field>
             </v-form>
           </v-flex>
@@ -82,7 +84,7 @@
         catalogName: '',
         nameRules: [
           v => !!v || 'Имя должено быть указано',
-          v => /^[\w\dа-яА-Я .\-ё"]{3,}$/.test(v) || 'Имя должено быть валидным'
+          v => /^[\w\dа-яА-Я .\-ё№#"]{3,}$/.test(v) || 'Имя должено быть валидным'
         ],
         nameValid: false
       };
@@ -102,6 +104,10 @@
         this.showCatalogDialog = true;
       },
       async save() {
+        if (!this.nameValid) {
+          return false;
+        }
+
         await this.$store.dispatch('getServerStatus');
         await this.$store.dispatch('getTokenStatus');
 

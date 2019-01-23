@@ -9,6 +9,7 @@ import PageNotFound from './pages/PageNotFound';
 import Catalogs from './pages/Catalogs';
 import Documents from './pages/Documents';
 import User from './pages/User';
+import Help from './pages/Help';
 import Formulas from './pages/Formulas';
 import { store } from './store';
 
@@ -37,6 +38,7 @@ async function ifAuthenticated(to, from, next) {
     case '/documents':
     case '/user':
     case '/formulas':
+    case '/help':
       if (!authStatus) {
         next('/login');
       }
@@ -102,16 +104,12 @@ export default new VueRouter({
     {
       path: '/user',
       component: User,
-      beforeEnter: ifAuthenticated,
-      meta: {
-        breadcrumb: [
-          {
-            text: 'Каталоги',
-            disabled: false,
-            href: '/catalogs'
-          }
-        ]
-      }
+      beforeEnter: ifAuthenticated
+    },
+    {
+      path: '/help',
+      component: Help,
+      beforeEnter: ifAuthenticated
     },
     {
       path: '/formulas',

@@ -1,6 +1,7 @@
 const userModel = require('../models/user');
 const codeActivationModel = require('../models/codeActivation');
 const mailer = require('../services/mailer');
+const limits = require('../policy/limits');
 
 module.exports = {
     // GET /user/info
@@ -58,6 +59,15 @@ module.exports = {
             });
         }
 
+        if (limits.string(email, 100)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки email не корректен.'
+                }
+            });
+        }
+
         try {
             let user = await userModel.findById(userId);
 
@@ -108,6 +118,24 @@ module.exports = {
         let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
         let newPassword = req.body.newPassword;
 
+        if (!newPassword) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Данные о формуле не переданны'
+                }
+            });
+        }
+
+        if (limits.string(newPassword, 100)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки newPassword не корректен.'
+                }
+            });
+        }
+
         try {
             let user = await userModel.findById(userId);
 
@@ -152,6 +180,15 @@ module.exports = {
                 status: 204,
                 data: {
                     message: 'Данные о коде не переданы'
+                }
+            });
+        }
+
+        if (limits.string(code, 64)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки code не корректен.'
                 }
             });
         }

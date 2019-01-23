@@ -17,6 +17,8 @@
           :rules="emailRules"
           @change="checkEmail"
           @input="emailIsDublicate = false"
+          maxlength="100"
+          counter
         >
         </v-text-field>
         <transition name="slide-fade">
@@ -39,6 +41,8 @@
           color="grey lighten-5"
           required
           :rules="passwordRules"
+          maxlength="100"
+          counter
         >
         </v-text-field>
         <v-text-field
@@ -51,6 +55,8 @@
           color="grey lighten-5"
           required
           :rules="passwordRules"
+          maxlength="100"
+          counter
         >
         </v-text-field>
 

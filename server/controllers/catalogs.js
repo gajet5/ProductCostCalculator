@@ -1,5 +1,6 @@
 const documentsModel = require('../models/documents');
 const catalogsModel = require('../models/catalogs');
+const limits = require('../policy/limits');
 
 module.exports = {
     // GET /catalogs/list?sortBy=${sortBy}&descending=${descending}&page=${page}&rowsPerPage=${rowsPerPage}&search=${search}
@@ -11,6 +12,15 @@ module.exports = {
         let page = parseInt(req.query.page);
         let rowsPerPage = parseInt(req.query.rowsPerPage);
         let search = req.query.search.toString('utf8');
+
+        if (limits.string(search, 100)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки search не корректен.'
+                }
+            });
+        }
 
         try {
             let catalogs = await catalogsModel.find({
@@ -59,6 +69,15 @@ module.exports = {
             });
         }
 
+        if (limits.string(name, 100)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки name не корректен.'
+                }
+            });
+        }
+
         try {
             await catalogsModel.create({
                 owner: userId,
@@ -93,6 +112,15 @@ module.exports = {
                 status: 204,
                 data: {
                     message: 'Данные о catalogId или newName категории не переданны'
+                }
+            });
+        }
+
+        if (limits.string(catalogId, 100) && limits.string(newName, 100)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки catalogId и newName не корректен.'
                 }
             });
         }
@@ -135,8 +163,17 @@ module.exports = {
             });
         }
 
+        if (limits.string(catalogId, 50)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит строки catalogId не корректен.'
+                }
+            });
+        }
+
         try {
-            await documentsModel.findOneAndRemove({
+            await documentsModel.deleteMany({
                 catalogId: catalogId,
                 owner: userId
             });

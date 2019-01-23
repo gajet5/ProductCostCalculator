@@ -9,7 +9,9 @@ const Catalogs = new Schema({
     },
     name: {
         type: String,
-        required: true
+        required: true,
+        trim: true,
+        maxlength: 100
     },
     createDate: {
         type: Date,
