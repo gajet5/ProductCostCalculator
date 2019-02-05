@@ -354,7 +354,7 @@
         documentId: 'newDocument',
         documentName: '',
         nameRules: [
-          v => !!v || 'Имя должено быть указано',
+          v => !!v || 'Имя должно быть указано',
           v => /^[\w\dа-яА-Я .\-ё#№]{3,}$/.test(v) || 'Имя должено быть валидным'
         ],
         nameValid: false,
