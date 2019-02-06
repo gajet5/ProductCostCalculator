@@ -27,30 +27,38 @@
               <small>Создан: {{ dateFormat(document.createDate) }}</small>
             </v-card-title>
             <v-card-text class="d-flex justify-space-around wrap">
-              <v-flex xs12 sm6 md5 lg4 v-for="(item, index) in document.options" :key="index" class="mb-3 pl-2 pr-2">
-                <v-card>
-                  <v-card-title>
-                    <h4>
-                      {{ item.position }}
-                    </h4>
-                    <v-spacer></v-spacer>
-                    <small>{{ item.formulaString }}</small>
-                  </v-card-title>
-                  <v-divider></v-divider>
-                  <v-list dense v-for="(value, indx) in item.formula" :key="indx">
-                    <template v-if="value.name">
-                      <v-list-tile>
-                        <v-list-tile-content>[{{value.value}}] {{ value.name }}:</v-list-tile-content>
-                        <v-list-tile-content class="align-end">{{ moneyFormat(item.variables[value.value.toLowerCase()]) }}</v-list-tile-content>
-                      </v-list-tile>
-                    </template>
-                  </v-list>
-                  <v-divider></v-divider>
-                  <v-card-text>
-                    <span>Расчёт позиции: {{ moneyFormat(item.count)}}</span>
-                  </v-card-text>
-                </v-card>
-              </v-flex>
+              <v-container>
+                <v-layout wrap>
+                  <v-flex xs12 sm6 md6 lg4 v-for="(item, index) in document.options" :key="index" class="mb-3 pl-2 pr-2">
+                    <v-card>
+                      <v-card-title>
+                        <h4>
+                          {{ item.position }}
+                        </h4>
+                        <v-spacer></v-spacer>
+                        <small>{{ item.formulaString }}</small>
+                      </v-card-title>
+                      <v-divider></v-divider>
+                      <v-list dense v-for="(value, indx) in item.formula" :key="indx">
+                        <template v-if="value.name">
+                          <v-list-tile>
+                            <v-list-tile-content>
+                              <div>
+                                <code class="code-position mr-1">{{value.value}}</code> <span>{{ value.name }}:</span>
+                              </div>
+                            </v-list-tile-content>
+                            <v-list-tile-content class="align-end">{{ moneyFormat(item.variables[value.value.toLowerCase()]) }}</v-list-tile-content>
+                          </v-list-tile>
+                        </template>
+                      </v-list>
+                      <v-divider></v-divider>
+                      <v-card-text>
+                        <span>Расчёт позиции: {{ moneyFormat(item.count)}}</span>
+                      </v-card-text>
+                    </v-card>
+                  </v-flex>
+                </v-layout>
+              </v-container>
             </v-card-text>
             <v-card-actions class="pa-3">
               Всего: {{ moneyFormat(document.totalCount) }}
@@ -98,5 +106,8 @@
 </script>
 
 <style scoped>
-
+ .code-position {
+   position: relative;
+   top: -2px;
+ }
 </style>
