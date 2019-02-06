@@ -46,6 +46,11 @@
                   <td>{{ dateFormat(props.item.createDate) }}</td>
                   <td>{{ moneyFormat(props.item.totalCount) }}</td>
                   <td class="justify-center layout">
+                    <v-btn color="success" @click.stop="viewReport(props.item._id)">
+                      <v-icon small>
+                        assignment
+                      </v-icon>
+                    </v-btn>
                     <document-component
                       :showDocumentDialog = 'documentsDialogOptions[props.item._id]'
                       :documentParams = 'props.item'
@@ -246,6 +251,10 @@
       },
       closeDocument(id) {
         this.documentsDialogOptions[id] = false;
+      },
+      viewReport(id) {
+        this.$store.commit('report/setDocumentId', id);
+        this.$router.push('/report');
       }
     }
   };

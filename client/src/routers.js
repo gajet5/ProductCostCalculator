@@ -10,6 +10,7 @@ import Catalogs from './pages/Catalogs';
 import Documents from './pages/Documents';
 import User from './pages/User';
 import Help from './pages/Help';
+import Report from './pages/Report';
 import Formulas from './pages/Formulas';
 import { store } from './store';
 
@@ -38,6 +39,7 @@ async function ifAuthenticated(to, from, next) {
     case '/documents':
     case '/user':
     case '/formulas':
+    case '/report':
     case '/help':
       if (!authStatus) {
         next('/login');
@@ -97,6 +99,30 @@ export default new VueRouter({
             text: 'Документы',
             disabled: true,
             href: '/documents'
+          }
+        ]
+      }
+    },
+    {
+      path: '/report',
+      component: Report,
+      beforeEnter: ifAuthenticated,
+      meta: {
+        breadcrumb: [
+          {
+            text: 'Каталоги',
+            disabled: false,
+            href: '/catalogs'
+          },
+          {
+            text: 'Документы',
+            disabled: false,
+            href: '/documents'
+          },
+          {
+            text: 'Отчёт',
+            disabled: true,
+            href: '/report'
           }
         ]
       }

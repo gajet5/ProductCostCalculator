@@ -7,6 +7,7 @@ import user from './modules/user';
 import formulas from './modules/formulas';
 import catalogs from './modules/catalogs';
 import documents from './modules/documents';
+import report from './modules/report';
 import statusService from '../services/status';
 
 Vue.use(Vuex);
@@ -18,7 +19,8 @@ export const store = new Vuex.Store({
     user,
     formulas,
     catalogs,
-    documents
+    documents,
+    report
   },
   state: {
     serverStatus: true,
