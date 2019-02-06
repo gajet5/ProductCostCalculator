@@ -224,6 +224,7 @@
       async removeDocument(id, name) {
         await this.$store.dispatch('documents/removeDocument', id);
         await this.$store.dispatch('documents/getDocuments', this.pagination);
+        this.$store.commit('report/setDocumentId', 'delete');
 
         this.deleteDialog = false;
         this.userRules = true;
