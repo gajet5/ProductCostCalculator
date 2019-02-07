@@ -33,7 +33,6 @@
           counter
         >
         </v-text-field>
-
         <v-btn
           type="submit"
           :disabled="!formValid"
@@ -41,6 +40,7 @@
           @click="login"
         >Войти
         </v-btn>
+        <forgot-password></forgot-password>
         <v-btn
           flat
           color="grey lighten-2"
@@ -57,7 +57,13 @@
 </template>
 
 <script>
+  import ForgotPassword from '../components/ForgotPassword';
+
   export default {
+    components: { ForgotPassword },
+    comments: {
+      ForgotPassword
+    },
     data() {
       return {
         serverStatus: true,
