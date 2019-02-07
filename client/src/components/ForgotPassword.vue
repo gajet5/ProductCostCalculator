@@ -8,15 +8,14 @@
         slot="activator"
         flat
         color="grey lighten-2"
-        @click="goToHomePage"
       >Забыли пароль?
       </v-btn>
       <v-card>
         <v-card-title
-          class="headline grey lighten-2"
+          class="headline indigo darken-2 pb-4"
           primary-title
         >
-          Форма восстановления пароля
+          <span class="t-color_white">Форма восстановления пароля</span>
         </v-card-title>
 
         <v-card-text>
@@ -69,14 +68,14 @@
         email: '',
         emailRules: [
           v => !!v || 'Почта должна быть указана.',
-          v => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'Почта должна быть валидной.'
+          v => /^[-a-z0-9!#$%&'*+/=?^_`{|}~]+(?:\.[-a-z0-9!#$%&'*+/=?^_`{|}~]+)*@(?:[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?\.)*(?:aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|[a-z][a-z])$/.test(v) || 'Почта должна быть валидной.'
         ],
         formValid: false
       };
     },
     methods: {
-      send() {
-        console.log(this.email);
+      async send() {
+        await this.$store.dispatch('auth/forgotPassword', this.email);
         this.close();
       },
       close() {
@@ -88,5 +87,7 @@
 </script>
 
 <style scoped>
-
+  .t-color_white {
+    color: white;
+  }
 </style>

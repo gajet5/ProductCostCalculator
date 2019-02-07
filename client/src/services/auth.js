@@ -38,5 +38,8 @@ export default {
       console.log(e);
       return false;
     }
+  },
+  async forgotPassword(email) {
+    await Api().get(`auth/forgotPassword?email=${email}`);
   }
 };

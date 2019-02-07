@@ -40,6 +40,9 @@ export default {
         console.log(e.message);
         return false;
       }
+    },
+    async forgotPassword(context, payload) {
+      await authServices.forgotPassword(payload);
     }
   }
 };
