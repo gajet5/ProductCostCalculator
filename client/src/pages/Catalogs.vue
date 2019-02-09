@@ -45,22 +45,49 @@
                 <tr :key="props.item._id" @click.stop="goToCatalog(props.item._id)">
                   <td>{{ props.item.name }}</td>
                   <td>{{ props.item.createDate }}</td>
-                  <td class="justify-center layout">
-                    <v-btn color="success" @click.stop="goToCatalog(props.item._id)">
-                      <v-icon small>
-                        input
-                      </v-icon>
-                    </v-btn>
-                    <catalog-component
-                      :catalogParams = 'props.item'
-                      @updateCatalogsList="updateCatalogsList"
-                      @userNotConfirmMail="userNotConfirmMail"
-                    ></catalog-component>
-                    <v-btn color="error" @click.stop="removeCatalogQuestion(props.item._id, props.item.name)">
-                      <v-icon small>
-                        delete
-                      </v-icon>
-                    </v-btn>
+                  <td>
+                    <div class="hidden-md-and-up">
+                      <v-menu @click.native.stop>
+                        <v-btn
+                          slot="activator"
+                          icon
+                        >
+                          <v-icon>more_vert</v-icon>
+                        </v-btn>
+                        <v-btn color="success" @click.stop="goToCatalog(props.item._id)">
+                          <v-icon small>
+                            input
+                          </v-icon>
+                        </v-btn>
+                        <catalog-component
+                          :catalogParams = 'props.item'
+                          @updateCatalogsList="updateCatalogsList"
+                          @userNotConfirmMail="userNotConfirmMail"
+                        ></catalog-component>
+                        <v-btn color="error" @click.stop="removeCatalogQuestion(props.item._id, props.item.name)">
+                          <v-icon small>
+                            delete
+                          </v-icon>
+                        </v-btn>
+                      </v-menu>
+                    </div>
+                    <div class="hidden-sm-and-down">
+                      <v-btn color="success" @click.stop="goToCatalog(props.item._id)">
+                        <v-icon small>
+                          input
+                        </v-icon>
+                      </v-btn>
+                      <catalog-component
+                        :catalogParams = 'props.item'
+                        @updateCatalogsList="updateCatalogsList"
+                        @userNotConfirmMail="userNotConfirmMail"
+                      ></catalog-component>
+                      <v-btn color="error" @click.stop="removeCatalogQuestion(props.item._id, props.item.name)">
+                        <v-icon small>
+                          delete
+                        </v-icon>
+                      </v-btn>
+                    </div>
                   </td>
                 </tr>
               </template>
@@ -229,5 +256,7 @@
 </script>
 
 <style scoped>
-
+  .v-menu__content {
+    background-color: #fff;
+  }
 </style>

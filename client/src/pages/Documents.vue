@@ -45,25 +45,52 @@
                   <td>{{ props.item.name }}</td>
                   <td>{{ dateFormat(props.item.createDate) }}</td>
                   <td>{{ moneyFormat(props.item.totalCount) }}</td>
-                  <td class="justify-center layout">
-                    <v-btn color="success" @click.stop="viewReport(props.item._id)">
-                      <v-icon small>
-                        assignment
-                      </v-icon>
-                    </v-btn>
-                    <document-component
-                      :showDocumentDialog = 'documentsDialogOptions[props.item._id]'
-                      :documentParams = 'props.item'
-                      @updateDocumentsList="updateDocumentsList"
-                      @userNotConfirmMail="userNotConfirmMail"
-                      @openDocument = 'openDocument($event)'
-                      @closeDocument = 'closeDocument($event)'
-                    ></document-component>
-                    <v-btn color="error" @click.stop="removeDocumentQuestion(props.item._id, props.item.name)">
-                      <v-icon small>
-                        delete
-                      </v-icon>
-                    </v-btn>
+                  <td>
+                    <div class="hidden-md-and-up">
+                      <v-menu @click.native.stop>
+                        <v-btn slot="activator" icon>
+                          <v-icon>more_vert</v-icon>
+                        </v-btn>
+                        <v-btn color="success" @click.stop="viewReport(props.item._id)">
+                          <v-icon small>
+                            assignment
+                          </v-icon>
+                        </v-btn>
+                        <document-component
+                          :showDocumentDialog='documentsDialogOptions[props.item._id]'
+                          :documentParams='props.item'
+                          @updateDocumentsList="updateDocumentsList"
+                          @userNotConfirmMail="userNotConfirmMail"
+                          @openDocument='openDocument($event)'
+                          @closeDocument='closeDocument($event)'
+                        ></document-component>
+                        <v-btn color="error" @click.stop="removeDocumentQuestion(props.item._id, props.item.name)">
+                          <v-icon small>
+                            delete
+                          </v-icon>
+                        </v-btn>
+                      </v-menu>
+                    </div>
+                    <div class="hidden-sm-and-down">
+                      <v-btn color="success" @click.stop="viewReport(props.item._id)">
+                        <v-icon small>
+                          assignment
+                        </v-icon>
+                      </v-btn>
+                      <document-component
+                        :showDocumentDialog='documentsDialogOptions[props.item._id]'
+                        :documentParams='props.item'
+                        @updateDocumentsList="updateDocumentsList"
+                        @userNotConfirmMail="userNotConfirmMail"
+                        @openDocument='openDocument($event)'
+                        @closeDocument='closeDocument($event)'
+                      ></document-component>
+                      <v-btn color="error" @click.stop="removeDocumentQuestion(props.item._id, props.item.name)">
+                        <v-icon small>
+                          delete
+                        </v-icon>
+                      </v-btn>
+                    </div>
                   </td>
                 </tr>
               </template>
@@ -76,12 +103,12 @@
       </v-layout>
     </v-container>
     <document-component
-      :showDocumentDialog = 'documentsDialogOptions.newDocument'
+      :showDocumentDialog='documentsDialogOptions.newDocument'
       @updateDocumentsList="updateDocumentsList"
       @userNotConfirmMail="userNotConfirmMail"
       @userNotPremium="userNotPremium"
-      @openDocument = 'openDocument($event)'
-      @closeDocument = 'closeDocument($event)'
+      @openDocument='openDocument($event)'
+      @closeDocument='closeDocument($event)'
     ></document-component>
     <v-snackbar
       v-model="userRules"
@@ -262,5 +289,7 @@
 </script>
 
 <style scoped>
-
+  .v-menu__content {
+   background-color: #fff;
+ }
 </style>
