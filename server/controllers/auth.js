@@ -15,6 +15,101 @@ function jwtSingUser(data) {
 }
 
 module.exports = {
+    // GET /auth/emailExist?email={string}
+    async emailExist(req, res) {
+        let email = req.query.email;
+
+        if (!email) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Данные о пользователе не переданны.'
+                }
+            });
+        }
+
+        if (limits.string(email, 50)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимит email не корректен.'
+                }
+            });
+        }
+
+        try {
+            let user = await userModel.findOne({ email });
+
+            if (!user) {
+                return res.json({
+                    status: 204,
+                    data: {
+                        message: 'Пользователь не найден'
+                    }
+                });
+            }
+
+            return res.json({
+                status: 200,
+                data: {
+                    message: 'Пользователь найден'
+                }
+            });
+        } catch (e) {
+            return res.json({
+                status: 500,
+                data: {
+                    message: 'Ошибка на сервере'
+                }
+            });
+        }
+    },
+
+    // GET /auth/forgotPassword
+    async forgotPassword(req, res) {
+        let email = req.query.email;
+
+        if (!email) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Данные о email не переданны.'
+                }
+            });
+        }
+
+        try {
+            let user = await userModel.findOne({ email });
+
+            if (!user) {
+                return res.json({
+                    status: 204,
+                    data: {
+                        message: 'Пользователь не найден'
+                    }
+                });
+            }
+
+
+
+            mailer.forgotPassword(email, hash);
+
+            return res.json({
+                status: 200,
+                data: {
+                    message: 'На почту отправлено сообщение'
+                }
+            });
+        } catch (e) {
+            return res.json({
+                status: 500,
+                data: {
+                    message: 'Ошибка на сервере'
+                }
+            });
+        }
+    },
+
     // POST /auth/registration
     async registration(req, res) {
         let email = req.body.email;
@@ -148,56 +243,6 @@ module.exports = {
                 status: 400,
                 data: {
                     message: 'Пользователь не найден'
-                }
-            });
-        }
-    },
-
-    // GET /auth/emailExist?email={string}
-    async emailExist(req, res) {
-        let email = req.query.email;
-
-        if (!email) {
-            return res.json({
-                status: 204,
-                data: {
-                    message: 'Данные о пользователе не переданны.'
-                }
-            });
-        }
-
-        if (limits.string(email, 50)) {
-            return res.json({
-                status: 204,
-                data: {
-                    message: 'Лимит email не корректен.'
-                }
-            });
-        }
-
-        try {
-            let user = await userModel.findOne({ email });
-
-            if (!user) {
-                return res.json({
-                    status: 204,
-                    data: {
-                        message: 'Пользователь не найден'
-                    }
-                });
-            }
-
-            return res.json({
-                status: 200,
-                data: {
-                    message: 'Пользователь найден'
-                }
-            });
-        } catch (e) {
-            return res.json({
-                status: 500,
-                data: {
-                    message: 'Ошибка на сервере'
                 }
             });
         }
