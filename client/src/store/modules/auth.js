@@ -42,7 +42,12 @@ export default {
       }
     },
     async forgotPassword(context, payload) {
-      await authServices.forgotPassword(payload);
+      try {
+        return await authServices.forgotPassword(payload);
+      } catch (e) {
+        console.log(e.message);
+        return false;
+      }
     }
   }
 };

@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const userModel = require('../models/user');
 const formulasModel = require('../models/formulas');
 const positionsModel = require('../models/positions');
@@ -80,6 +81,7 @@ module.exports = {
 
         try {
             let user = await userModel.findOne({ email });
+            let hash;
 
             if (!user) {
                 return res.json({
@@ -90,9 +92,30 @@ module.exports = {
                 });
             }
 
+            if (user.lastForgotEmail > Date.now()) {
+                return res.json({
+                    status: 204,
+                    data: {
+                        message: 'Время повторного сброса пароля не подошло.'
+                    }
+                });
+            }
 
+            while (true) {
+                hash = crypto.randomBytes(128).toString('hex');
+                if (!await userModel.findOne({ forgotPasswordHash: hash })) {
+                    break;
+                }
+            }
 
-            mailer.forgotPassword(email, hash);
+            await user.updateOne({
+                forgotPasswordHash: hash,
+                lastForgotEmail: Date.now() + 1000 * 60 * 5
+            });
+
+            if (config.sendMail) {
+                mailer.forgotPassword(email, hash);
+            }
 
             return res.json({
                 status: 200,

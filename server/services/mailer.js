@@ -26,8 +26,8 @@ module.exports = {
         let mailOptions = {
             from: config.mailOptions.auth.user,
             to: email,
-            subject: '[PCC] Подтверждение email',
-            html: pug.renderFile(path.join(path.resolve(__dirname), '..', 'template', 'forgotPassword.pug'), { confirmLink: `${config.site}/registration/confirm/${id}` })
+            subject: '[PCC] Обновление пароля',
+            html: pug.renderFile(path.join(path.resolve(__dirname), '..', 'template', 'forgotPassword.pug'), { renewLink: `${config.site}/registration/renew/${hash}` })
         };
 
         smtpTransport.sendMail(mailOptions, function(err) {

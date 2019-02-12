@@ -40,6 +40,12 @@ export default {
     }
   },
   async forgotPassword(email) {
-    await Api().get(`auth/forgotPassword?email=${email}`);
+    try {
+      let { data } = await Api().get(`auth/forgotPassword?email=${email}`);
+      return data;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   }
 };

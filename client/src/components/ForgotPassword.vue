@@ -33,6 +33,13 @@
             >
             </v-text-field>
           </v-form>
+          <v-alert
+            :value="error"
+            type="error"
+            transition="scale-transition"
+          >
+            {{ errorText }}
+          </v-alert>
         </v-card-text>
 
         <v-divider></v-divider>
@@ -70,13 +77,24 @@
           v => !!v || 'Почта должна быть указана.',
           v => /^[-a-z0-9!#$%&'*+/=?^_`{|}~]+(?:\.[-a-z0-9!#$%&'*+/=?^_`{|}~]+)*@(?:[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?\.)*(?:aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|[a-z][a-z])$/.test(v) || 'Почта должна быть валидной.'
         ],
-        formValid: false
+        formValid: false,
+        error: false,
+        errorText: ''
       };
     },
     methods: {
       async send() {
-        await this.$store.dispatch('auth/forgotPassword', this.email);
-        this.close();
+        let result = await this.$store.dispatch('auth/forgotPassword', this.email);
+        if (result.data.status === 200) {
+          this.close();
+        } else {
+          this.error = true;
+          this.errorText = result.data.message;
+
+          setTimeout(() => {
+            this.error = false;
+          }, 5000);
+        }
       },
       close() {
         this.email = '';
