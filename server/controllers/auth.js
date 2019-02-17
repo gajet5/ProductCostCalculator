@@ -102,7 +102,7 @@ module.exports = {
             }
 
             while (true) {
-                hash = crypto.randomBytes(128).toString('hex');
+                hash = crypto.randomBytes(64).toString('hex');
                 if (!await userModel.findOne({ forgotPasswordHash: hash })) {
                     break;
                 }
@@ -205,6 +205,64 @@ module.exports = {
                         }
                     });
             }
+        }
+    },
+
+    // POST /auth/change-password
+    async changePassword(req, res) {
+        let id = req.body.id;
+        let password = req.body.password;
+
+        if (!id || !password) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Данные о пользователе не переданны.'
+                }
+            });
+        }
+
+        if (limits.string(id, 128) && limits.string(password, 50)) {
+            return res.json({
+                status: 204,
+                data: {
+                    message: 'Лимиты строк не корректны.'
+                }
+            });
+        }
+
+        try {
+            let user = await userModel.findOne({
+                forgotPasswordHash: id
+            });
+
+            if (!user) {
+                return res.json({
+                    status: 404,
+                    data: {
+                        message: 'Пользователь не найден.'
+                    }
+                });
+            }
+
+            await user.updateOne({
+                password,
+                forgotPasswordHash: ''
+            });
+
+            return res.json({
+                status: 200,
+                data: {
+                    message: 'Изменение пароля прошло успешно.'
+                }
+            });
+        } catch (e) {
+            return res.json({
+                status: 500,
+                data: {
+                    message: e.message
+                }
+            });
         }
     },
 

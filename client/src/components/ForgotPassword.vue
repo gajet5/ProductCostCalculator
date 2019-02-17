@@ -35,7 +35,7 @@
           </v-form>
           <v-alert
             :value="error"
-            type="error"
+            :type="alertType"
             transition="scale-transition"
           >
             {{ errorText }}
@@ -79,16 +79,24 @@
         ],
         formValid: false,
         error: false,
+        alertType: 'info',
         errorText: ''
       };
     },
     methods: {
       async send() {
         let result = await this.$store.dispatch('auth/forgotPassword', this.email);
-        if (result.data.status === 200) {
-          this.close();
+        if (result.status === 200) {
+          this.error = true;
+          this.alertType = 'success';
+          this.errorText = result.data.message;
+          setTimeout(() => {
+            this.error = false;
+            this.close();
+          }, 5000);
         } else {
           this.error = true;
+          this.alertType = 'error';
           this.errorText = result.data.message;
 
           setTimeout(() => {

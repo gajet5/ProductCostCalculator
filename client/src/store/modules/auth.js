@@ -25,6 +25,17 @@ export default {
         return false;
       }
     },
+    async changePassword(context, payload) {
+      try {
+        return await authServices.changePassword({
+          id: payload.id,
+          password: payload.password
+        });
+      } catch (e) {
+        console.log(e.message);
+        return false;
+      }
+    },
     async confirm(context, payload) {
       try {
         return await authServices.confirm(payload.id);

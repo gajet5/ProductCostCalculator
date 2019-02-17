@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 import Login from './pages/Login';
 import Registration from './pages/Registration';
 import RegistrationConfirm from './pages/RegistrationConfirm';
+import ChangePassword from './pages/ChangePassword';
 import Welcome from './pages/Welcome';
 import PageNotFound from './pages/PageNotFound';
 import Catalogs from './pages/Catalogs';
@@ -63,6 +64,11 @@ export default new VueRouter({
     {
       path: '/registration',
       component: Registration,
+      beforeEnter: ifAuthenticated
+    },
+    {
+      path: '/registration/renew/:id',
+      component: ChangePassword,
       beforeEnter: ifAuthenticated
     },
     {

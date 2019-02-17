@@ -10,6 +10,15 @@ export default {
       return false;
     }
   },
+  async changePassword(credentials) {
+    try {
+      let { data } = await Api().post('auth/change-password', credentials);
+      return data;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  },
   async emailExist(email) {
     try {
       let { data } = await Api().get(`auth/emailExist?email=${email}`);
