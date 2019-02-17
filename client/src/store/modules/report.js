@@ -46,7 +46,6 @@ export default {
       context.commit('setLoading', true);
       let { data } = await documentsServices.getDocument(context.getters.documentId);
       context.commit('setLoading', false);
-      console.log(data.document[0]);
       context.commit('setDocument', data.document[0]);
     }
   }
