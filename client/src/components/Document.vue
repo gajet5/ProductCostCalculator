@@ -161,7 +161,7 @@
                               maxlength="25"
                               counter
                             >
-                              <soft-calc-component slot="append" @bringIn="bringIn($event, item.variables, key.value.toLowerCase(), item)"></soft-calc-component>
+                              <soft-calc-component slot="append" :current="item.variables[key.value.toLowerCase()]" @bringIn="bringIn($event, item.variables, key.value.toLowerCase(), item)"></soft-calc-component>
                             </v-text-field>
                           </v-flex>
                         </v-layout>
