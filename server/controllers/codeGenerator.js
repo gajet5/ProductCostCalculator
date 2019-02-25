@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const fs = require('fs-extra');
 const path = require('path');
 
-// GET /code-generator?user${string}&password=${string}&limit=${number}
+// GET /code-generator?user=${string}&password=${string}&limit=${number}
 module.exports = async (req, res) => {
     let user = req.query.user;
     let password = req.query.password;

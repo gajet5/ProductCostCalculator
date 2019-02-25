@@ -154,13 +154,15 @@
                             <v-text-field
                               :label="key.name"
                               color="indigo darken-1"
-                              v-model="item.variables[key.value.toLocaleLowerCase()]"
+                              v-model="item.variables[key.value.toLowerCase()]"
                               @keypress="inputCheck"
                               @keyup="countFormula(item)"
                               @keydown="haveChange = true"
                               maxlength="25"
                               counter
-                            ></v-text-field>
+                            >
+                              <soft-calc-component slot="append" @bringIn="bringIn($event, item.variables, key.value.toLowerCase(), item)"></soft-calc-component>
+                            </v-text-field>
                           </v-flex>
                         </v-layout>
                       </template>
@@ -337,6 +339,7 @@
 
 <script>
   import { Parser } from 'expr-eval';
+  import softCalcComponent from './SoftCalc';
 
   export default {
     created() {
@@ -349,6 +352,9 @@
       this.options = JSON.parse(JSON.stringify(this.documentParams.options));
     },
     props: ['documentParams', 'showDocumentDialog'],
+    components: {
+      softCalcComponent
+    },
     data() {
       return {
         documentId: 'newDocument',
@@ -549,6 +555,10 @@
       },
       moneyFormat(count) {
         return Intl.NumberFormat('ru-RU').format(count).replace(/,/, '.');
+      },
+      bringIn(value, variables, letter, item) {
+        variables[letter] = value;
+        this.countFormula(item);
       }
     }
   };
@@ -559,6 +569,7 @@
     margin-top: 15px;
     margin-right: 10px;
   }
+
   .letter {
     padding: 10px;
   }
