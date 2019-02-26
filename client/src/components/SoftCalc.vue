@@ -2,7 +2,8 @@
   <div class="text-xs-center">
     <v-dialog
       v-model="dialog"
-      width="500"
+      width="300"
+      class="overflow-hidden"
     >
       <v-icon slot="activator">
         queue
@@ -10,35 +11,165 @@
 
       <v-card>
 
-        <div class="calculator">
-          <div class="display">{{current || '0'}}</div>
-          <div @click="clear" class="btn">C</div>
-          <div @click="sign" class="btn">+/-</div>
-          <div @click="percent" class="btn">%</div>
-          <div @click="divide" class="btn operator">÷</div>
-          <div @click="append('7')" class="btn">7</div>
-          <div @click="append('8')" class="btn">8</div>
-          <div @click="append('9')" class="btn">9</div>
-          <div @click="times" class="btn operator">x</div>
-          <div @click="append('4')" class="btn">4</div>
-          <div @click="append('5')" class="btn">5</div>
-          <div @click="append('6')" class="btn">6</div>
-          <div @click="minus" class="btn operator">-</div>
-          <div @click="append('1')" class="btn">1</div>
-          <div @click="append('2')" class="btn">2</div>
-          <div @click="append('3')" class="btn">3</div>
-          <div @click="add" class="btn operator">+</div>
-          <div @click="append('0')" class="btn zero">0</div>
-          <div @click="dot" class="btn">.</div>
-          <div @click="equal" class="btn operator">=</div>
-        </div>
+        <v-container fluid class="pa-0">
+          <v-layout>
+            <v-flex xs12>
+              <p class="text-xs-right pt-3 pb-3 pl-3 pr-3 overflow-hidden">
+                <span class="calc-header">{{ total }}</span>
+              </p>
+            </v-flex>
+          </v-layout>
+          <v-layout>
+            <v-flex xs3>
+              <div class="calc-btn calc-btn__grey pa-3">
+                <span>
+                  AC
+                </span>
+              </div>
+            </v-flex>
+            <v-flex xs3>
+              <div class="calc-btn calc-btn__grey pa-3">
+                <span>
+                  +/-
+                </span>
+              </div>
+            </v-flex>
+            <v-flex xs3>
+              <div class="calc-btn calc-btn__grey pa-3">
+                <span>
+                  %
+                </span>
+              </div>
+            </v-flex>
+            <v-flex xs3>
+              <div class="calc-btn calc-btn__primary pa-3">
+                <span>
+                  /
+                </span>
+              </div>
+            </v-flex>
+          </v-layout>
+          <v-layout>
+            <v-flex xs3>
+              <div class="calc-btn pa-3 border-gray-a">
+                <span>
+                  7
+                </span>
+              </div>
+            </v-flex>
+            <v-flex xs3>
+              <div class="calc-btn pa-3 border-gray-a">
+                <span>
+                  8
+                </span>
+              </div>
+            </v-flex>
+            <v-flex xs3>
+              <div class="calc-btn pa-3 border-gray-a">
+                <span>
+                  9
+                </span>
+              </div>
+            </v-flex>
+            <v-flex xs3>
+              <div class="calc-btn calc-btn__primary pa-3">
+                <span>
+                  *
+                </span>
+              </div>
+            </v-flex>
+          </v-layout>
+          <v-layout>
+            <v-flex xs3>
+              <div class="calc-btn pa-3 border-gray-a">
+                <span>
+                  4
+                </span>
+              </div>
+            </v-flex>
+            <v-flex xs3>
+              <div class="calc-btn pa-3 border-gray-a">
+                <span>
+                  5
+                </span>
+              </div>
+            </v-flex>
+            <v-flex xs3>
+              <div class="calc-btn pa-3 border-gray-a">
+                <span>
+                  6
+                </span>
+              </div>
+            </v-flex>
+            <v-flex xs3>
+              <div class="calc-btn calc-btn__primary pa-3">
+                <span>
+                  -
+                </span>
+              </div>
+            </v-flex>
+          </v-layout>
+          <v-layout>
+            <v-flex xs3>
+              <div class="calc-btn pa-3 border-gray-a">
+                <span>
+                  1
+                </span>
+              </div>
+            </v-flex>
+            <v-flex xs3>
+              <div class="calc-btn pa-3 border-gray-a">
+                <span>
+                  2
+                </span>
+              </div>
+            </v-flex>
+            <v-flex xs3>
+              <div class="calc-btn pa-3 border-gray-a">
+                <span>
+                  3
+                </span>
+              </div>
+            </v-flex>
+            <v-flex xs3>
+              <div class="calc-btn calc-btn__primary pa-3">
+                <span>
+                  +
+                </span>
+              </div>
+            </v-flex>
+          </v-layout>
+          <v-layout>
+            <v-flex xs6>
+              <div class="calc-btn pa-3 border-gray-a">
+                <span>
+                  0
+                </span>
+              </div>
+            </v-flex>
+            <v-flex xs3>
+              <div class="calc-btn pa-3 border-gray-a">
+                <span>
+                  .
+                </span>
+              </div>
+            </v-flex>
+            <v-flex xs3>
+              <div class="calc-btn calc-btn__primary pa-3">
+                <span>
+                  =
+                </span>
+              </div>
+            </v-flex>
+          </v-layout>
+        </v-container>
 
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            color="primary"
+            color="#3949ab"
             flat
             @click="bringIn"
           >
@@ -57,101 +188,60 @@
     data() {
       return {
         dialog: false,
-        previous: null,
-        operator: null,
-        operatorClicked: false
+        total: this.current
       };
     },
     methods: {
       bringIn() {
-        this.$emit('bringIn', this.current);
+        this.$emit('bringIn', this.total);
         this.dialog = false;
-      },
-      clear() {
-        this.current = '';
-      },
-      sign() {
-        if (this.current.charAt(0) === '-') {
-          this.current = this.current.slice(1);
-        } else {
-          this.current = `-${this.current}`;
-        }
-      },
-      percent() {
-        this.current = `${parseFloat(this.current) / 100}`;
-      },
-      append(number) {
-        if (this.operatorClicked) {
-          this.current = '';
-          this.operatorClicked = false;
-        }
-        this.current = `${this.current}${number}`;
-      },
-      dot() {
-        if (this.current.indexOf('.') === -1) {
-          this.append('.');
-        }
-      },
-      setPrevious() {
-        this.previous = this.current;
-        this.operatorClicked = true;
-      },
-      divide() {
-        this.operator = (a, b) => a / b;
-        this.setPrevious();
-      },
-      times() {
-        this.operator = (a, b) => a * b;
-        this.setPrevious();
-      },
-      minus() {
-        this.operator = (a, b) => a - b;
-        this.setPrevious();
-      },
-      add() {
-        this.operator = (a, b) => a + b;
-        this.setPrevious();
-      },
-      equal() {
-        this.current = `${this.operator(
-          parseFloat(this.current),
-          parseFloat(this.previous)
-        )}`;
-        this.previous = null;
       }
     }
   };
 </script>
 
 <style scoped>
-  .calculator {
-    margin: 0 auto;
-    width: 500px;
-    font-size: 40px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: minmax(50px, auto);
+  .calc-header {
+    color: #3949ab;
+    font-size: 30px;
   }
 
-  .display {
+  .calc-btn {
+    font-weight: normal;
+    color: #3949ab;
+    font-size: 20px;
     text-align: center;
-    grid-column: 1 / 5;
-    background-color: #333;
-    color: white;
+  }
+  
+  .calc-btn__grey {
+    font-weight: lighter;
+    background-color: #ccc;
+    color: #fff;
   }
 
-  .zero {
-    grid-column: 1 / 3;
+  .calc-btn__primary {
+    font-weight: lighter;
+    background-color: #3949ab;
+    color: #fff;
   }
 
-  .btn {
-    text-align: center;
-    background-color: #F2F2F2;
-    border: 1px solid #999;
+  .border-gray-a {
+    box-shadow: 0 0 0 .5px #ccc;
   }
 
-  .operator {
-    background-color: orange;
-    color: white;
+  .border-gray-t {
+    border-top: 1px solid #ccc;
+  }
+
+  .border-gray-b {
+    border-bottom: 1px solid #ccc;
+  }
+
+  .border-gray-l {
+    border-left: 1px solid #ccc;
+  }
+
+  .border-gray-r {
+    border-right: 1px solid #ccc;
   }
 </style>
