@@ -4,19 +4,23 @@
       v-model="dialog"
       width="300"
       class="overflow-hidden"
+      @keydown="keyboardRules($event)"
     >
-      <v-icon slot="activator">
+      <v-icon
+        slot="activator"
+        color="grey"
+        @click.stop="setIncomingNumber"
+      >
         queue
       </v-icon>
 
       <v-card>
-
         <v-container fluid class="pa-0">
           <v-layout>
             <v-flex xs12>
               <p class="text-xs-right pt-3 pb-3 pl-3 pr-3 overflow-hidden calc-display">
-                <span class="calc-header">{{ current || '0' }}</span>
-                <span class="grey--text">{{ selectedNumber || '0' }}</span>
+                <span class="calc-header">{{ moneyFormat(total) || '0' }}</span>
+                <span class="grey--text">{{ moneyFormat(selectedNumber) || '0' }}</span>
               </p>
             </v-flex>
           </v-layout>
@@ -103,7 +107,7 @@
               </div>
             </v-flex>
             <v-flex xs3>
-              <div class="calc-btn calc-btn__primary pa-3" @click="add($event)">
+              <div class="calc-btn calc-btn__primary pa-3" @click.stop="add($event)">
                 <span>+</span>
               </div>
             </v-flex>
@@ -154,70 +158,204 @@
         total: '',
         selectedNumber: '',
         operator: null,
-        selectedOperatorBg: null
+        selectedOperatorBg: null,
+        firstEnter: false
       };
     },
     methods: {
+      setIncomingNumber() {
+        this.total = this.current + '';
+        this.dialog = true;
+      },
       bringIn() {
         this.$emit('bringIn', this.total);
         this.dialog = false;
       },
-      setSelectedOperatorBg(e) {
-        this.selectedOperatorBg = e.target.style;
+      setSelectedOperatorBg(style) {
+        this.selectedOperatorBg = style;
         this.selectedOperatorBg.backgroundColor = 'rgba(57, 73, 171, 0.6)';
       },
       clearAll() {
         this.total = '';
         this.selectedNumber = '';
+        if (this.selectedOperatorBg) {
+          this.selectedOperatorBg.backgroundColor = '';
+        }
+        this.operator = null;
       },
       clearSelected() {
         this.selectedNumber = '';
       },
       sing() {
+        if (!this.total) {
+          return;
+        }
         this.total = this.total.charAt(0) === '-' ? this.total.slice(1) : `-${this.total}`;
       },
       append(number) {
-        this.selectedNumber = `${this.selectedNumber}${number}`;
+        if ((this.total.length === 9 && this.firstEnter) || this.selectedNumber.length === 9) {
+          return;
+        }
+
+        if (!this.total || this.firstEnter) {
+          this.total = `${this.total}${number}`;
+          this.firstEnter = true;
+        } else {
+          this.selectedNumber = `${this.selectedNumber}${number}`;
+        }
+
+        if (this.selectedOperatorBg) {
+          this.selectedOperatorBg.backgroundColor = '';
+        }
       },
       dot() {
-        if (this.selectedNumber.indexOf('.') === -1) {
+        if (this.total.indexOf('.') === -1) {
+          this.append('.');
+        }
+
+        if (this.selectedNumber.indexOf('.') === -1 && !this.firstEnter) {
           this.append('.');
         }
       },
+      markOperator(e) {
+        if (!e) {
+          return;
+        }
+        if (e.path[0].nodeName === 'SPAN') {
+          this.setSelectedOperatorBg(e.path[1].style);
+        } else {
+          this.setSelectedOperatorBg(e.target.style);
+        }
+      },
       divide(e) {
+        this.firstEnter = false;
+
+        if (this.selectedOperatorBg) {
+          this.selectedOperatorBg.backgroundColor = '';
+        }
+
+        this.markOperator(e);
+
         this.operator = (a, b) => a / b;
-        if (this.total !== '' && this.selectedNumber !== '') {
+        if (this.selectedNumber !== '') {
           this.equal();
         }
-        // this.setSelectedOperatorBg(e);
       },
       times(e) {
+        this.firstEnter = false;
+
+        if (this.selectedOperatorBg) {
+          this.selectedOperatorBg.backgroundColor = '';
+        }
+
+        this.markOperator(e);
+
         this.operator = (a, b) => a * b;
-        if (this.total !== '' && this.selectedNumber !== '') {
+        if (this.selectedNumber !== '') {
           this.equal();
         }
-        // this.setSelectedOperatorBg(e);
       },
       minus(e) {
+        this.firstEnter = false;
+
+        if (this.selectedOperatorBg) {
+          this.selectedOperatorBg.backgroundColor = '';
+        }
+
+        this.markOperator(e);
+
         this.operator = (a, b) => a - b;
-        if (this.total !== '' && this.selectedNumber !== '') {
+        if (this.selectedNumber !== '') {
           this.equal();
         }
-        // this.setSelectedOperatorBg(e);
       },
       add(e) {
+        this.firstEnter = false;
+
+        if (this.selectedOperatorBg) {
+          this.selectedOperatorBg.backgroundColor = '';
+        }
+
+        this.markOperator(e);
+
         this.operator = (a, b) => a + b;
-        if (this.total !== '' && this.selectedNumber !== '') {
+        if (this.selectedNumber !== '') {
           this.equal();
         }
-        // this.setSelectedOperatorBg(e);
       },
       equal() {
         this.total = `${this.operator(
-          parseFloat(this.total),
+          parseFloat(this.total || 0),
           parseFloat(this.selectedNumber)
         )}`;
         this.selectedNumber = '';
+        if (this.selectedOperatorBg) {
+          this.selectedOperatorBg.backgroundColor = '';
+        }
+        this.operator = null;
+      },
+      keyboardRules(e) {
+        let code = e.code;
+        let key = e.key;
+        let shiftKey = e.shiftKey;
+        let ctrlKey = e.ctrlKey;
+
+        switch (code) {
+          case 'Digit0':
+          case 'Digit1':
+          case 'Digit2':
+          case 'Digit3':
+          case 'Digit4':
+          case 'Digit5':
+          case 'Digit6':
+          case 'Digit7':
+          case 'Digit8':
+          case 'Digit9':
+          case 'Numpad0':
+          case 'Numpad1':
+          case 'Numpad2':
+          case 'Numpad3':
+          case 'Numpad4':
+          case 'Numpad5':
+          case 'Numpad6':
+          case 'Numpad7':
+          case 'Numpad8':
+          case 'Numpad9':
+            if (!shiftKey && !ctrlKey) {
+              this.append(key);
+            }
+            if (shiftKey && code === 'Digit8') {
+              this.times();
+            }
+            break;
+          case 'NumpadDivide':
+          case 'Slash':
+            this.divide();
+            break;
+          case 'NumpadMultiply':
+            this.times();
+            break;
+          case 'Minus':
+          case 'NumpadSubtract':
+            this.minus();
+            break;
+          case 'NumpadAdd':
+            this.add();
+            break;
+          case 'Equal':
+            if (!shiftKey) {
+              break;
+            }
+            this.add();
+            break;
+          case 'Enter':
+          case 'NumpadEnter':
+            this.equal();
+            break;
+        }
+      },
+      moneyFormat(count) {
+        return Intl.NumberFormat('ru-RU', { maximumFractionDigits: 8 }).format(count).replace(',', '.');
       }
     }
   };
