@@ -343,13 +343,7 @@
 
   export default {
     created() {
-      if (!this.documentParams) {
-        return false;
-      }
-
-      this.documentId = this.documentParams._id;
-      this.documentName = this.documentParams.name;
-      this.options = JSON.parse(JSON.stringify(this.documentParams.options));
+      this.init();
     },
     props: ['documentParams', 'showDocumentDialog'],
     components: {
@@ -398,9 +392,19 @@
     watch: {
       showDocumentDialog() {
         this.haveChange = false;
+        this.init();
       }
     },
     methods: {
+      init() {
+        if (!this.documentParams) {
+          return false;
+        }
+
+        this.documentId = this.documentParams._id;
+        this.documentName = this.documentParams.name;
+        this.options = JSON.parse(JSON.stringify(this.documentParams.options));
+      },
       userRules() {
         if (!this.$store.getters['user/isActiveted']) {
           this.$emit('userNotConfirmMail');
