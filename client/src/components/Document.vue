@@ -66,7 +66,7 @@
                   placeholder="Выберите позицию или введите свою."
                   item-text="name"
                   item-value="_id"
-                  :menu-props="{zIndex:'203'}"
+                  :menu-props="{zIndex:'205'}"
                   maxlength="50"
                   counter
                 >
