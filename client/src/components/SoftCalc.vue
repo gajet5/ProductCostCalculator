@@ -107,7 +107,7 @@
               </div>
             </v-flex>
             <v-flex xs3>
-              <div class="calc-btn calc-btn__primary pa-3" @click.stop="add($event)">
+              <div class="calc-btn calc-btn__primary pa-3" @click="add($event)">
                 <span>+</span>
               </div>
             </v-flex>
@@ -227,13 +227,19 @@
           this.setSelectedOperatorBg(e.target.style);
         }
       },
-      divide(e) {
-        this.firstEnter = false;
-
+      unmarkOperator() {
         if (this.selectedOperatorBg) {
           this.selectedOperatorBg.backgroundColor = '';
         }
+      },
+      divide(e) {
+        this.firstEnter = false;
 
+        if (this.operator) {
+          this.equal();
+        }
+
+        this.unmarkOperator();
         this.markOperator(e);
 
         this.operator = (a, b) => a / b;
@@ -244,10 +250,11 @@
       times(e) {
         this.firstEnter = false;
 
-        if (this.selectedOperatorBg) {
-          this.selectedOperatorBg.backgroundColor = '';
+        if (this.operator) {
+          this.equal();
         }
 
+        this.unmarkOperator();
         this.markOperator(e);
 
         this.operator = (a, b) => a * b;
@@ -258,10 +265,11 @@
       minus(e) {
         this.firstEnter = false;
 
-        if (this.selectedOperatorBg) {
-          this.selectedOperatorBg.backgroundColor = '';
+        if (this.operator) {
+          this.equal();
         }
 
+        this.unmarkOperator();
         this.markOperator(e);
 
         this.operator = (a, b) => a - b;
@@ -272,10 +280,11 @@
       add(e) {
         this.firstEnter = false;
 
-        if (this.selectedOperatorBg) {
-          this.selectedOperatorBg.backgroundColor = '';
+        if (this.operator) {
+          this.equal();
         }
 
+        this.unmarkOperator();
         this.markOperator(e);
 
         this.operator = (a, b) => a + b;
@@ -289,9 +298,9 @@
           parseFloat(this.selectedNumber)
         )}`;
         this.selectedNumber = '';
-        if (this.selectedOperatorBg) {
-          this.selectedOperatorBg.backgroundColor = '';
-        }
+
+        this.unmarkOperator();
+
         this.operator = null;
       },
       keyboardRules(e) {
@@ -373,6 +382,7 @@
   }
 
   .calc-btn {
+    cursor: pointer;
     font-weight: normal;
     color: #3949ab;
     font-size: 20px;
