@@ -221,8 +221,9 @@
         if (!e) {
           return;
         }
-        if (e.path[0].nodeName === 'SPAN') {
-          this.setSelectedOperatorBg(e.path[1].style);
+
+        if (e.target.nodeName === 'SPAN') {
+          this.setSelectedOperatorBg(e.target.parentNode.style);
         } else {
           this.setSelectedOperatorBg(e.target.style);
         }
@@ -414,7 +415,7 @@
   }
 
   .border-gray-a {
-    box-shadow: 0 0 0 .5px #ccc;
+    box-shadow: 0 0 0 1px rgba(204, 204, 204, 0.51);
   }
 
 </style>
