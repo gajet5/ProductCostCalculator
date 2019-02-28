@@ -244,9 +244,7 @@
         this.markOperator(e);
 
         this.operator = (a, b) => a / b;
-        if (this.selectedNumber !== '') {
-          this.equal();
-        }
+        this.equal();
       },
       times(e) {
         this.firstEnter = false;
@@ -259,9 +257,7 @@
         this.markOperator(e);
 
         this.operator = (a, b) => a * b;
-        if (this.selectedNumber !== '') {
-          this.equal();
-        }
+        this.equal();
       },
       minus(e) {
         this.firstEnter = false;
@@ -274,9 +270,7 @@
         this.markOperator(e);
 
         this.operator = (a, b) => a - b;
-        if (this.selectedNumber !== '') {
-          this.equal();
-        }
+        this.equal();
       },
       add(e) {
         this.firstEnter = false;
@@ -289,11 +283,13 @@
         this.markOperator(e);
 
         this.operator = (a, b) => a + b;
-        if (this.selectedNumber !== '') {
-          this.equal();
-        }
+        this.equal();
       },
       equal() {
+        if (!this.selectedNumber) {
+          return;
+        }
+
         this.total = `${this.operator(
           parseFloat(this.total || 0),
           parseFloat(this.selectedNumber)
