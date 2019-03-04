@@ -137,52 +137,11 @@
                   <v-layout class="mb-1">
                     <v-flex xs12 class="d-flex">
                       <div>
-                        <v-dialog
-                          v-model="deleteFormulaDialog"
-                          persistent
-                        >
-                          <v-btn flat icon color="error" class="ma-0" slot="activator">
-                            <v-icon>
-                              remove
-                            </v-icon>
-                          </v-btn>
-                          <v-card>
-                            <v-card-title
-                              class="headline yellow"
-                            >
-                              <v-icon large class="mr-1" color="red">
-                                warning
-                              </v-icon>
-                              Удалить формулу?
-                            </v-card-title>
-                            <v-card-text>
-                              <p>
-                                Вы собираетесь удалить формулу: <b>{{ formulas.formulaName }}</b>.<br>
-                                Удаляем?
-                              </p>
-                              <p>
-                                Если в позиции не будет формул, позиция будет удалена.
-                              </p>
-                            </v-card-text>
-                            <v-card-actions>
-                              <v-spacer></v-spacer>
-                              <v-btn
-                                color="green darken-1"
-                                flat="flat"
-                                @click="deleteFormula(item, formulas)"
-                              >
-                                ОК
-                              </v-btn>
-                              <v-btn
-                                color="red darken-1"
-                                flat="flat"
-                                @click="deleteFormulaDialog = false"
-                              >
-                                Отмена
-                              </v-btn>
-                            </v-card-actions>
-                          </v-card>
-                        </v-dialog>
+                        <v-btn flat icon color="error" class="ma-0" @click="deleteFormulaQuestion(item, formulas, formulas.formulaName)">
+                          <v-icon>
+                            remove
+                          </v-icon>
+                        </v-btn>
                         {{ formulas.formulaName }}
                       </div>
                       <v-spacer></v-spacer>
@@ -496,6 +455,47 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="deleteFormulaDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline yellow"
+        >
+          <v-icon large class="mr-1" color="red">
+            warning
+          </v-icon>
+          Удалить формулу?
+        </v-card-title>
+        <v-card-text>
+          <p>
+            Вы собираетесь удалить формулу: <b>{{ deleteFormulaDialogName }}</b>.<br>
+            Удаляем?
+          </p>
+          <p>
+            Если в позиции не будет формул, позиция будет удалена.
+          </p>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="deleteFormula(deleteFormulaDialogItem, deleteFormulaDialogFormula)"
+          >
+            ОК
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="deleteFormulaDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
@@ -529,13 +529,16 @@
         snackbarDocumentText: '',
         deleteDialog: false,
         deletePositionsDialog: false,
-        deleteDialogId: '',
+        deleteDialogId: null,
         deleteDialogName: '',
         haveChange: false,
         saveChangeDialog: false,
         addFormulaDialog: false,
         addFormulaDialogFormula: '',
-        deleteFormulaDialog: false
+        deleteFormulaDialog: false,
+        deleteFormulaDialogName: '',
+        deleteFormulaDialogItem: null,
+        deleteFormulaDialogFormula: null
       };
     },
     computed: {
@@ -694,10 +697,13 @@
         this.deletePositionsDialog = true;
       },
       async deletePositions(id, name) {
+        this.haveChange = true;
         await this.$store.dispatch('documents/deletePositions', id);
         await this.$store.dispatch('documents/getPositions');
 
         this.deletePositionsDialog = false;
+        this.deleteDialogId = null;
+        this.deleteDialogName = '';
         this.snackbarDocument = true;
         this.snackbarDocumentStatus = 'info';
         this.snackbarDocumentText = `Параметр позиции ${name} удалён.`;
@@ -765,10 +771,14 @@
 
         this.addFormulaDialog = false;
       },
-      deleteFormulaQuestion() {
-
+      deleteFormulaQuestion(item, formula, name) {
+        this.deleteFormulaDialog = true;
+        this.deleteFormulaDialogName = name;
+        this.deleteFormulaDialogItem = item;
+        this.deleteFormulaDialogFormula = formula;
       },
       deleteFormula(item, formula) {
+        this.haveChange = true;
         let indexOption = item.formulas.indexOf(formula);
         item.formulas.splice(indexOption, 1);
 
@@ -781,6 +791,9 @@
         }
 
         this.deleteFormulaDialog = false;
+        this.deleteFormulaDialogName = '';
+        this.deleteFormulaDialogItem = null;
+        this.deleteFormulaDialogFormula = null;
       }
     }
   };
