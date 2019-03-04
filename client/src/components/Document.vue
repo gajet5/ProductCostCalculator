@@ -133,7 +133,7 @@
                 <v-card-title primary-title>
                   <h3 class="headline mb-0">{{ item.position }}</h3>
                   <v-spacer></v-spacer>
-                  <div>
+                  <div v-show="showAdditionalItem(item)">
                     <h4 class="headline mb-0">
                       <span class="grey--text font-weight-light caption text-lowercase">Расчёт карты =</span>
                       {{ moneyFormat(item.cardCount) }}
@@ -145,7 +145,8 @@
                     <v-flex xs12 class="d-flex">
                       <div>
                         <v-btn flat icon color="error" class="ma-0"
-                               @click="deleteFormulaQuestion(item, formulas, formulas.formulaName)">
+                               @click="deleteFormulaQuestion(item, formulas, formulas.formulaName)"
+                               v-show="showAdditionalItem(item)">
                           <v-icon>
                             remove
                           </v-icon>
@@ -175,7 +176,7 @@
                                 color="indigo darken-1"
                                 v-model="formulas.variables[formula.value.toLowerCase()]"
                                 @keypress="inputCheck"
-                                @keyup="countFormula(item, formulas)"
+                                @keyup="countFormula(item)"
                                 @keydown="haveChange = true"
                                 maxlength="25"
                                 counter
@@ -205,56 +206,16 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer class="hidden-sm-and-down"></v-spacer>
-                  <v-dialog
-                  v-model="addFormulaDialog"
-                  persistent
-                >
-                  <v-btn slot="activator" flat icon color="success">
+                  <v-btn flat icon color="success" @click="addFormulaDialogInit(item)">
                     <v-icon>
                       add
                     </v-icon>
                   </v-btn>
-                  <v-card>
-                    <v-card-title
-                      class="headline success white--text"
-                    >
-                      Добавление формулы
-                    </v-card-title>
-                    <v-card-text>
-                      <v-autocomplete
-                        v-model="addFormulaDialogFormula"
-                        :items="formulasName"
-                        item-text="name"
-                        return-object
-                        color="indigo darken-1"
-                        placeholder="Выберите формулу."
-                      >
-                      </v-autocomplete>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn
-                        color="green darken-1"
-                        flat="flat"
-                        @click="addFormula(item)"
-                      >
-                        ОК
-                      </v-btn>
-                      <v-btn
-                        color="red darken-1"
-                        flat="flat"
-                        @click="addFormulaDialog = false"
-                      >
-                        Отмена
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
                   <v-dialog
                     v-model="formulaRelationDialog"
                     persistent
                   >
-                    <v-btn flat icon color="indigo darken-1" slot="activator" v-show="item.formulaRelation.length">
+                    <v-btn flat icon color="indigo darken-1" slot="activator" v-show="showAdditionalItem(item)">
                       <v-icon>
                         settings
                       </v-icon>
@@ -545,6 +506,46 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="addFormulaDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline success white--text"
+        >
+          Добавление формулы
+        </v-card-title>
+        <v-card-text>
+          <v-autocomplete
+            v-model="addFormulaDialogFormula"
+            :items="formulasName"
+            item-text="name"
+            return-object
+            color="indigo darken-1"
+            placeholder="Выберите формулу."
+          >
+          </v-autocomplete>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="addFormula(addFormulaDialogItem)"
+          >
+            ОК
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="addFormulaDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
@@ -584,6 +585,7 @@
         saveChangeDialog: false,
         addFormulaDialog: false,
         addFormulaDialogFormula: '',
+        addFormulaDialogItem: null,
         deleteFormulaDialog: false,
         deleteFormulaDialogName: '',
         deleteFormulaDialogItem: null,
@@ -758,18 +760,20 @@
         this.snackbarDocumentStatus = 'info';
         this.snackbarDocumentText = `Параметр позиции ${name} удалён.`;
       },
-      countFormula(item, formulas) {
-        let expression = Parser.parse(formulas.formulaString.toLowerCase());
+      countFormula(item) {
+        for (let formula of item.formulas) {
+          let expression = Parser.parse(formula.formulaString.toLowerCase());
 
-        if (Object.keys(formulas.variables).length === 1) {
-          formulas.count = expression.evaluate(formulas.variables);
-          formulas.count = parseFloat(formulas.count).toFixed(2);
-        } else {
-          formulas.count = expression.evaluate(formulas.variables).toFixed(2);
-        }
+          if (Object.keys(formula.variables).length === 1) {
+            formula.count = expression.evaluate(formula.variables);
+            formula.count = parseFloat(formula.count).toFixed(2);
+          } else {
+            formula.count = expression.evaluate(formula.variables).toFixed(2);
+          }
 
-        if (!isFinite(formulas.count)) {
-          formulas.count = 0;
+          if (!isFinite(formula.count)) {
+            formula.count = 0;
+          }
         }
 
         if (item.formulaRelation.length) {
@@ -784,7 +788,10 @@
 
           item.cardCount = Parser.parse(countString).evaluate();
         } else {
-          item.cardCount = formulas.count;
+          for (let formula of item.formulas) {
+            item.cardCount = 0;
+            item.cardCount += parseFloat(formula.count);
+          }
         }
       },
       inputCheck(e) {
@@ -813,6 +820,10 @@
         variables[letter] = value;
         this.countFormula(item);
       },
+      addFormulaDialogInit(item) {
+        this.addFormulaDialogItem = item;
+        this.addFormulaDialog = true;
+      },
       async addFormula(item) {
         await this.$store.dispatch('formulas/getFormula', this.addFormulaDialogFormula._id);
         let variables = {};
@@ -837,6 +848,8 @@
         this.setFormulaRelation(item);
 
         this.addFormulaDialog = false;
+        this.addFormulaDialogFormula = '';
+        this.addFormulaDialogItem = null;
       },
       deleteFormulaQuestion(item, formula, name) {
         this.deleteFormulaDialog = true;
@@ -858,10 +871,7 @@
         }
 
         this.setFormulaRelation(item);
-
-        if (!item.formulas.length) {
-          this.deleteOption(item, item.position);
-        }
+        this.countFormula(item);
 
         this.deleteFormulaDialog = false;
         this.deleteFormulaDialogName = '';
@@ -875,6 +885,13 @@
           if (item.formulas[i + 1]) {
             item.formulaRelation.push('+');
           }
+        }
+      },
+      showAdditionalItem(item) {
+        try {
+          return item.formulaRelation.length;
+        } catch (e) {
+          return false;
         }
       }
     }
