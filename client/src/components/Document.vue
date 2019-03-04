@@ -132,12 +132,20 @@
               <template v-if="item.new">
                 <v-card-title primary-title>
                   <h3 class="headline mb-0">{{ item.position }}</h3>
+                  <v-spacer></v-spacer>
+                  <div>
+                    <h4 class="headline mb-0">
+                      <span class="grey--text font-weight-light caption text-lowercase">Расчёт карты =</span>
+                      {{ moneyFormat(item.cardCount) }}
+                    </h4>
+                  </div>
                 </v-card-title>
                 <v-card-text v-for="(formulas, formulasIndex) in item.formulas" :key="formulasIndex">
                   <v-layout class="mb-1">
                     <v-flex xs12 class="d-flex">
                       <div>
-                        <v-btn flat icon color="error" class="ma-0" @click="deleteFormulaQuestion(item, formulas, formulas.formulaName)">
+                        <v-btn flat icon color="error" class="ma-0"
+                               @click="deleteFormulaQuestion(item, formulas, formulas.formulaName)">
                           <v-icon>
                             remove
                           </v-icon>
@@ -167,12 +175,14 @@
                                 color="indigo darken-1"
                                 v-model="formulas.variables[formula.value.toLowerCase()]"
                                 @keypress="inputCheck"
-                                @keyup="countFormula(formulas)"
+                                @keyup="countFormula(item, formulas)"
                                 @keydown="haveChange = true"
                                 maxlength="25"
                                 counter
                               >
-                                <soft-calc-component slot="append" :current="formulas.variables[formula.value.toLowerCase()]" @bringIn="bringIn($event, formulas.variables, formula.value.toLowerCase(), formulas)"></soft-calc-component>
+                                <soft-calc-component slot="append"
+                                                     :current="formulas.variables[formula.value.toLowerCase()]"
+                                                     @bringIn="bringIn($event, formulas.variables, formula.value.toLowerCase(), formulas)"></soft-calc-component>
                               </v-text-field>
                             </v-flex>
                           </v-layout>
@@ -196,44 +206,81 @@
                 <v-card-actions>
                   <v-spacer class="hidden-sm-and-down"></v-spacer>
                   <v-dialog
-                    v-model="addFormulaDialog"
+                  v-model="addFormulaDialog"
+                  persistent
+                >
+                  <v-btn slot="activator" flat icon color="success">
+                    <v-icon>
+                      add
+                    </v-icon>
+                  </v-btn>
+                  <v-card>
+                    <v-card-title
+                      class="headline success white--text"
+                    >
+                      Добавление формулы
+                    </v-card-title>
+                    <v-card-text>
+                      <v-autocomplete
+                        v-model="addFormulaDialogFormula"
+                        :items="formulasName"
+                        item-text="name"
+                        return-object
+                        color="indigo darken-1"
+                        placeholder="Выберите формулу."
+                      >
+                      </v-autocomplete>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="green darken-1"
+                        flat="flat"
+                        @click="addFormula(item)"
+                      >
+                        ОК
+                      </v-btn>
+                      <v-btn
+                        color="red darken-1"
+                        flat="flat"
+                        @click="addFormulaDialog = false"
+                      >
+                        Отмена
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+                  <v-dialog
+                    v-model="formulaRelationDialog"
                     persistent
                   >
-                    <v-btn slot="activator" flat icon color="success">
+                    <v-btn flat icon color="indigo darken-1" slot="activator" v-show="item.formulaRelation.length">
                       <v-icon>
-                        add
+                        settings
                       </v-icon>
                     </v-btn>
                     <v-card>
                       <v-card-title
-                        class="headline success white--text"
+                        class="headline white--text indigo darken-1"
                       >
-                        Добавление формулы
+                        Настройка действий
                       </v-card-title>
                       <v-card-text>
-                        <v-autocomplete
-                          v-model="addFormulaDialogFormula"
-                          :items="formulasName"
-                          item-text="name"
-                          return-object
-                          color="indigo darken-1"
-                          placeholder="Выберите формулу."
-                        >
-                        </v-autocomplete>
+
                       </v-card-text>
                       <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn
                           color="green darken-1"
                           flat="flat"
-                          @click="addFormula(item.formulas)"
+                          @click="setFormulaRelation()"
                         >
                           ОК
                         </v-btn>
                         <v-btn
                           color="red darken-1"
                           flat="flat"
-                          @click="addFormulaDialog = false"
+                          @click="formulaRelationDialog = false"
                         >
                           Отмена
                         </v-btn>
@@ -256,7 +303,8 @@
                   <v-spacer></v-spacer>
                   <div>
                     <h4 class="headline mb-0">
-                      <span class="grey--text font-weight-light caption text-lowercase">{{ item.formulaString }} =</span>
+                      <span
+                        class="grey--text font-weight-light caption text-lowercase">{{ item.formulaString }} =</span>
                       {{ moneyFormat(item.count) }}
                     </h4>
                   </div>
@@ -281,7 +329,8 @@
                                 maxlength="25"
                                 counter
                               >
-                                <soft-calc-component slot="append" :current="item.variables[key.value.toLowerCase()]" @bringIn="bringIn($event, item.variables, key.value.toLowerCase(), item)"></soft-calc-component>
+                                <soft-calc-component slot="append" :current="item.variables[key.value.toLowerCase()]"
+                                                     @bringIn="bringIn($event, item.variables, key.value.toLowerCase(), item)"></soft-calc-component>
                               </v-text-field>
                             </v-flex>
                           </v-layout>
@@ -538,7 +587,8 @@
         deleteFormulaDialog: false,
         deleteFormulaDialogName: '',
         deleteFormulaDialogItem: null,
-        deleteFormulaDialogFormula: null
+        deleteFormulaDialogFormula: null,
+        formulaRelationDialog: false
       };
     },
     computed: {
@@ -552,9 +602,7 @@
         let count = 0;
         for (let item of this.options) {
           if (item.new) {
-            for (let formula of item.formulas) {
-              count += parseFloat(formula.count);
-            }
+            count += parseFloat(item.cardCount);
           } else {
             count += parseFloat(item.count);
           }
@@ -645,6 +693,8 @@
         this.options.unshift({
           new: true,
           position: this.positionSelected.name ? this.positionSelected.name : this.positionSelected,
+          cardCount: 0,
+          formulaRelation: [],
           formulas: [{
             formulaName: this.formulaSelected.name,
             count: 0,
@@ -708,18 +758,33 @@
         this.snackbarDocumentStatus = 'info';
         this.snackbarDocumentText = `Параметр позиции ${name} удалён.`;
       },
-      countFormula(item) {
-        let expression = Parser.parse(item.formulaString.toLowerCase());
+      countFormula(item, formulas) {
+        let expression = Parser.parse(formulas.formulaString.toLowerCase());
 
-        if (Object.keys(item.variables).length === 1) {
-          item.count = expression.evaluate(item.variables);
-          item.count = parseFloat(item.count).toFixed(2);
+        if (Object.keys(formulas.variables).length === 1) {
+          formulas.count = expression.evaluate(formulas.variables);
+          formulas.count = parseFloat(formulas.count).toFixed(2);
         } else {
-          item.count = expression.evaluate(item.variables).toFixed(2);
+          formulas.count = expression.evaluate(formulas.variables).toFixed(2);
         }
 
-        if (!isFinite(item.count)) {
-          item.count = 0;
+        if (!isFinite(formulas.count)) {
+          formulas.count = 0;
+        }
+
+        if (item.formulaRelation.length) {
+          let countString = '';
+
+          for (let i = 0; i < item.formulas.length; i += 1) {
+            countString += item.formulas[i].count;
+            if (item.formulaRelation[i]) {
+              countString += item.formulaRelation[i];
+            }
+          }
+
+          item.cardCount = Parser.parse(countString).evaluate();
+        } else {
+          item.cardCount = formulas.count;
         }
       },
       inputCheck(e) {
@@ -748,7 +813,7 @@
         variables[letter] = value;
         this.countFormula(item);
       },
-      async addFormula(formulas) {
+      async addFormula(item) {
         await this.$store.dispatch('formulas/getFormula', this.addFormulaDialogFormula._id);
         let variables = {};
         let formulaString = '';
@@ -760,7 +825,7 @@
           formulaString += item.value;
         }
 
-        formulas.push({
+        item.formulas.push({
           formulaName: this.addFormulaDialogFormula.name,
           count: 0,
           formula: this.$store.getters['formulas/formula'].formula,
@@ -768,6 +833,8 @@
           variables,
           comment: ''
         });
+
+        this.setFormulaRelation(item);
 
         this.addFormulaDialog = false;
       },
@@ -786,6 +853,12 @@
         this.snackbarDocumentStatus = 'info';
         this.snackbarDocumentText = `Формула ${formula.formulaName} удалёна.`;
 
+        if (item.formulas.length === 1) {
+          item.formulaRelation = [];
+        }
+
+        this.setFormulaRelation(item);
+
         if (!item.formulas.length) {
           this.deleteOption(item, item.position);
         }
@@ -794,6 +867,15 @@
         this.deleteFormulaDialogName = '';
         this.deleteFormulaDialogItem = null;
         this.deleteFormulaDialogFormula = null;
+      },
+      setFormulaRelation(item) {
+        item.formulaRelation = [];
+
+        for (let i = 0; i < item.formulas.length; i += 1) {
+          if (item.formulas[i + 1]) {
+            item.formulaRelation.push('+');
+          }
+        }
       }
     }
   };
