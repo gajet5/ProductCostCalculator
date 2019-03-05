@@ -211,43 +211,12 @@
                       add
                     </v-icon>
                   </v-btn>
-                  <v-dialog
-                    v-model="formulaRelationDialog"
-                    persistent
-                  >
-                    <v-btn flat icon color="indigo darken-1" slot="activator" v-show="showAdditionalItem(item)">
-                      <v-icon>
-                        settings
-                      </v-icon>
-                    </v-btn>
-                    <v-card>
-                      <v-card-title
-                        class="headline white--text indigo darken-1"
-                      >
-                        Настройка действий
-                      </v-card-title>
-                      <v-card-text>
-
-                      </v-card-text>
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                          color="green darken-1"
-                          flat="flat"
-                          @click="setFormulaRelation()"
-                        >
-                          ОК
-                        </v-btn>
-                        <v-btn
-                          color="red darken-1"
-                          flat="flat"
-                          @click="formulaRelationDialog = false"
-                        >
-                          Отмена
-                        </v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
+                  <v-btn flat icon color="indigo" v-show="showAdditionalItem(item)"
+                         @click="formulaRelationDialogInit(item)">
+                    <v-icon>
+                      settings
+                    </v-icon>
+                  </v-btn>
                   <v-btn flat icon color="error" @click="deleteOptionQuestion(item, item.position)">
                     <v-icon>
                       delete
@@ -546,6 +515,48 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="formulaRelationDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline white--text indigo darken-1"
+        >
+          Настройка зависимости
+        </v-card-title>
+        <v-card-text>
+          <template v-if="formulaRelationDialogItem">
+            <div v-for="(formula, index) of formulaRelationDialogItem.formulas" :key="index">
+              <span>
+                {{ formula.formulaName }}
+              </span>
+              <div v-if="formulaRelationDialogItem.formulaRelation[index]">
+                {{ formulaRelationDialogItem.formulaRelation[index] }}
+              </div>
+
+            </div>
+          </template>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="setFormulaRelation"
+          >
+            ОК
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="formulaRelationDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
@@ -590,7 +601,8 @@
         deleteFormulaDialogName: '',
         deleteFormulaDialogItem: null,
         deleteFormulaDialogFormula: null,
-        formulaRelationDialog: false
+        formulaRelationDialog: false,
+        formulaRelationDialogItem: null
       };
     },
     computed: {
@@ -845,7 +857,7 @@
           comment: ''
         });
 
-        this.setFormulaRelation(item);
+        this.setDefaultFormulaRelation(item);
 
         this.addFormulaDialog = false;
         this.addFormulaDialogFormula = '';
@@ -870,7 +882,7 @@
           item.formulaRelation = [];
         }
 
-        this.setFormulaRelation(item);
+        this.setDefaultFormulaRelation(item);
         this.countFormula(item);
 
         this.deleteFormulaDialog = false;
@@ -878,7 +890,15 @@
         this.deleteFormulaDialogItem = null;
         this.deleteFormulaDialogFormula = null;
       },
-      setFormulaRelation(item) {
+      formulaRelationDialogInit(item) {
+        this.formulaRelationDialog = true;
+        this.formulaRelationDialogItem = item;
+      },
+      setFormulaRelation() {
+        this.formulaRelationDialog = false;
+        this.formulaRelationDialogItem = null;
+      },
+      setDefaultFormulaRelation(item) {
         item.formulaRelation = [];
 
         for (let i = 0; i < item.formulas.length; i += 1) {
