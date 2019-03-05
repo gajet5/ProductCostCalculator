@@ -181,9 +181,12 @@
                                 maxlength="25"
                                 counter
                               >
-                                <soft-calc-component slot="append"
-                                                     :current="formulas.variables[formula.value.toLowerCase()]"
-                                                     @bringIn="bringIn($event, formulas.variables, formula.value.toLowerCase(), formulas)"></soft-calc-component>
+                                <soft-calc-component
+                                  slot="append"
+                                  :current="formulas.variables[formula.value.toLowerCase()]"
+                                  @bringIn="bringIn($event, formulas.variables, formula.value.toLowerCase(), item)"
+                                >
+                                </soft-calc-component>
                               </v-text-field>
                             </v-flex>
                           </v-layout>
@@ -193,7 +196,7 @@
                     <v-flex xs6 class="ml-3">
                       <v-textarea
                         label="Комментарий"
-                        v-model="item.comment"
+                        v-model="formulas.comment"
                         auto-grow
                         box
                         color="indigo darken-1"
@@ -259,8 +262,13 @@
                                 maxlength="25"
                                 counter
                               >
-                                <soft-calc-component slot="append" :current="item.variables[key.value.toLowerCase()]"
-                                                     @bringIn="bringIn($event, item.variables, key.value.toLowerCase(), item)"></soft-calc-component>
+                                <soft-calc-component
+                                  slot="append"
+                                  :current="item.variables[key.value.toLowerCase()]"
+                                  @bringIn="bringIn($event, item.variables, key.value.toLowerCase(), item)"
+                                >
+
+                                </soft-calc-component>
                               </v-text-field>
                             </v-flex>
                           </v-layout>
@@ -527,17 +535,43 @@
         </v-card-title>
         <v-card-text>
           <template v-if="formulaRelationDialogItem">
-            <div v-for="(formula, index) of formulaRelationDialogItem.formulas" :key="index">
-              <span>
-                {{ formula.formulaName }}
-              </span>
-              <div v-if="formulaRelationDialogItem.formulaRelation[index]">
-                {{ formulaRelationDialogItem.formulaRelation[index] }}
-              </div>
-
-            </div>
+            <v-list two-line>
+              <template v-for="(formula, index) of formulaRelationDialogItem.formulas">
+                <div :key="index">
+                  <v-list-tile>
+                    <v-list-tile-content>
+                      <v-list-tile-sub-title>формула</v-list-tile-sub-title>
+                      <v-list-tile-title>
+                        <h3>
+                          {{ formula.formulaName }}
+                        </h3>
+                      </v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                  <v-divider></v-divider>
+                  <template v-if="formulaRelationDialogItem.formulaRelation[index]">
+                    <v-list-tile
+                      height="80px"
+                    >
+                      <v-list-tile-content class="pt-2">
+                        <v-select
+                          :items="['+', '-', '*', '/']"
+                          label="Зависимость"
+                          v-model="formulaRelationDialogItem.formulaRelation[index]"
+                          outline
+                          color="indigo darken-1"
+                          height="50px"
+                        ></v-select>
+                      </v-list-tile-content>
+                    </v-list-tile>
+                    <v-divider></v-divider>
+                  </template>
+                </div>
+              </template>
+            </v-list>
           </template>
         </v-card-text>
+        <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
@@ -895,6 +929,7 @@
         this.formulaRelationDialogItem = item;
       },
       setFormulaRelation() {
+        this.countFormula(this.formulaRelationDialogItem);
         this.formulaRelationDialog = false;
         this.formulaRelationDialogItem = null;
       },
