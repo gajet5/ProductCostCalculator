@@ -85,6 +85,33 @@ module.exports = {
         }
     },
 
+    // GET /documents/document
+    async document(req, res) {
+        const token = req.headers['x-access-token'];
+        let { userId } = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
+        let documentId = req.query.documentId;
+
+        try {
+            return res.json({
+                status: 200,
+                data: {
+                    message: 'Список позиций пользователя',
+                    document: await documentsModel.find({
+                        _id: documentId,
+                        owner: userId
+                    })
+                }
+            });
+        } catch (e) {
+            return res.json({
+                status: 500,
+                data: {
+                    message: e.message
+                }
+            });
+        }
+    },
+
     // POST /documents/add
     async add(req, res) {
         const token = req.headers['x-access-token'];
@@ -113,13 +140,17 @@ module.exports = {
             });
         }
 
-        if (limits.stringInArray(options, 'comment', 5000)) {
-            return res.json({
-                status: 204,
-                data: {
-                    message: 'Лимит строки comment не корректен.'
+        for (let option of options) {
+            for (let formula of option.formulas) {
+                if (limits.string(formula.comment, 5000)) {
+                    return res.json({
+                        status: 204,
+                        data: {
+                            message: 'Лимит строки comment не корректен.'
+                        }
+                    });
                 }
-            });
+            }
         }
 
         try {
@@ -220,13 +251,28 @@ module.exports = {
             });
         }
 
-        if (limits.stringInArray(options, 'comment', 5000)) {
-            return res.json({
-                status: 204,
-                data: {
-                    message: 'Лимит строки comment не корректен.'
+        for (let option of options) {
+            if (option.new) {
+                for (let formula of option.formulas) {
+                    if (limits.string(formula.comment, 5000)) {
+                        return res.json({
+                            status: 204,
+                            data: {
+                                message: 'Лимит строки comment не корректен.'
+                            }
+                        });
+                    }
                 }
-            });
+            } else {
+                if (limits.string(option.comment, 5000)) {
+                    return res.json({
+                        status: 204,
+                        data: {
+                            message: 'Лимит строки comment не корректен.'
+                        }
+                    });
+                }
+            }
         }
 
         try {

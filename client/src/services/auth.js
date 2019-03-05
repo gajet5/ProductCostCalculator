@@ -10,6 +10,15 @@ export default {
       return false;
     }
   },
+  async changePassword(credentials) {
+    try {
+      let { data } = await Api().post('auth/change-password', credentials);
+      return data;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  },
   async emailExist(email) {
     try {
       let { data } = await Api().get(`auth/emailExist?email=${email}`);
@@ -33,6 +42,15 @@ export default {
   async login(credentials) {
     try {
       let { data } = await Api().post('auth/login', credentials);
+      return data;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  },
+  async forgotPassword(email) {
+    try {
+      let { data } = await Api().get(`auth/forgotPassword?email=${email}`);
       return data;
     } catch (e) {
       console.log(e);

@@ -41,20 +41,42 @@
                 <tr :key="props.item._id" @click.prevent="openFormula(props.item._id)">
                   <td>{{ props.item.name }}</td>
                   <td>{{ dateFormat(props.item.createDate) }}</td>
-                  <td class="justify-center layout">
-                    <formula-component
-                      :showFormulaDialog = 'formulasDialogOptions[props.item._id]'
-                      :formulaParams = 'props.item'
-                      @updateFormulasList="updateFormulasList"
-                      @userNotConfirmMail="userNotConfirmMail"
-                      @openFormula = 'openFormula($event)'
-                      @closeFormula = 'closeFormula($event)'
-                    ></formula-component>
-                    <v-btn color="error" @click.stop="removeFormulaQuestion(props.item._id, props.item.name)">
-                      <v-icon small>
-                        delete
-                      </v-icon>
-                    </v-btn>
+                  <td>
+                    <div class="hidden-md-and-up">
+                      <v-menu @click.native.stop>
+                        <v-btn slot="activator" icon>
+                          <v-icon>more_vert</v-icon>
+                        </v-btn>
+                        <formula-component
+                          :showFormulaDialog='formulasDialogOptions[props.item._id]'
+                          :formulaParams='props.item'
+                          @updateFormulasList="updateFormulasList"
+                          @userNotConfirmMail="userNotConfirmMail"
+                          @openFormula='openFormula($event)'
+                          @closeFormula='closeFormula($event)'
+                        ></formula-component>
+                        <v-btn color="error" @click.stop="removeFormulaQuestion(props.item._id, props.item.name)">
+                          <v-icon small>
+                            delete
+                          </v-icon>
+                        </v-btn>
+                      </v-menu>
+                    </div>
+                    <div class="hidden-sm-and-down">
+                      <formula-component
+                        :showFormulaDialog='formulasDialogOptions[props.item._id]'
+                        :formulaParams='props.item'
+                        @updateFormulasList="updateFormulasList"
+                        @userNotConfirmMail="userNotConfirmMail"
+                        @openFormula='openFormula($event)'
+                        @closeFormula='closeFormula($event)'
+                      ></formula-component>
+                      <v-btn color="error" @click.stop="removeFormulaQuestion(props.item._id, props.item.name)">
+                        <v-icon small>
+                          delete
+                        </v-icon>
+                      </v-btn>
+                    </div>
                   </td>
                 </tr>
               </template>
@@ -67,12 +89,12 @@
       </v-layout>
     </v-container>
     <formula-component
-      :showFormulaDialog = 'formulasDialogOptions.newFormula'
+      :showFormulaDialog='formulasDialogOptions.newFormula'
       @updateFormulasList="updateFormulasList"
       @userNotConfirmMail="userNotConfirmMail"
       @userNotPremium="userNotPremium"
-      @openFormula = 'openFormula($event)'
-      @closeFormula = 'closeFormula($event)'
+      @openFormula='openFormula($event)'
+      @closeFormula='closeFormula($event)'
     ></formula-component>
     <v-snackbar
       v-model="userRules"
@@ -228,5 +250,7 @@
 </script>
 
 <style scoped>
-
+  .v-menu__content {
+    background-color: #fff;
+  }
 </style>

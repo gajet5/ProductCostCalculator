@@ -1,6 +1,8 @@
+import 'babel-polyfill';
+import 'event-source-polyfill';
+
 import Vue from 'vue';
 import App from './App.vue';
-import 'babel-polyfill';
 
 import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.min.css';

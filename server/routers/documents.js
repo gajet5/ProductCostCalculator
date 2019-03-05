@@ -2,6 +2,7 @@ const router = require('express').Router();
 const documentsController = require('../controllers/documents');
 
 router.get('/list', documentsController.list);
+router.get('/document', documentsController.document);
 router.get('/positions', documentsController.getPositions);
 router.post('/add', documentsController.add);
 router.post('/add-positions', documentsController.addPositions);

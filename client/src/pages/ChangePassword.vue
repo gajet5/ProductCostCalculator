@@ -5,32 +5,8 @@
       </div>
     </div>
     <div class="registration-wrapper">
-      <h3 class="display-3 mb-2">Регистрация</h3>
-      <v-form ref="registrationForm" v-model="formValid" autocomplete="off" @submit.prevent="">
-        <v-text-field
-          v-model.trim="email"
-          label="Введите email"
-          type="email"
-          required
-          dark
-          color="grey lighten-5"
-          :rules="emailRules"
-          @change="checkEmail"
-          @input="emailIsDublicate = false"
-          maxlength="100"
-          counter
-        >
-        </v-text-field>
-        <transition name="slide-fade">
-          <div v-show="emailIsDublicate">
-            <v-alert
-              :value="true"
-              outline
-              color="warning">
-              Адресс уже зарегистрирован
-            </v-alert>
-          </div>
-        </transition>
+      <h3 class="display-3 mb-2">Изменение пароля</h3>
+      <v-form ref="changePasswordForm" v-model="formValid" autocomplete="off" @submit.prevent="">
         <v-text-field
           v-model.trim="password"
           :append-icon="p1 ? 'visibility' : 'visibility_off'"
@@ -59,26 +35,16 @@
           counter
         >
         </v-text-field>
-
         <v-btn
           type="submit"
           :disabled="!formValid"
           color="success"
-          @click="registration"
-        >Зарегистрироватся
-        </v-btn>
-        <v-btn
-          flat
-          color="grey lighten-2"
-          @click="goToHomePage"
-        >Назад
+          @click="changePassword"
+        >изменить
         </v-btn>
       </v-form>
-      <v-alert :value="registredSuccess" color="success">
-        Регистрация прошла успешно, добро пожаловать в клуб.
-      </v-alert>
-      <v-alert :value="registredError" color="error">
-        Во время регистрации произошла ошибка, попробуйте ещё раз.
+      <v-alert :value="changeStatus" :color="changeColorStatus" transition="scale-transition">
+        {{ changeText }}
       </v-alert>
     </div>
 
@@ -89,64 +55,51 @@
   export default {
     data() {
       return {
-        registredSuccess: false,
-        registredError: false,
         formValid: false,
-        email: '',
-        emailIsDublicate: false,
         password: '',
         p1: true,
         rePassword: '',
         p2: true,
-        emailRules: [
-          v => !!v || 'Почта должна быть указана',
-          // eslint-disable-next-line
-          v => /(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/.test(v) || 'Почта должна быть валидной.'
-        ],
         passwordRules: [
           v => !!v || 'Пароль должен быть указан',
           v => /^[a-zA-Z0-9]{4,}$/.test(v) || 'Пароль должен быть валидным',
           v => v === this.password || 'Пароли должны совпадать'
-        ]
+        ],
+        changeStatus: false,
+        changeColorStatus: '',
+        changeText: ''
       };
     },
     methods: {
-      async registration() {
-        if (this.$refs.registrationForm.validate()) {
-          let result = await this.$store.dispatch('auth/registration', {
-            email: this.email,
+      async changePassword() {
+        if (this.$refs.changePasswordForm.validate()) {
+          let result = await this.$store.dispatch('auth/changePassword', {
+            id: this.$route.params.id,
             password: this.password
           });
 
           switch (result.status) {
             case 200:
-              this.clear();
-              this.registredSuccess = true;
-              this.$store.commit('setToken', result.data.token);
+              this.changeStatus = true;
+              this.changeColorStatus = 'success';
+              this.changeText = 'Пароль успешно изменён';
 
               setTimeout(() => {
-                this.$router.push('/catalogs');
+                this.changeStatus = false;
+                this.$router.push('/login');
               }, 5000);
               break;
 
             default:
-              this.registredError = true;
-              this.$store.commit('setToken', '');
+              this.changeStatus = true;
+              this.changeColorStatus = 'error';
+              this.changeText = 'В момент изменения пароля произошла ошибка';
+              setTimeout(() => {
+                this.changeStatus = false;
+              }, 5000);
               break;
           }
         }
-      },
-      async checkEmail() {
-        let result = await this.$store.dispatch('auth/checkEmail', {
-          email: this.email
-        });
-        this.emailIsDublicate = result.status === 200;
-      },
-      goToHomePage() {
-        this.$router.push('/');
-      },
-      clear() {
-        this.$refs.registrationForm.reset();
       }
     }
   };
@@ -209,5 +162,4 @@
     transform: translateX(90px);
     opacity: 0;
   }
-
 </style>

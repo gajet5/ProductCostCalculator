@@ -33,7 +33,6 @@
           counter
         >
         </v-text-field>
-
         <v-btn
           type="submit"
           :disabled="!formValid"
@@ -41,6 +40,7 @@
           @click="login"
         >Войти
         </v-btn>
+        <forgot-password></forgot-password>
         <v-btn
           flat
           color="grey lighten-2"
@@ -57,7 +57,13 @@
 </template>
 
 <script>
+  import ForgotPassword from '../components/ForgotPassword';
+
   export default {
+    components: { ForgotPassword },
+    comments: {
+      ForgotPassword
+    },
     data() {
       return {
         serverStatus: true,
@@ -69,7 +75,8 @@
         p1: true,
         emailRules: [
           v => !!v || 'Почта должна быть указана.',
-          v => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'Почта должна быть валидной.'
+          // eslint-disable-next-line
+          v => /(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/.test(v) || 'Почта должна быть валидной.'
         ],
         passwordRules: [
           v => !!v || 'Пароль должен быть указан.',

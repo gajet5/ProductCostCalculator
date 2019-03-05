@@ -12,6 +12,16 @@ export default {
       return false;
     }
   },
+  async getDocument(payload) {
+    try {
+      let queryString = `documents/document?documentId=${payload}`;
+      let { data } = await Api().get(queryString);
+      return data;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  },
   async getPositions() {
     try {
       let { data } = await Api().get('documents/positions');

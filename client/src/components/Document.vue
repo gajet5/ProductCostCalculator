@@ -66,9 +66,10 @@
                   placeholder="Выберите позицию или введите свою."
                   item-text="name"
                   item-value="_id"
-                  :menu-props="{zIndex:'203'}"
                   maxlength="50"
                   counter
+                  :menu-props="{ value: comboboxVisible }"
+                  @click="comboboxVisible = !comboboxVisible"
                 >
                   <template
                     slot="item"
@@ -78,10 +79,10 @@
                       {{ item.name }}
                     </v-list-tile-content>
                     <v-spacer></v-spacer>
-                    <v-list-tile-action @click.stop>
+                    <v-list-tile-action>
                       <v-btn
                         icon
-                        @click.stop.prevent="deletePositionsQuestion(item._id, item.name)"
+                        @click.stop="deletePositionsQuestion(item._id, item.name)"
                       >
                         <v-icon color="red">delete</v-icon>
                       </v-btn>
@@ -127,66 +128,175 @@
       <v-container>
         <v-layout>
           <v-flex>
-            <v-card v-for="(item, index) in options" :key="index" class="mb-2">
-              <v-card-title primary-title>
-                <div>
+            <v-card v-for="(item, itemIndex) in options" :key="itemIndex" class="mb-2">
+              <template v-if="item.new">
+                <v-card-title primary-title>
                   <h3 class="headline mb-0">{{ item.position }}</h3>
-                  <div>{{ item.formulaName }}</div>
-                </div>
-                <v-spacer></v-spacer>
-                <div>
-                  <h4 class="headline mb-0">
-                    <span class="grey--text font-weight-light caption text-lowercase">{{ item.formulaString }} =</span>
-                    {{ moneyFormat(item.count) }}
-                  </h4>
-                </div>
-              </v-card-title>
-              <v-card-text>
-                <v-layout>
-                  <v-flex xs6>
-                    <div v-for="(key, i) in item.formula" :key="i">
-                      <template v-if="key.name">
-                        <v-layout>
-                          <v-flex xs1 class="letter-wrapper">
-                            <span class="letter orange darken-1 white--text">{{ key.value }}</span>
-                          </v-flex>
-                          <v-flex xs11>
-                            <v-text-field
-                              :label="key.name"
-                              color="indigo darken-1"
-                              v-model="item.variables[key.value.toLocaleLowerCase()]"
-                              @keypress="inputCheck"
-                              @keyup="countFormula(item)"
-                              @keydown="haveChange = true"
-                              maxlength="25"
-                              counter
-                            ></v-text-field>
-                          </v-flex>
-                        </v-layout>
-                      </template>
-                    </div>
-                  </v-flex>
-                  <v-flex xs6 class="ml-3">
-                    <v-textarea
-                      label="Комментарий"
-                      v-model="item.comment"
-                      auto-grow
-                      box
-                      color="indigo darken-1"
-                      maxlength="5000"
-                      counter
-                    ></v-textarea>
-                  </v-flex>
-                </v-layout>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer class="hidden-sm-and-down"></v-spacer>
-                <v-btn flat icon color="error" @click="deleteOptionQuestion(item, item.position)">
-                  <v-icon>
-                    delete
-                  </v-icon>
-                </v-btn>
-              </v-card-actions>
+                  <v-spacer></v-spacer>
+                  <div v-show="showAdditionalItem(item)">
+                    <h4 class="headline mb-0">
+                      <span class="grey--text font-weight-light caption text-lowercase">Расчёт карты =</span>
+                      {{ moneyFormat(item.cardCount) }}
+                    </h4>
+                  </div>
+                </v-card-title>
+                <v-card-text v-for="(formulas, formulasIndex) in item.formulas" :key="formulasIndex">
+                  <v-layout class="mb-1">
+                    <v-flex xs12 class="d-flex">
+                      <div>
+                        <v-btn flat icon color="error" class="ma-0"
+                               @click="deleteFormulaQuestion(item, formulas, formulas.formulaName)"
+                               v-show="showAdditionalItem(item)">
+                          <v-icon>
+                            remove
+                          </v-icon>
+                        </v-btn>
+                        {{ formulas.formulaName }}
+                      </div>
+                      <v-spacer></v-spacer>
+                      <div class="text-xs-right">
+                        <h4 class="headline mb-0">
+                          <span class="grey--text font-weight-light caption text-lowercase">{{ formulas.formulaString }} =</span>
+                          {{ moneyFormat(formulas.count) }}
+                        </h4>
+                      </div>
+                    </v-flex>
+                  </v-layout>
+                  <v-layout>
+                    <v-flex xs6>
+                      <div v-for="(formula, formulaIndex) in formulas.formula" :key="formulaIndex">
+                        <template v-if="formula.name">
+                          <v-layout>
+                            <v-flex xs1 class="letter-wrapper">
+                              <span class="letter orange darken-1 white--text">{{ formula.value }}</span>
+                            </v-flex>
+                            <v-flex xs11>
+                              <v-text-field
+                                :label="formula.name"
+                                color="indigo darken-1"
+                                v-model="formulas.variables[formula.value.toLowerCase()]"
+                                @keypress="inputCheck"
+                                @keyup="countFormula(item)"
+                                @keydown="haveChange = true"
+                                maxlength="25"
+                                counter
+                              >
+                                <soft-calc-component
+                                  slot="append"
+                                  :current="formulas.variables[formula.value.toLowerCase()]"
+                                  @bringIn="bringIn($event, formulas.variables, formula.value.toLowerCase(), item)"
+                                >
+                                </soft-calc-component>
+                              </v-text-field>
+                            </v-flex>
+                          </v-layout>
+                        </template>
+                      </div>
+                    </v-flex>
+                    <v-flex xs6 class="ml-3">
+                      <v-textarea
+                        label="Комментарий"
+                        v-model="formulas.comment"
+                        auto-grow
+                        box
+                        color="indigo darken-1"
+                        maxlength="5000"
+                        counter
+                      ></v-textarea>
+                    </v-flex>
+                  </v-layout>
+                  <v-divider></v-divider>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer class="hidden-sm-and-down"></v-spacer>
+                  <v-btn flat icon color="success" @click="addFormulaDialogInit(item)">
+                    <v-icon>
+                      add
+                    </v-icon>
+                  </v-btn>
+                  <v-btn flat icon color="indigo" v-show="showAdditionalItem(item)"
+                         @click="formulaRelationDialogInit(item)">
+                    <v-icon>
+                      settings
+                    </v-icon>
+                  </v-btn>
+                  <v-btn flat icon color="error" @click="deleteOptionQuestion(item, item.position)">
+                    <v-icon>
+                      delete
+                    </v-icon>
+                  </v-btn>
+                </v-card-actions>
+              </template>
+              <template v-else>
+                <v-card-title primary-title>
+                  <div>
+                    <h3 class="headline mb-0">{{ item.position }}</h3>
+                    <div>{{ item.formulaName }}</div>
+                  </div>
+                  <v-spacer></v-spacer>
+                  <div>
+                    <h4 class="headline mb-0">
+                      <span
+                        class="grey--text font-weight-light caption text-lowercase">{{ item.formulaString }} =</span>
+                      {{ moneyFormat(item.count) }}
+                    </h4>
+                  </div>
+                </v-card-title>
+                <v-card-text>
+                  <v-layout>
+                    <v-flex xs6>
+                      <div v-for="(key, i) in item.formula" :key="i">
+                        <template v-if="key.name">
+                          <v-layout>
+                            <v-flex xs1 class="letter-wrapper">
+                              <span class="letter orange darken-1 white--text">{{ key.value }}</span>
+                            </v-flex>
+                            <v-flex xs11>
+                              <v-text-field
+                                :label="key.name"
+                                color="indigo darken-1"
+                                v-model="item.variables[key.value.toLowerCase()]"
+                                @keypress="inputCheck"
+                                @keyup="countFormula(item)"
+                                @keydown="haveChange = true"
+                                maxlength="25"
+                                counter
+                              >
+                                <soft-calc-component
+                                  slot="append"
+                                  :current="item.variables[key.value.toLowerCase()]"
+                                  @bringIn="bringIn($event, item.variables, key.value.toLowerCase(), item)"
+                                >
+
+                                </soft-calc-component>
+                              </v-text-field>
+                            </v-flex>
+                          </v-layout>
+                        </template>
+                      </div>
+                    </v-flex>
+                    <v-flex xs6 class="ml-3">
+                      <v-textarea
+                        label="Комментарий"
+                        v-model="item.comment"
+                        auto-grow
+                        box
+                        color="indigo darken-1"
+                        maxlength="5000"
+                        counter
+                      ></v-textarea>
+                    </v-flex>
+                  </v-layout>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer class="hidden-sm-and-down"></v-spacer>
+                  <v-btn flat icon color="error" @click="deleteOptionQuestion(item, item.position)">
+                    <v-icon>
+                      delete
+                    </v-icon>
+                  </v-btn>
+                </v-card-actions>
+              </template>
             </v-card>
           </v-flex>
         </v-layout>
@@ -332,44 +442,201 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="deleteFormulaDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline yellow"
+        >
+          <v-icon large class="mr-1" color="red">
+            warning
+          </v-icon>
+          Удалить формулу?
+        </v-card-title>
+        <v-card-text>
+          <p>
+            Вы собираетесь удалить формулу: <b>{{ deleteFormulaDialogName }}</b>.<br>
+            Удаляем?
+          </p>
+          <p>
+            Если в позиции не будет формул, позиция будет удалена.
+          </p>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="deleteFormula(deleteFormulaDialogItem, deleteFormulaDialogFormula)"
+          >
+            ОК
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="deleteFormulaDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="addFormulaDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline success white--text"
+        >
+          Добавление формулы
+        </v-card-title>
+        <v-card-text>
+          <v-autocomplete
+            v-model="addFormulaDialogFormula"
+            :items="formulasName"
+            item-text="name"
+            return-object
+            color="indigo darken-1"
+            placeholder="Выберите формулу."
+          >
+          </v-autocomplete>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="addFormula(addFormulaDialogItem)"
+          >
+            ОК
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="addFormulaDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="formulaRelationDialog"
+      persistent
+    >
+      <v-card>
+        <v-card-title
+          class="headline white--text indigo darken-1"
+        >
+          Настройка зависимости
+        </v-card-title>
+        <v-card-text>
+          <template v-if="formulaRelationDialogItem">
+            <v-list two-line>
+              <template v-for="(formula, index) of formulaRelationDialogItem.formulas">
+                <div :key="index">
+                  <v-list-tile>
+                    <v-list-tile-content>
+                      <v-list-tile-sub-title>формула</v-list-tile-sub-title>
+                      <v-list-tile-title>
+                        <h3>
+                          {{ formula.formulaName }}
+                        </h3>
+                      </v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                  <v-divider></v-divider>
+                  <template v-if="formulaRelationDialogItem.formulaRelation[index]">
+                    <v-list-tile
+                      height="80px"
+                    >
+                      <v-list-tile-content class="pt-2">
+                        <v-select
+                          :items="['+', '-', '*', '/']"
+                          label="Зависимость"
+                          v-model="formulaRelationDialogItem.formulaRelation[index]"
+                          outline
+                          color="indigo darken-1"
+                          height="50px"
+                        ></v-select>
+                      </v-list-tile-content>
+                    </v-list-tile>
+                    <v-divider></v-divider>
+                  </template>
+                </div>
+              </template>
+            </v-list>
+          </template>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="setFormulaRelation"
+          >
+            ОК
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            flat="flat"
+            @click="formulaRelationDialog = false"
+          >
+            Отмена
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
 <script>
   import { Parser } from 'expr-eval';
+  import softCalcComponent from './SoftCalc';
 
   export default {
     created() {
-      if (!this.documentParams) {
-        return false;
-      }
-
-      this.documentId = this.documentParams._id;
-      this.documentName = this.documentParams.name;
-      this.options = JSON.parse(JSON.stringify(this.documentParams.options));
+      this.init();
     },
     props: ['documentParams', 'showDocumentDialog'],
+    components: {
+      softCalcComponent
+    },
     data() {
       return {
         documentId: 'newDocument',
         documentName: '',
         nameRules: [
-          v => !!v || 'Имя должено быть указано',
+          v => !!v || 'Имя должно быть указано',
           v => /^[\w\dа-яА-Я .\-ё#№]{3,}$/.test(v) || 'Имя должено быть валидным'
         ],
         nameValid: false,
         formulaSelected: '',
         positionSelected: '',
+        comboboxVisible: false,
         options: [],
         snackbarDocument: false,
         snackbarDocumentStatus: '',
         snackbarDocumentText: '',
         deleteDialog: false,
         deletePositionsDialog: false,
-        deleteDialogId: '',
+        deleteDialogId: null,
         deleteDialogName: '',
         haveChange: false,
-        saveChangeDialog: false
+        saveChangeDialog: false,
+        addFormulaDialog: false,
+        addFormulaDialogFormula: '',
+        addFormulaDialogItem: null,
+        deleteFormulaDialog: false,
+        deleteFormulaDialogName: '',
+        deleteFormulaDialogItem: null,
+        deleteFormulaDialogFormula: null,
+        formulaRelationDialog: false,
+        formulaRelationDialogItem: null
       };
     },
     computed: {
@@ -381,9 +648,12 @@
       },
       totalCount() {
         let count = 0;
-
         for (let item of this.options) {
-          count += parseFloat(item.count);
+          if (item.new) {
+            count += parseFloat(item.cardCount);
+          } else {
+            count += parseFloat(item.count);
+          }
         }
 
         return count.toFixed(2);
@@ -392,9 +662,22 @@
     watch: {
       showDocumentDialog() {
         this.haveChange = false;
+        this.init();
+      },
+      positionSelected() {
+        this.comboboxVisible = false;
       }
     },
     methods: {
+      init() {
+        if (!this.documentParams) {
+          return false;
+        }
+
+        this.documentId = this.documentParams._id;
+        this.documentName = this.documentParams.name;
+        this.options = JSON.parse(JSON.stringify(this.documentParams.options));
+      },
       userRules() {
         if (!this.$store.getters['user/isActiveted']) {
           this.$emit('userNotConfirmMail');
@@ -450,19 +733,24 @@
 
         for (let item of this.$store.getters['formulas/formula'].formula) {
           if (/\w/.test(item.value)) {
-            variables[item.value.toLocaleLowerCase()] = '';
+            variables[item.value.toLowerCase()] = '';
           }
           formulaString += item.value;
         }
 
         this.options.unshift({
+          new: true,
           position: this.positionSelected.name ? this.positionSelected.name : this.positionSelected,
-          formulaName: this.formulaSelected.name,
-          count: 0,
-          formula: this.$store.getters['formulas/formula'].formula,
-          formulaString,
-          variables,
-          comment: ''
+          cardCount: 0,
+          formulaRelation: [],
+          formulas: [{
+            formulaName: this.formulaSelected.name,
+            count: 0,
+            formula: this.$store.getters['formulas/formula'].formula,
+            formulaString,
+            variables,
+            comment: ''
+          }]
         });
 
         await this.addPositions();
@@ -501,31 +789,55 @@
         this.snackbarDocumentText = `Позиция ${name} удалёна.`;
       },
       deletePositionsQuestion(id, name) {
+        this.comboboxVisible = false;
         this.deleteDialogId = id;
         this.deleteDialogName = name;
         this.deletePositionsDialog = true;
       },
       async deletePositions(id, name) {
+        this.haveChange = true;
         await this.$store.dispatch('documents/deletePositions', id);
         await this.$store.dispatch('documents/getPositions');
 
         this.deletePositionsDialog = false;
+        this.deleteDialogId = null;
+        this.deleteDialogName = '';
         this.snackbarDocument = true;
         this.snackbarDocumentStatus = 'info';
         this.snackbarDocumentText = `Параметр позиции ${name} удалён.`;
       },
       countFormula(item) {
-        let expression = Parser.parse(item.formulaString.toLocaleLowerCase());
+        for (let formula of item.formulas) {
+          let expression = Parser.parse(formula.formulaString.toLowerCase());
 
-        if (Object.keys(item.variables).length === 1) {
-          item.count = expression.evaluate(item.variables);
-          item.count = parseFloat(item.count).toFixed(2);
-        } else {
-          item.count = expression.evaluate(item.variables).toFixed(2);
+          if (Object.keys(formula.variables).length === 1) {
+            formula.count = expression.evaluate(formula.variables);
+            formula.count = parseFloat(formula.count).toFixed(2);
+          } else {
+            formula.count = expression.evaluate(formula.variables).toFixed(2);
+          }
+
+          if (!isFinite(formula.count)) {
+            formula.count = 0;
+          }
         }
 
-        if (!isFinite(item.count)) {
-          item.count = 0;
+        if (item.formulaRelation.length) {
+          let countString = '';
+
+          for (let i = 0; i < item.formulas.length; i += 1) {
+            countString += item.formulas[i].count;
+            if (item.formulaRelation[i]) {
+              countString += item.formulaRelation[i];
+            }
+          }
+
+          item.cardCount = Parser.parse(countString).evaluate();
+        } else {
+          for (let formula of item.formulas) {
+            item.cardCount = 0;
+            item.cardCount += parseFloat(formula.count);
+          }
         }
       },
       inputCheck(e) {
@@ -549,6 +861,93 @@
       },
       moneyFormat(count) {
         return Intl.NumberFormat('ru-RU').format(count).replace(/,/, '.');
+      },
+      bringIn(value, variables, letter, item) {
+        variables[letter] = value;
+        this.countFormula(item);
+      },
+      addFormulaDialogInit(item) {
+        this.addFormulaDialogItem = item;
+        this.addFormulaDialog = true;
+      },
+      async addFormula(item) {
+        await this.$store.dispatch('formulas/getFormula', this.addFormulaDialogFormula._id);
+        let variables = {};
+        let formulaString = '';
+
+        for (let item of this.$store.getters['formulas/formula'].formula) {
+          if (/\w/.test(item.value)) {
+            variables[item.value.toLowerCase()] = '';
+          }
+          formulaString += item.value;
+        }
+
+        item.formulas.push({
+          formulaName: this.addFormulaDialogFormula.name,
+          count: 0,
+          formula: this.$store.getters['formulas/formula'].formula,
+          formulaString,
+          variables,
+          comment: ''
+        });
+
+        this.setDefaultFormulaRelation(item);
+
+        this.addFormulaDialog = false;
+        this.addFormulaDialogFormula = '';
+        this.addFormulaDialogItem = null;
+      },
+      deleteFormulaQuestion(item, formula, name) {
+        this.deleteFormulaDialog = true;
+        this.deleteFormulaDialogName = name;
+        this.deleteFormulaDialogItem = item;
+        this.deleteFormulaDialogFormula = formula;
+      },
+      deleteFormula(item, formula) {
+        this.haveChange = true;
+        let indexOption = item.formulas.indexOf(formula);
+        item.formulas.splice(indexOption, 1);
+
+        this.snackbarDocument = true;
+        this.snackbarDocumentStatus = 'info';
+        this.snackbarDocumentText = `Формула ${formula.formulaName} удалёна.`;
+
+        if (item.formulas.length === 1) {
+          item.formulaRelation = [];
+        }
+
+        this.setDefaultFormulaRelation(item);
+        this.countFormula(item);
+
+        this.deleteFormulaDialog = false;
+        this.deleteFormulaDialogName = '';
+        this.deleteFormulaDialogItem = null;
+        this.deleteFormulaDialogFormula = null;
+      },
+      formulaRelationDialogInit(item) {
+        this.formulaRelationDialog = true;
+        this.formulaRelationDialogItem = item;
+      },
+      setFormulaRelation() {
+        this.countFormula(this.formulaRelationDialogItem);
+        this.formulaRelationDialog = false;
+        this.formulaRelationDialogItem = null;
+      },
+      setDefaultFormulaRelation(item) {
+        item.formulaRelation = [];
+
+        for (let i = 0; i < item.formulas.length; i += 1) {
+          if (item.formulas[i + 1]) {
+            item.formulaRelation.push('+');
+          }
+        }
+      },
+      showAdditionalItem(item) {
+        try {
+          return item.formulaRelation.length;
+        } catch (e) {
+          return false;
+        }
       }
     }
   };
@@ -559,6 +958,7 @@
     margin-top: 15px;
     margin-right: 10px;
   }
+
   .letter {
     padding: 10px;
   }

@@ -37,6 +37,14 @@ const User = new Schema({
     lastConfirmEmail: {
         type: Date,
         default: Date.now
+    },
+    forgotPasswordHash: {
+        type: String,
+        default: null
+    },
+    lastForgotEmail: {
+        type: Date,
+        default: Date.now
     }
 });
 

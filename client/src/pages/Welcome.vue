@@ -64,14 +64,14 @@
               <v-flex xs12 md4>
                 <v-card class="elevation-0 transparent">
                   <v-card-text class="text-xs-center">
-                    <v-icon x-large class="blue--text text--lighten-2">build</v-icon>
+                    <v-icon x-large class="blue--text text--lighten-2">calendar_today</v-icon>
                   </v-card-text>
                   <v-card-title primary-title class="layout justify-center">
-                    <div class="headline text-xs-center">Открыты для предложений</div>
+                    <div class="headline text-xs-center">Месяц доступа</div>
                   </v-card-title>
                   <v-card-text>
-                    Я буду рад получить от вас обратную связь о калькуляторе, а так же мнение, что по вашему можно сделать лучше.
-                    Если у вас возникли вопросы по использованию калькулятора, вы так же можете их задать мне.
+                    После регистрации вы получаете бесплатный полный доступ к сервису на 1 месяц.
+                    После некоторые функции станут недоступными, вы сможете улучшить аккаунт в личном кабинете.
                   </v-card-text>
                 </v-card>
               </v-flex>
