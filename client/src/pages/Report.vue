@@ -77,7 +77,7 @@
                           </v-list>
                           <v-alert
                             :value="true"
-                            color="info"
+                            color="indigo accent-1"
                             icon="info"
                             outline
                             v-if="item.formulaRelation[formulaIndex]"
