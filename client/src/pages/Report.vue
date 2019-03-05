@@ -65,6 +65,15 @@
                                 </v-list-tile>
                               </template>
                             </template>
+                            <v-list-tile :key="valueIndex">
+                              <v-list-tile-content>
+                                <div>
+                                  <span>Результат:</span>
+                                </div>
+                              </v-list-tile-content>
+                              <v-list-tile-content class="align-end">{{ moneyFormat(item.cardCount) }}
+                              </v-list-tile-content>
+                            </v-list-tile>
                           </v-list>
                           <v-alert
                             :value="true"
@@ -78,7 +87,7 @@
                         </div>
                         <v-divider></v-divider>
                         <v-card-text>
-                          <span>Расчёт позиции: {{ moneyFormat(item.cardCount)}}</span>
+                          <span>Всего: {{ moneyFormat(item.cardCount)}}</span>
                         </v-card-text>
                       </template>
                       <template v-else>

@@ -42,6 +42,13 @@ module.exports = {
         options: {
           name: 'img/[name].[ext]?[hash]'
         }
+      },
+      {
+        test: /\.(eot|ttf|woff2|woff)$/,
+        loader: 'file-loader',
+        options: {
+          name: 'font/[name].[ext]?[hash]'
+        }
       }
     ]
   },
