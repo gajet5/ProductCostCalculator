@@ -210,6 +210,96 @@
               </v-expansion-panel-content>
               <v-expansion-panel-content>
                 <div slot="header">
+                  <v-icon class="mr-2" color="amber">
+                    insert_drive_file
+                  </v-icon>
+                  Дополнительные возможности
+                </div>
+                <v-card>
+                  <div class="d-flex justify-center">
+                    <v-img
+                      :src="require('../static/img/help/additionalOptions.png')"
+                      max-width="1050px"
+                    ></v-img>
+                  </div>
+                  <v-card-text>
+                    <h4>Добавление формул</h4>
+                  </v-card-text>
+                  <v-card-text>
+                    1. <strong>Позиция</strong> может быть расчитана по нескольким формулам.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    2. Для добавления формулы в позицию нажмите на кнопку <v-icon>add</v-icon><strong>Добавить</strong> внизу карточки.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    3. Откроется окно выбора формулы, выберите нужную вам формулу и нажмите "<strong>OK</strong>".
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    4. Для изменения отношений между формулами зайдите в <v-icon>settings</v-icon><strong>Настройки</strong>.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    5. Каждую формулу можно удалить нажав на <v-icon>remove</v-icon><strong>Удалить</strong> перед названием формулы.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <div class="d-flex justify-center mt-3">
+                    <v-img
+                      :src="require('../static/img/help/calc.png')"
+                      max-width="300px"
+                    ></v-img>
+                  </div>
+                  <v-card-text>
+                    <h4>Калькулятор</h4>
+                  </v-card-text>
+                  <v-card-text>
+                    1. Каждое поле в расчёте позиции обладает функцией "<strong>Калькулятор</strong>".
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    2. Чтобы вызвать калькулятор нажмите на значёк <v-icon>queue</v-icon><strong>Калькулятор</strong> в поле подсчёта.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    3. Если в поле расчёта была цифра она перенесётся в калькулятор.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    4. Функционал калькулятора позволяет производить расчёты при помощи <strong>клавиатуры</strong>.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    5. После окончания расчётов, нажмите "<strong>ВНЕСТИ</strong>", ваша конечная цифра перенесётся в поле расчёта.
+                  </v-card-text>
+                </v-card>
+              </v-expansion-panel-content>
+              <v-expansion-panel-content>
+                <div slot="header">
+                  <v-icon class="mr-2" color="info">
+                    assignment
+                  </v-icon>
+                  Отчёты
+                </div>
+                <v-card>
+                  <div class="d-flex justify-center">
+                    <v-img
+                      :src="require('../static/img/help/report.png')"
+                      max-width="1050px"
+                    ></v-img>
+                  </div>
+                  <v-card-text>
+                    1. Для формирования отчёта по документу нажмите в списке документов на кнопку <v-icon>assignment</v-icon><strong>Отчёт</strong>.
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-text>
+                    2. В отчёте отображается краткая информация о вашем документе.
+                  </v-card-text>
+                </v-card>
+              </v-expansion-panel-content>
+              <v-expansion-panel-content>
+                <div slot="header">
                   <v-icon class="mr-2" color="info">
                     functions
                   </v-icon>
@@ -409,7 +499,7 @@
                     ></v-img>
                   </div>
                   <v-card-text>
-                    <h4>Демо</h4>
+                    <h4>Email не подтверждён</h4>
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-text>

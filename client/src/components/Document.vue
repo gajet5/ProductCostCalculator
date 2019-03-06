@@ -135,7 +135,7 @@
                   <v-spacer></v-spacer>
                   <div v-show="showAdditionalItem(item)">
                     <h4 class="headline mb-0">
-                      <span class="grey--text font-weight-light caption text-lowercase">Расчёт карты =</span>
+                      <span class="grey--text font-weight-light caption text-lowercase">Расчёт позиции =</span>
                       {{ moneyFormat(item.cardCount) }}
                     </h4>
                   </div>
