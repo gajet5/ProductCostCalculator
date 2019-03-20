@@ -3,6 +3,7 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: './src/main.js',
+  cache: false,
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',

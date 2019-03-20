@@ -40,7 +40,7 @@
               <template slot="items" slot-scope="props">
                 <tr :key="props.item._id" @click.prevent="openFormula(props.item._id)">
                   <td>{{ props.item.name }}</td>
-                  <td>{{ dateFormat(props.item.createDate) }}</td>
+                  <td class="hidden-sm-and-down">{{ dateFormat(props.item.createDate) }}</td>
                   <td>
                     <div class="hidden-md-and-up">
                       <v-menu @click.native.stop>
@@ -164,7 +164,7 @@
       return {
         formulasHeaders: [
           { text: 'Имя', value: 'name' },
-          { text: 'Создано', value: 'createDate' },
+          { text: 'Создано', value: 'createDate', class: 'hidden-sm-and-down' },
           { text: 'Действия', value: 'name', sortable: false }
         ],
         rowsPerPageItems: [10, 20, 30, 50],

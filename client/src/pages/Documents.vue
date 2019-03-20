@@ -43,7 +43,7 @@
               <template slot="items" slot-scope="props">
                 <tr :key="props.item._id" @click.stop="openDocument(props.item._id)">
                   <td>{{ props.item.name }}</td>
-                  <td>{{ dateFormat(props.item.createDate) }}</td>
+                  <td class="hidden-sm-and-down">{{ dateFormat(props.item.createDate) }}</td>
                   <td>{{ moneyFormat(props.item.totalCount) }}</td>
                   <td>
                     <div class="hidden-md-and-up">
@@ -187,7 +187,7 @@
         documentsDialogOptions: {},
         documentsHeaders: [
           { text: 'Имя', value: 'name' },
-          { text: 'Создано', value: 'createDate' },
+          { text: 'Создано', value: 'createDate', class: 'hidden-sm-and-down' },
           { text: 'Сумма', value: 'totalCount', sortable: false },
           { text: 'Действия', value: 'name', sortable: false }
         ],
