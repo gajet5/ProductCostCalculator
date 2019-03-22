@@ -510,6 +510,7 @@
             color="green darken-1"
             flat="flat"
             @click="addFormula(addFormulaDialogItem)"
+            :disabled="addFormulaDialogBtn"
           >
             ОК
           </v-btn>
@@ -629,14 +630,15 @@
         haveChange: false,
         saveChangeDialog: false,
         addFormulaDialog: false,
-        addFormulaDialogFormula: '',
+        addFormulaDialogFormula: null,
         addFormulaDialogItem: null,
         deleteFormulaDialog: false,
         deleteFormulaDialogName: '',
         deleteFormulaDialogItem: null,
         deleteFormulaDialogFormula: null,
         formulaRelationDialog: false,
-        formulaRelationDialogItem: null
+        formulaRelationDialogItem: null,
+        addFormulaDialogBtn: false
       };
     },
     computed: {
@@ -666,6 +668,9 @@
       },
       positionSelected() {
         this.comboboxVisible = false;
+      },
+      addFormulaDialogFormula() {
+        this.addFormulaDialogBtn = false;
       }
     },
     methods: {
@@ -867,10 +872,12 @@
         this.countFormula(item);
       },
       addFormulaDialogInit(item) {
+        this.addFormulaDialogBtn = true;
         this.addFormulaDialogItem = item;
         this.addFormulaDialog = true;
       },
       async addFormula(item) {
+        this.addFormulaDialogBtn = true;
         await this.$store.dispatch('formulas/getFormula', this.addFormulaDialogFormula._id);
         let variables = {};
         let formulaString = '';
@@ -894,7 +901,7 @@
         this.setDefaultFormulaRelation(item);
 
         this.addFormulaDialog = false;
-        this.addFormulaDialogFormula = '';
+        this.addFormulaDialogFormula = null;
         this.addFormulaDialogItem = null;
       },
       deleteFormulaQuestion(item, formula, name) {
