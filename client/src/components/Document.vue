@@ -117,7 +117,7 @@
               outline
               block
               color="success"
-              :disabled="!formulaSelected || !positionSelected"
+              :disabled="addOptionsBtn"
               @click="addOptions"
             >
               <v-icon>add</v-icon>
@@ -632,13 +632,14 @@
         addFormulaDialog: false,
         addFormulaDialogFormula: null,
         addFormulaDialogItem: null,
+        addFormulaDialogBtn: false,
         deleteFormulaDialog: false,
         deleteFormulaDialogName: '',
         deleteFormulaDialogItem: null,
         deleteFormulaDialogFormula: null,
         formulaRelationDialog: false,
         formulaRelationDialogItem: null,
-        addFormulaDialogBtn: false
+        addOptionsBtn: true
       };
     },
     computed: {
@@ -668,9 +669,13 @@
       },
       positionSelected() {
         this.comboboxVisible = false;
+        this.addOptionsBtn = !this.formulaSelected || !this.positionSelected;
       },
       addFormulaDialogFormula() {
         this.addFormulaDialogBtn = false;
+      },
+      formulaSelected() {
+        this.addOptionsBtn = !this.formulaSelected || !this.positionSelected;
       }
     },
     methods: {
@@ -730,6 +735,7 @@
         this.$emit('updateDocumentsList');
       },
       async addOptions() {
+        this.addOptionsBtn = true;
         this.haveChange = true;
 
         await this.$store.dispatch('formulas/getFormula', this.formulaSelected._id);
