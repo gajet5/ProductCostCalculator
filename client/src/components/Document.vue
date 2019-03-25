@@ -70,6 +70,7 @@
                   counter
                   :menu-props="{ value: comboboxVisible }"
                   @click="comboboxVisible = !comboboxVisible"
+                  @blur="comboboxVisible = false"
                 >
                   <template
                     slot="item"
