@@ -51,7 +51,7 @@ export default {
   },
   async editDocument(payload) {
     try {
-      let { data } = await Api().patch('documents/edit', payload);
+      let { data } = await Api().post('documents/edit', payload);
       return data;
     } catch (e) {
       console.log(e);
