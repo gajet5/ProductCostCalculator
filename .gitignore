@@ -144,3 +144,4 @@ typings/
 client/dist
 server/config/index.js
 server/codes
+server/ssl

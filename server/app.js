@@ -1,8 +1,16 @@
+const https = require('https');
 const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const { port } = require('./config');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
+
+// todo: Вынести в конфиг
+const privateKey  = fs.readFileSync(path.join(__dirname, 'ssl', 'private.key'), 'utf8');
+const certificate = fs.readFileSync(path.join(__dirname, 'ssl', 'certificate.crt'), 'utf8');
+const credentials = {key: privateKey, cert: certificate};
 
 const app = express();
 const logger = morgan('tiny');
@@ -38,9 +46,10 @@ app.use('/catalogs', catalogsRouter);
 app.use('/documents', documentsRouter);
 app.use('/formulas', formulasRouter);
 
+
 connection.once('open', () => {
     console.log('Connected to MongoDB');
-    app.listen(port, () => {
+    https.createServer(credentials, app).listen(port, () => {
         console.log(`PCC server online on ${port} port.`);
     });
 });
